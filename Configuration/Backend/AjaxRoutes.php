@@ -4,8 +4,8 @@
 use TYPO3\CMS\DigitalAssetManagement\Controller\DigitalAssetManagementAjaxController;
 return [
     //
-    'files_inline_show_folder' => [
-        'path' => '/siteconfiguration/inline/create',
+    'dam_inline_show_folder' => [
+        'path' => '/dam/inline/showfolder',
         'target' => DigitalAssetManagementAjaxController::class . '::showFolder'
     ]
 ];

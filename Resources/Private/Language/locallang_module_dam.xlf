@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0" xmlns:t3="http://typo3.org/schemas/xliff">
+  <file t3:id="65436677" source-language="en" datatype="plaintext" original="messages" date="2018-04-12T22:22:32Z" product-name="digital_asset_management">
+    <header/>
+    <body>
+      <trans-unit id="dam_labels_tablabel">
+        <source>Digital Asset Management</source>
+      </trans-unit>
+      <trans-unit id="dam_labels_tabdescr">
+        <source>This module shows a fancy filelist.</source>
+      </trans-unit>
+      <trans-unit id="dam_tabs_tab">
+        <source>Configuration</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
