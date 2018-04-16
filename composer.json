@@ -1,0 +1,39 @@
+{
+	"name": "lns/files",
+	"type": "typo3-cms-extension",
+	"description": "Filelist",
+	"license": ["GPL-2.0+"],
+	"authors": [
+		{
+			"name": "André Bardoun",
+			"email": "bardoun@schaffrath-digital.de",
+			"role": "Maintainer"
+		}
+		{
+			"name": "Jürgen Venne",
+			"email": "venne@schaffrath-digital.de",
+			"role": "Maintainer"
+		}
+	],
+	"require": {
+		"typo3/cms-core": ">=8.7.0 <=9.9.99"
+	},
+	"replace": {
+		"digital_asset_management": "*"
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "digital_asset_management"
+		}
+	},
+	"autoload": {
+		"psr-4": {
+			"TYPO3\\CMS\\DigitalAssetManagement\\": "Classes/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"TYPO3\\CMS\\DigitalAssetManagement\\Tests\\": "Tests/"
+		}
+	}
+}
