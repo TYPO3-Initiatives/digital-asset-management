@@ -12,7 +12,8 @@ defined('TYPO3_MODE') or die();
         'icon' => 'EXT:digital_asset_management/Resources/Public/Icons/module-dam.svg',
         'labels' => 'LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_module_dam.xlf',
         'workspaces' => 'online,custom',
-        'navigationComponentId' => ''
+        'navigationComponentId' => '', //does not work: file-tree should be hidden
+        'navigationFrameModule' => '' //does not work: file-tree should be hidden
     ]
 );
 
