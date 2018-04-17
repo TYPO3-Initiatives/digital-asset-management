@@ -58,7 +58,11 @@ class DigitalAssetManagementController
      */
     public function handleRequest(ServerRequestInterface $request): ResponseInterface
     {
-        $this->moduleTemplate->getPageRenderer()->loadRequireJsModule('TYPO3/CMS/Backend/ContextMenu');
+//        $this->moduleTemplate->getPageRenderer()->loadRequireJsModule('TYPO3/CMS/Backend/ContextMenu');
+        //include JavaScript and CSS
+//        $this->moduleTemplate->getPageRenderer()->loadRequireJsModule('TYPO3/CMS/DigitalAssetManagement/DigitalAssetManagementActions');
+        //@todo: use getPageRenderer()->loadRequireJsModule instead of addJsFooterFile
+        $this->moduleTemplate->getPageRenderer()->addJsFooterFile('EXT:digital_asset_management/Resources/Public/JavaScript/DigitalAssetManagementActions.js');
         $action = $request->getQueryParams()['action'] ?? $request->getParsedBody()['action'] ?? 'overview';
         $this->initializeView($action);
 //            \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($action);
@@ -88,21 +92,36 @@ class DigitalAssetManagementController
      */
     protected function overviewAction(): void
     {
-//        $this->configureOverViewDocHeader();
-        /** @var Site[] $allSites */
-//        $allSites = $this->siteFinder->getAllSites();
-//        $pages = $this->getAllSitePages();
-//        foreach ($allSites as $identifier => $site) {
-//            $rootPageId = $site->getRootPageId();
-//            if (isset($pages[$rootPageId])) {
-//                $pages[$rootPageId]['siteIdentifier'] = $identifier;
-//                $pages[$rootPageId]['siteConfiguration'] = $site;
-//            }
+        $backendUser = $this->getBackendUser();
+        // Take the first object of the first storage
+        $fileStorages = $backendUser->getFileStorages();
+//        $fileStorage = reset($fileStorages);
+//        if ($fileStorage) {
+//            $this->folderObject = $fileStorage->getRootLevelFolder();
+//        } else {
+//            throw new \RuntimeException('Could not find any folder to be displayed.', 1349276894);
 //        }
-        $this->view->assign('filemounts', 'nope');
+        $this->view->assign('storages', $fileStorages);
+        $this->view->assign('user', $backendUser);
     }
 
+    /**
+     * Returns an instance of LanguageService
+     *
+     * @return \TYPO3\CMS\Core\Localization\LanguageService
+     */
+    protected function getLanguageService()
+    {
+        return $GLOBALS['LANG'];
+    }
 
-
-
+    /**
+     * Returns the current BE user.
+     *
+     * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+     */
+    protected function getBackendUser()
+    {
+        return $GLOBALS['BE_USER'];
+    }
 }
