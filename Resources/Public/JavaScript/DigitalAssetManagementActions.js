@@ -10,4 +10,12 @@
  *
  * The TYPO3 project - inspiring people to share!
  */
-define(["require","exports"],function(t,e){"use strict";return function(){function t(){}return t.getReturnUrl=function(){return top.rawurlencode(top.list_frame.document.location.pathname+top.list_frame.document.location.search)},t}()});
+
+"use strict";
+
+var todo = {},
+    todo.dam = {};
+
+todo.dam.init = function (){
+
+};
