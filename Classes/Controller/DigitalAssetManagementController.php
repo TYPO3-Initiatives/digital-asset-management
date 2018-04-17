@@ -61,8 +61,12 @@ class DigitalAssetManagementController
 //        $this->moduleTemplate->getPageRenderer()->loadRequireJsModule('TYPO3/CMS/Backend/ContextMenu');
         //include JavaScript and CSS
 //        $this->moduleTemplate->getPageRenderer()->loadRequireJsModule('TYPO3/CMS/DigitalAssetManagement/DigitalAssetManagementActions');
-        //@todo: use getPageRenderer()->loadRequireJsModule instead of addJsFooterFile
-        $this->moduleTemplate->getPageRenderer()->addJsFooterFile('EXT:digital_asset_management/Resources/Public/JavaScript/DigitalAssetManagementActions.js');
+        //@todo: use getPageRenderer()->loadRequireJsModule instead of loadJavascriptLib
+        $this->moduleTemplate->loadJavascriptLib('EXT:digital_asset_management/Resources/Public/JavaScript/DigitalAssetManagementActions.js');
+        $this->moduleTemplate->loadJavascriptLib('https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js');
+        $this->moduleTemplate->getPageRenderer()->addCssFile('EXT:digital_asset_management/Resources/Public/Css/digitalassetmanagement.css');
+        //Include bootstrap css
+        $this->moduleTemplate->getPageRenderer()->addCssFile('https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css');
         $action = $request->getQueryParams()['action'] ?? $request->getParsedBody()['action'] ?? 'overview';
         $this->initializeView($action);
 //            \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($action);
@@ -101,7 +105,10 @@ class DigitalAssetManagementController
 //        } else {
 //            throw new \RuntimeException('Could not find any folder to be displayed.', 1349276894);
 //        }
+        $files = reset($fileStorages);
+
         $this->view->assign('storages', $fileStorages);
+        $this->view->assign('files', $files);
         $this->view->assign('user', $backendUser);
     }
 
