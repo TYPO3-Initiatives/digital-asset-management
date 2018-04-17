@@ -1,7 +1,7 @@
 {
-	"name": "lns/files",
+	"name": "lns/digital-asset-management",
 	"type": "typo3-cms-extension",
-	"description": "Filelist",
+	"description": "Fancy filelist",
 	"license": ["GPL-2.0+"],
 	"authors": [
 		{
