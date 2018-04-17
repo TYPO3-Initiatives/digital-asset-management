@@ -12,27 +12,7 @@ defined('TYPO3_MODE') or die();
         'icon' => 'EXT:digital_asset_management/Resources/Public/Icons/module-dam.svg',
         'labels' => 'LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_module_dam.xlf',
         'workspaces' => 'online,custom',
-        'navigationComponentId' => '', //does not work: file-tree should be hidden
-        'navigationFrameModule' => '' //does not work: file-tree should be hidden
+        'navigationComponentId' => '',
+        'inheritNavigationComponentFromMainModule' => false
     ]
 );
-
-
-
-//
-//
-//// Register "Styleguide" backend module
-//\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-//    'TYPO3.CMS.digital_asset_management',
-//    'file',
-//    'list',
-//    'top',
-//    [
-//        'DigitalAssetManagement' => 'index'
-//    ],
-//    [
-//        'access' => 'user,group',
-//        'icon' => 'EXT:digital_asset_management/Resources/Public/Icons/module-dam.svg',
-//        'labels' => 'LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_module_dam.xlf'
-//    ]
-//);
