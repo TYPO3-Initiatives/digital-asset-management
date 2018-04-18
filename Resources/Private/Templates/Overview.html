@@ -21,15 +21,46 @@
 		</div>
 		<div class="col-xs-12 col-md-10">
 			<div class="header">
-				<h1>Dateien</h1>
-				<div class="card" style="width: 18rem;">
-					<img class="card-img-top" src="..." alt="Card image cap">
-					<div class="card-body">
-						<h5 class="card-title">Card title</h5>
-						<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-						<a href="#" class="btn btn-primary">Go somewhere</a>
-					</div>
-				</div>
+				<h1>Files <small>Ort: {storages.1.storageRecord.name}</small></h1>
+				<f:if condition="{content.folders}">
+					<f:then>
+						<div class="row">
+							<f:for each="{content.folders}" as="folder">
+								<div class="card d-inline-block" style="width: 180px;">
+									<core:iconForResource resource="{folder}" size="large" />
+									<div class="card-body">
+										<h5 class="card-title">{folder.name}</h5>
+										<p class="card-text">Items: {folder.uid}</p>
+									</div>
+								</div>
+							</f:for>
+						</div>
+					</f:then>
+					<f:else>
+						<p>No Folders found</p>
+					</f:else>
+				</f:if>
+				<f:if condition="{content.files}">
+					<f:then>
+						<div class="row">
+							<f:for each="{content.files}" as="file">
+								<div class="card d-inline-block" style="width: 180px;">
+									<f:image class="card-img-top" image="{file}" width="180c" height="120c"/>
+									<div class="card-body">
+										<h5 class="card-title">{file.name}</h5>
+										<p class="card-text">Size: {file.size} <br>Modified: {file.uid} {file.properties.modification_date -> f:format.date()}</p>
+										<a href="#" class="btn btn-primary">Go somewhere</a>
+									</div>
+								</div>
+							</f:for>
+						</div>
+					</f:then>
+					<f:else>
+						<p>No Files found</p>
+					</f:else>
+				</f:if>
+
+
 			</div>
 		</div>
 	</div>
