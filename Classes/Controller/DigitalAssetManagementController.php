@@ -74,6 +74,13 @@ class DigitalAssetManagementController
         if ($result instanceof ResponseInterface) {
             return $result;
         }
+
+        // Add shortcut button
+        $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
+        $myButton = $buttonBar->makeShortcutButton()->setModuleName('my_info');
+        $buttonBar->addButton($myButton);
+
+
         $this->moduleTemplate->setContent($this->view->render());
         return new HtmlResponse($this->moduleTemplate->renderContent());
     }
