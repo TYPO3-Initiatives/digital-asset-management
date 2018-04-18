@@ -18,6 +18,7 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\HtmlResponse;
+use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3Fluid\Fluid\View\ViewInterface;
@@ -97,19 +98,46 @@ class DigitalAssetManagementController
     protected function overviewAction(): void
     {
         $backendUser = $this->getBackendUser();
-        // Take the first object of the first storage
-        $fileStorages = $backendUser->getFileStorages();
-//        $fileStorage = reset($fileStorages);
-//        if ($fileStorage) {
-//            $this->folderObject = $fileStorage->getRootLevelFolder();
-//        } else {
-//            throw new \RuntimeException('Could not find any folder to be displayed.', 1349276894);
-//        }
-        $files = reset($fileStorages);
 
-        $this->view->assign('storages', $fileStorages);
-        $this->view->assign('files', $files);
+        // Get all storage objects
+        /** @var ResourceStorage[] $fileStorages */
+        $fileStorages = $backendUser->getFileStorages();
+        $content = $this->getFolderContent($fileStorages);
+         $this->view->assign('storages', $fileStorages);
+        $this->view->assign('content', $content);
         $this->view->assign('user', $backendUser);
+    }
+
+    /**
+     * Return first level of files/folders/storages as an assoziative array
+     * this can be:
+     *  if there is only one storage the content of that storage is returned
+     *  if there are more than one storages the storages are returned
+     *
+     * @param ResourceStorage[] $fileStorages
+     * @return array
+     * @throws \RuntimeException
+     */
+    protected function getFolderContent($fileStorages){
+        //If there is only one storage show content of that as entrypoint
+        if (is_array($fileStorages)){
+            if (count($fileStorages) === 1) {
+                /** @var ResourceStorage $fileStorage  */
+                $fileStorage = reset($fileStorages);
+                if ($fileStorage) {
+                    $rootfolder = $this->folderObject = $fileStorage->getRootLevelFolder();
+                    $fileIdentifiers = $fileStorage->getFileIdentifiersInFolder($rootfolder->getIdentifier());
+                    $folderIdentifiers = $fileStorage->getFolderIdentifiersInFolder($rootfolder->getIdentifier());
+                    $files = $fileStorage->getFilesInFolder($rootfolder);
+                    $folders = $fileStorage->getFoldersInFolder($rootfolder);
+                } else {
+                    throw new \RuntimeException('Could not find any folder to be displayed.', 1349276894);
+                }
+            } else {
+
+            }
+        }
+        return ['files' => $files, 'folders' => $folders];
     }
 
     /**
