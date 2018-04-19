@@ -27,7 +27,7 @@ class DigitalAssetManagementActions {
    * @returns {string}
    */
   public static getReturnUrl(): string {
-	  return top.rawurlencode(top.list_frame.document.location.pathname + top.list_frame.document.location.search);
+    return top.rawurlencode(top.list_frame.document.location.pathname + top.list_frame.document.location.search);
   }
 }
 
