@@ -21,7 +21,14 @@
 		</div>
 		<div class="col-xs-12 col-md-10">
 			<div class="header">
-				<h1>Files <small>Ort: {storages.1.storageRecord.name}</small></h1>
+				<h1>Files <small class="breadcrumb">{storages.1.storageRecord.name}</small></h1>
+			</div>
+			<div class="maincontent">
+				<div class="row folders">
+				</div>
+				<div class="row files">
+				</div>
+				<f:comment>
 				<f:if condition="{content.folders}">
 					<f:then>
 						<div class="row">
@@ -59,10 +66,10 @@
 						<p>No Files found</p>
 					</f:else>
 				</f:if>
-
-
+				</f:comment>
 			</div>
 		</div>
+		<div class="errorlog col-12"></div>
 	</div>
 </div>
 </html>
