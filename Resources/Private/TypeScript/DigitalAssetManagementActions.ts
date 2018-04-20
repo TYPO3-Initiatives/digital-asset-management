@@ -20,69 +20,66 @@ import Icons = require('TYPO3/CMS/Backend/Icons');
  * @exports TYPO3/CMS/Backend/InfoWindow
  */
 class DigitalAssetManagementActions {
-	public static init() {
-	    let my = this;
-		//@todo: why does only top. work here?
+	public static init(): void {
+		let my = DigitalAssetManagementActions;
+		// @todo: why does only top. work here?
 		console.log(top.TYPO3.lang['localize.wizard.header']);
-		//todo: how include own labels?
+		// todo: how include own labels?
 		console.log(top.TYPO3.lang['mlang_tabs_tab']);
 		console.log('DigitalAssetManagement.init');
-		//@todo: why does TYPO3.sett... work here without top.?
-		$.getJSON(TYPO3.settings.ajaxUrls.dam_request, {'getContent': '/'})
-			.done(function (data) {
-				DigitalAssetManagementActions.renderContent(data);
-			})
-			.fail(function (err) {
-				console.log('DigitalAssetManagement request promise fail ' + JSON.stringify(err));
-				top.TYPO3.Notification.warning('Request failed', 'Content can not be displayed. ' + err.readyState);
-				DigitalAssetManagementActions.renderError(err);
-			});
-	};
+		my.renderBreadcrumb('/');
+		my.request('getContent', '/');
+		$('.digital-asset-management').on('click', '.card', function(){
+			let method = $(this).data('method');
+			let parameter = $(this).data('parameter');
+			console.log ( 'methiod: ' + method + ", par: " + parameter);
+			my.request(method, parameter);
+		});
+	}
 
 	/**
-     *
-	 * @param err
+	 *
+	 * @param errdam_request
 	 */
-	public static renderError(err: any) {
+	public static renderError(err: any): void {
 		$('.errorlog').html(err.responseText);
-	};
+	}
 
-	public static renderContent(data: any) {
+	public static renderContent(data: any): void {
 		if (data && data.request) {
 			$('.errorlog').html(data.request + data.response);
 		}
-		if (data.content && data.content.files || data.content.folder) {
-			//Show folders and files
-			let html = "";
-			for (let i = 0; i < data.content.folders.length; i++) {
-				let folder = data.content.folders[i];
+		if (data.getContent && (data.getContent.files || data.getContent.folder)) {
+			// Show folders and files
+			let html = '';
+			for (let i = 0; i < data.getContent.folders.length; i++) {
+				const folder = data.getContent.folders[i];
 				console.log(folder);
-				for (let prop in folder) {
-					if (folder.hasOwnProperty(prop)) {
-						console.log("prop " + prop + ": " + folder[prop]);
-					}
-				}
-				var icon = Icons.getIcon('apps-filetree-folder', 'large');
-				console.log(icon);
-				//@todo: use moment.js for date-formatting?!
-				//@todo: how to get the thumbnail images without viewhelper?
-				html += '  <div class="card d-inline-block" style="width: 180px;">\n' +
-					'   <img class="card-img-top" src="'+icon+'" data-src="' + folder.uid + '" width="180" height="120"/>\n' +
+				Icons.getIcon('apps-filetree-folder', 'large').done( (iconMarkup: string): void => {
+					$('.folder-icon').html(iconMarkup);
+				});
+				// @todo: use moment.js for date-formatting?!
+				// @todo: how to get the thumbnail images without viewhelper?
+				html += '   <div class="card d-inline-block" data-method="getContent" ' +
+					'data-parameter="' + folder.identifier + '" style="width: 180px;">\n' +
+					'   <div class="folder-icon">' +
+					'      <img class="card-img-top" src="" data-src="' + folder.uid + '" width="180" height="120"/>\n' +
+					'   </div>' +
 					'   <div class="card-body">\n' +
-					'   <h5 class="card-title">' + folder[' * name'] + '</h5>\n' +
+					'   <h5 class="card-title">' + folder.name + '</h5>\n' +
 					'    <p class="card-text">&nbsp;</p>\n' +
 					'    <a href="#" class="btn btn-primary">Go somewhere</a>\n' +
 					'    </div>\n' +
 					'  </div>\n';
 			}
 			$('.folders').html(html);
-			html = "";
-			//icon mimetypes-pdf
-			for (let i = 0; i < data.content.files.length; i++) {
-				let file = data.content.files[i];
+			html = '';
+			// icon mimetypes-pdf
+			for (let i = 0; i < data.getContent.files.length; i++) {
+				const file = data.getContent.files[i];
 				console.log(file);
-				//@todo: use moment.js for date-formatting?!
-				//@todo: how to get the thumbnail images without viewhelper?
+				// @todo: use moment.js for date-formatting?!
+				// @todo: how to get the thumbnail images without viewhelper?
 				html += '<div class="card d-inline-block" style="width: 180px;">\n' +
 					'    <img class="card-img-top" src="PlaceholderImage" data-src="' + file.uid + '" width="180" height="120"/>\n' +
 					'    <div class="card-body">\n' +
@@ -94,9 +91,50 @@ class DigitalAssetManagementActions {
 			}
 			$('.files').html(html);
 		} else {
-			//Show storage infos
+			// Show storage infos
 		}
-	};
+	}
+
+	protected static renderBreadcrumb(identifier: string): void {
+		let parts = identifier.split('/');
+		let html = '';
+		for (let i = 0; i < parts.length; i++) {
+			const part = parts[i];
+			html += ' / <span data-method="getContent" data-parameter="' + part + '">' + part + '</span>';
+		}
+		$('.breadcrumb').html(html);
+	}
+
+	/**
+	 * query a json backenendroute
+	 *
+	 * @param {string} method
+	 * @param {string} parameter
+	 */
+	protected static request(method: string, parameter: string): void {
+		let my = DigitalAssetManagementActions;
+		// @todo: why does TYPO3.sett... work here without top.?
+		let query = {};
+		query[method] = parameter;
+		$.getJSON(TYPO3.settings.ajaxUrls.dam_request, query)
+			.done((data: any): void => {
+				switch (method) {
+					case 'getContent':
+						console.log(data);
+
+						my.renderBreadcrumb(parameter);
+						my.renderContent(data);
+						break;
+					default:
+						top.TYPO3.Notification.warning('Request failed', 'Unknown method: ' + method);
+				}
+			})
+			.fail((err: any): void => {
+				console.log('DigitalAssetManagement request promise fail ' + JSON.stringify(err));
+				top.TYPO3.Notification.warning('Request failed', 'Content can not be displayed. ' + err.readyState);
+				my.renderError(err);
+			});
+	}
 }
 
 $(DigitalAssetManagementActions.init);
