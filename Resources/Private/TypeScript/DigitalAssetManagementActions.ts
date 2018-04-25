@@ -20,32 +20,60 @@ import Icons = require('TYPO3/CMS/Backend/Icons');
  * @exports TYPO3/CMS/Backend/InfoWindow
  */
 class DigitalAssetManagementActions {
+
+	static folderPartial: string = '    <div class="card folder-action d-inline-block" data-method="getContent" ' +
+		'data-parameter="{identifier}" style="width: 180px;">\n' +
+		'   <div class="icon folder-icon icon-apps-filetree-folder"></div>' +
+		'   <div class="card-body">\n' +
+		'   <h5 class="card-title">{name}</h5>\n' +
+		'    <p class="card-text">&nbsp;</p>\n' +
+		'    <a href="#" class="btn btn-primary">Go somewhere</a>\n' +
+		'    </div>\n' +
+		'  </div>\n';
+
+	static filePartial: string = '<div class="card d-inline-block" style="width: 180px;">\n' +
+		'    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
+		'    <div class="card-body">\n' +
+		'    <h5 class="card-title">{name}</h5>\n' +
+		'    <p class="card-text">Size: {size} <br>Modified: {uid} ' + '' + '</p>\n' +
+		'    <a href="#" class="btn btn-primary">Go somewhere</a>\n' +
+		'    </div>\n' +
+		'  </div>\n';
+
+	/**
+	 *
+	 */
 	public static init(): void {
 		let my = DigitalAssetManagementActions;
-		// @todo: why does only top. work here?
+		// @todo: why does only 'top.' work here?
 		console.log(top.TYPO3.lang['localize.wizard.header']);
 		// todo: how include own labels?
 		console.log(top.TYPO3.lang['mlang_tabs_tab']);
 		console.log('DigitalAssetManagement.init');
 		my.renderBreadcrumb('/');
 		my.request('getContent', '/');
-		$('.digital-asset-management').on('click', '.card', function(){
+		$('.digital-asset-management').on('click', '.folder-action', function(): void {
 			let method = $(this).data('method');
 			let parameter = $(this).data('parameter');
-			console.log ( 'methiod: ' + method + ", par: " + parameter);
+			console.log ( 'method: ' + method + ', par: ' + parameter);
 			my.request(method, parameter);
 		});
 	}
 
 	/**
 	 *
-	 * @param errdam_request
+	 * @param err any
 	 */
 	public static renderError(err: any): void {
 		$('.errorlog').html(err.responseText);
 	}
 
+	/**
+	 *
+	 * @param data object
+	 */
 	public static renderContent(data: any): void {
+		let my = DigitalAssetManagementActions;
 		if (data && data.request) {
 			$('.errorlog').html(data.request + data.response);
 		}
@@ -55,22 +83,12 @@ class DigitalAssetManagementActions {
 			for (let i = 0; i < data.getContent.folders.length; i++) {
 				const folder = data.getContent.folders[i];
 				console.log(folder);
-				Icons.getIcon('apps-filetree-folder', 'large').done( (iconMarkup: string): void => {
-					$('.folder-icon').html(iconMarkup);
-				});
+				// Icons.getIcon('apps-filetree-folder', 'large').done( (iconMarkup: string): void => {
+				// 	$('.folder-icon').html(iconMarkup);
+				// });
 				// @todo: use moment.js for date-formatting?!
 				// @todo: how to get the thumbnail images without viewhelper?
-				html += '   <div class="card d-inline-block" data-method="getContent" ' +
-					'data-parameter="' + folder.identifier + '" style="width: 180px;">\n' +
-					'   <div class="folder-icon">' +
-					'      <img class="card-img-top" src="" data-src="' + folder.uid + '" width="180" height="120"/>\n' +
-					'   </div>' +
-					'   <div class="card-body">\n' +
-					'   <h5 class="card-title">' + folder.name + '</h5>\n' +
-					'    <p class="card-text">&nbsp;</p>\n' +
-					'    <a href="#" class="btn btn-primary">Go somewhere</a>\n' +
-					'    </div>\n' +
-					'  </div>\n';
+				html += my.replaceTemplateVars(my.folderPartial, folder);
 			}
 			$('.folders').html(html);
 			html = '';
@@ -80,14 +98,7 @@ class DigitalAssetManagementActions {
 				console.log(file);
 				// @todo: use moment.js for date-formatting?!
 				// @todo: how to get the thumbnail images without viewhelper?
-				html += '<div class="card d-inline-block" style="width: 180px;">\n' +
-					'    <img class="card-img-top" src="PlaceholderImage" data-src="' + file.uid + '" width="180" height="120"/>\n' +
-					'    <div class="card-body">\n' +
-					'    <h5 class="card-title">' + file.name + '</h5>\n' +
-					'    <p class="card-text">Size: ' + file.size + ' <br>Modified: ' + file.uid + ' ' + '' + '</p>\n' +
-					'    <a href="#" class="btn btn-primary">Go somewhere</a>\n' +
-					'    </div>\n' +
-					'  </div>\n';
+				html += my.replaceTemplateVars(my.filePartial, file);
 			}
 			$('.files').html(html);
 		} else {
@@ -98,9 +109,11 @@ class DigitalAssetManagementActions {
 	protected static renderBreadcrumb(identifier: string): void {
 		let parts = identifier.split('/');
 		let html = '';
+		let path = '';
 		for (let i = 0; i < parts.length; i++) {
 			const part = parts[i];
-			html += ' / <span data-method="getContent" data-parameter="' + part + '">' + part + '</span>';
+			path += '/' + part[i];
+			html += '&nbsp;&gt;&nbsp;<span class="folder-action" data-method="getContent" data-parameter="' + path + '">' + part + '</span>';
 		}
 		$('.breadcrumb').html(html);
 	}
@@ -134,6 +147,21 @@ class DigitalAssetManagementActions {
 				top.TYPO3.Notification.warning('Request failed', 'Content can not be displayed. ' + err.readyState);
 				my.renderError(err);
 			});
+	}
+
+	/**
+	 *
+	 * @param {string} template
+	 * @param {object} data
+	 * @returns {string}
+	 */
+	protected static replaceTemplateVars(template: string, data: object): string {
+		return template.replace(
+				/{(\w*)}/g,
+				function(m: string, key: string): string {
+					return data.hasOwnProperty( key ) ? data[ key ] : ' -missing prop:' + key + '-';
+				}
+			);
 	}
 }
 
