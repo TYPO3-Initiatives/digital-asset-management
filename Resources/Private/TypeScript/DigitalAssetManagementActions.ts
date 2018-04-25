@@ -35,7 +35,7 @@ class DigitalAssetManagementActions {
 		'    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
 		'    <div class="card-body">\n' +
 		'    <h5 class="card-title">{name}</h5>\n' +
-		'    <p class="card-text">Size: {size} <br>Modified: {uid} ' + '' + '</p>\n' +
+		'    <p class="card-text">Size: {size} <br>Modified: {uid}</p>\n' +
 		'    <a href="#" class="btn btn-primary">Go somewhere</a>\n' +
 		'    </div>\n' +
 		'  </div>\n';
