@@ -22,3 +22,23 @@ div {
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
+
+
+.digital-asset-management .icon {
+	background-repeat: no-repeat;
+	background-size: auto;
+	background-position: center;
+	height: 130px;
+	width: 100%;
+}
+
+.digital-asset-management .card {
+	cursor: pointer;
+}
+
+.digital-asset-management .card:hover {
+	background-color: #dddddd;
+}
+.icon-apps-filetree-folder {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder.svg");
+}
