@@ -18,9 +18,8 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\JsonResponse;
-use TYPO3\CMS\Core\Resource\File;
-use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
+use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemInterface;
 
 /**
  * Backend controller: The "Digital Asset Management" JSON response controller
@@ -55,8 +54,8 @@ class DigitalAssetManagementAjaxController
 //        if (isset($params['another action'])){
 //            $result['another'] = "blabla";
 //        }
-        $result['request'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($request,null, 8, false, true,true);
-        $result['response'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($response,null, 8, false, true,true);
+//         $result['request'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($request,null, 8, false, true,true);
+//         $result['response'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($response,null, 8, false, true,true);
         $response->setPayload($result);
         return $response;
     }
@@ -73,67 +72,33 @@ class DigitalAssetManagementAjaxController
         // Get all storage objects
         /** @var ResourceStorage[] $fileStorages */
         $fileStorages = $backendUser->getFileStorages();
+        /** @var FileSystemInterface $service */
+        $service = null;
+        $result['storages'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
         if (is_array($fileStorages)){
             //If there is only one storage show content of that as entrypoint
             if (count($fileStorages) === 1) {
                 /** @var ResourceStorage $fileStorage  */
                 $fileStorage = reset($fileStorages);
                 if ($fileStorage) {
-                    return $this->getFolderContent($fileStorage, $path);
+                    $storageInfo = $fileStorage->getStorageRecord();
+                    if (isset($storageInfo['driver'])) {
+                        switch ($storageInfo['driver']) {
+                            case 'Local':
+                                // $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
+                                $service = new \TYPO3\CMS\DigitalAssetManagement\Service\MockJsonFileSystemService($fileStorage);
+                                break;
+                        }
+                    }
+                    if ($service) {
+                        return ['files' => $service->listFilesWithMetadata($path), 'folders' => $service->listFolderWithMetadata($path)];
+                    }
                 }
             } else if (count($fileStorages) > 1) {
+                //@todo: support multiple file storages
                 return 'todo support multiple file storages';
             }
         }
-    }
-
-    /**
-     * Return first level of files/folders/storages as an assoziative array
-     * this can be:
-     *  if there is only one storage the content of that storage is returned
-     *  if there are more than one storages the storages are returned
-     *
-     * @param ResourceStorage $fileStorage
-     * @param string $identifier
-     * @return array
-     * @throws \RuntimeException
-     */
-    protected function getFolderContent($fileStorage, $identifier){
-        if ($fileStorage) {
-            if( $identifier === '/') {
-                $startingFolder = $fileStorage->getRootLevelFolder();
-            } else {
-                $startingFolder = $fileStorage->getFolder($identifier);
-            }
-//            $fileIdentifiers = $fileStorage->getFileIdentifiersInFolder($startingFolder->getIdentifier());
-//            $folderIdentifiers = $fileStorage->getFolderIdentifiersInFolder($startingFolder->getIdentifier());
-            /** @var File[] $files */
-            $files = $fileStorage->getFilesInFolder($startingFolder);
-            /** @var Folder[] $folders */
-            $folders = $fileStorage->getFoldersInFolder($startingFolder);
-            $folderArray = [];
-            foreach ($folders as $folder){
-                $newFolder = [];
-                $folder = (array)$folder;
-                foreach ($folder as $key => $value) {
-                    $newFolder[preg_replace('/[^a-zA-Z]/', '', $key)] = $value;
-                }
-                $newFolder['storageName'] = $fileStorage->getName();
-                $newFolder['storageUid'] = $fileStorage->getUid();
-                $folderArray[] = $newFolder;
-            }
-            $fileArray = [];
-            foreach ($files as $file){
-                $file = $file->toArray();
-                $file['storageName'] = $fileStorage->getName();
-                $file['storageUid'] = $fileStorage->getUid();
-                $fileArray[] = $file;
-            }
-            $fileStorage = (array)$fileStorage;
-        } else {
-            throw new \RuntimeException('Could not find any storage to be displayed.', 1349276894);
-        }
-         return ['files' => $fileArray, 'folders' => $folderArray, 'storage' => $fileStorage];
     }
 
     /**
