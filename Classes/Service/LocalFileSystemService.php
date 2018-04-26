@@ -38,7 +38,15 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
      */
     public function write($path, $content): bool
     {
-        // TODO: Implement write() method.
+        $parts = explode('/', $path);
+        $file = array_pop($parts);
+        $dir = '';
+        foreach($parts as $part) {
+            if (!is_dir($dir .= "/$part")) {
+                mkdir($dir);
+            }
+        }
+        return (file_put_contents("$dir/$file", $content) !== false);
     }
 
     /**
@@ -72,11 +80,33 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
      *
      * @param string $path
      * @param string|array $keys
-     * @return string
+     * @return array
      */
-    public function getMetadata($path, $keys): string
+    public function getMetadata($path, $keys): array
     {
-        // TODO: Implement getMetadata() method.
+        $result = [];
+        $result['filename'] = pathinfo($path,PATHINFO_FILENAME);
+        $result['filesize'] = filesize($path);
+        $result['filetime'] = filemtime($path);
+        $result['mimetype'] = mime_content_type($path);
+        // todo: add supported mime types & special keys
+        if (in_array($result['mimetype'], ['image/jpeg'])) {
+            $fp = fopen($path, 'rb');
+            if ($fp) {
+                $headers = exif_read_data($fp);
+                foreach ($keys as $key) {
+                    switch ($key) {
+                        case 'height':
+                            $result['height'] = $headers['COMPUTED']['Height'];
+                            break;
+                        case 'width':
+                            $result['width'] = $headers['COMPUTED']['Width'];
+                            break;
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
     /**

@@ -47,13 +47,13 @@ interface FileSystemInterface
 
     /**
      * get file metadata by key such as
-     *  modification-timestamp, filename, size, mimetype
+     *  filename, filesize, filetime, mimetype
      *
      * @param string $path
      * @param string|array $keys
-     * @return string
+     * @return array
      */
-    public function getMetadata($path, $keys): string;
+    public function getMetadata($path, $keys): array;
 
     /**
      * @param string $path
