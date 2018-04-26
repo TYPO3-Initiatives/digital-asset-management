@@ -21,9 +21,9 @@ class MockJsonFileSystemService extends AbstractFileSystemService implements Fil
      * @param string $path
      * @return string
      */
-    public function read($path): string
+    public function readFile($path): string
     {
-        // TODO: Implement read() method.
+        // TODO: Implement readFile() method.
     }
 
     /**
@@ -31,9 +31,9 @@ class MockJsonFileSystemService extends AbstractFileSystemService implements Fil
      * @param string $content
      * @return bool success
      */
-    public function write($path, $content): bool
+    public function writeFile($path, $content): bool
     {
-        // TODO: Implement write() method.
+        // TODO: Implement writeFile() method.
     }
 
     /**
@@ -43,18 +43,27 @@ class MockJsonFileSystemService extends AbstractFileSystemService implements Fil
      * @param string $path
      * @return bool success
      */
-    public function exists($path): bool
+    public function existsFile($path): bool
     {
-        // TODO: Implement exists() method.
+        // TODO: Implement existsFile() method.
     }
 
     /**
      * @param string $path
      * @return bool success
      */
-    public function delete($path): bool
+    public function deleteFile($path): bool
     {
-        // TODO: Implement delete() method.
+        // TODO: Implement deleteFile() method.
+    }
+
+    /**
+     * @param string $path
+     * @return array
+     */
+    public function infoFile($path): array
+    {
+        // TODO: Implement infoFile() method.
     }
 
     /**
@@ -65,7 +74,7 @@ class MockJsonFileSystemService extends AbstractFileSystemService implements Fil
      * @param string|array $keys
      * @return array
      */
-    public function getMetadata($path, $keys): array
+    public function getMetadataFile($path, $keys): array
     {
         // TODO: Implement getMetadata() method.
     }

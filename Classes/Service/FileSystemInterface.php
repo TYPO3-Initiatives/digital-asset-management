@@ -46,6 +46,12 @@ interface FileSystemInterface
     public function delete($path): bool;
 
     /**
+     * @param string $path
+     * @return array
+     */
+    public function info($path): array;
+
+    /**
      * get file metadata by key such as
      *  filename, filesize, filetime, mimetype
      *

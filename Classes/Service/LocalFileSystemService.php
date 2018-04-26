@@ -24,7 +24,7 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
      * @param string $path
      * @return string
      */
-    public function read($path): string
+    protected function readFile($path): string
     {
         if (is_file($path)) {
             return file_get_contents($path);
@@ -36,7 +36,7 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
      * @param string $content
      * @return bool success
      */
-    public function write($path, $content): bool
+    protected function writeFile($path, $content): bool
     {
         $parts = explode('/', $path);
         $file = array_pop($parts);
@@ -56,7 +56,7 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
      * @param string $path
      * @return bool success
      */
-    public function exists($path): bool
+    protected function existsFile($path): bool
     {
         return is_file($path) || is_dir($path);
     }
@@ -65,13 +65,27 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
      * @param string $path
      * @return bool success
      */
-    public function delete($path): bool
+    protected function deleteFile($path): bool
     {
         if(is_file($path)){
             // @todo: uncomment next line, but do not really delete files for now
             // unlink($path);
         }
-        return !$this->exists($path);
+        return !$this->existsFile($path);
+    }
+
+    /**
+     * @param string $path
+     * @return array
+     */
+    public function infoFile($path): array
+    {
+        $result = [];
+        $result['name'] = pathinfo($path,PATHINFO_FILENAME);
+        $result['size'] = filesize($path);
+        $result['modification_date'] = filemtime($path);
+        $result['mime_type'] = mime_content_type($path);
+        return $result;
     }
 
     /**
@@ -82,13 +96,9 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
      * @param string|array $keys
      * @return array
      */
-    public function getMetadata($path, $keys): array
+    protected function getMetadataFile($path, $keys): array
     {
         $result = [];
-        $result['filename'] = pathinfo($path,PATHINFO_FILENAME);
-        $result['filesize'] = filesize($path);
-        $result['filetime'] = filemtime($path);
-        $result['mimetype'] = mime_content_type($path);
         // todo: add supported mime types & special keys
         if (in_array($result['mimetype'], ['image/jpeg'])) {
             $fp = fopen($path, 'rb');
@@ -109,118 +119,4 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
         return $result;
     }
 
-    /**
-     * array of files/folders/storages as an assoziative array
-     * this can be:
-     *  if there is only one storage the content of that storage is returned
-     *  if there are more than one storages the storages are returned
-     *
-     * @param string $path
-     * @return array[string]
-     */
-    public function listFiles($path): array
-    {
-        $fileArray = [];
-        if ($this->storage) {
-            $storage = $this->storage;
-            if( $path === '/') {
-                $startingFolder = $storage->getRootLevelFolder();
-            } else {
-                $startingFolder = $storage->getFolder($path);
-            }
-            /** @var File[] $files */
-            $files = $storage->getFilesInFolder($startingFolder);
-            foreach ($files as $file){
-                $fileArray[] = $file->getName();
-            }
-        } else {
-            throw new \RuntimeException('Could not find any storage to be displayed.', 1349276894);
-        }
-        return $fileArray;
-    }
-
-    /**
-     * @param $path
-     * @return array
-     */
-    public function listFilesWithMetadata($path): array
-    {
-        $fileArray = [];
-        if ($this->storage) {
-            $storage = $this->storage;
-            if( $path === '/') {
-                $startingFolder = $storage->getRootLevelFolder();
-            } else {
-                $startingFolder = $storage->getFolder($path);
-            }
-            /** @var File[] $files */
-            $files = $storage->getFilesInFolder($startingFolder);
-            foreach ($files as $file){
-                $file = $file->toArray();
-                $file['storageName'] = $storage->getName();
-                $file['storageUid'] = $storage->getUid();
-                $fileArray[] = $file;
-            }
-        } else {
-            throw new \RuntimeException('Could not find any storage to be displayed.', 1349276894);
-        }
-        return $fileArray;
-    }
-
-    /**
-     * @param string $path
-     * @return array of strings
-     */
-    public function listFolder($path): array
-    {
-        $folderArray = [];
-        if ($this->storage) {
-            $storage = $this->storage;
-            if( $path === '/') {
-                $startingFolder = $storage->getRootLevelFolder();
-            } else {
-                $startingFolder = $storage->getFolder($path);
-            }
-            /** @var Folder[] $folders */
-            $folders = $storage->getFoldersInFolder($startingFolder);
-            foreach ($folders as $folder){
-                $folderArray[] = $folder->getName();
-            }
-        } else {
-            throw new \RuntimeException('Could not find any storage to be displayed.', 1349276894);
-        }
-        return $folderArray;
-    }
-
-    /**
-     * @param $path
-     * @return array
-     */
-    public function listFolderWithMetadata($path): array
-    {
-        $newFolder = [];
-        if ($this->storage) {
-            $storage = $this->storage;
-            if( $path === '/') {
-                $startingFolder = $storage->getRootLevelFolder();
-            } else {
-                $startingFolder = $storage->getFolder($path);
-            }
-            /** @var Folder[] $folders */
-            $folders = $storage->getFoldersInFolder($startingFolder);
-            $folderArray = [];
-            foreach ($folders as $folder){
-                $folder = (array)$folder;
-                foreach ($folder as $key => $value) {
-                    $newFolder[preg_replace('/[^a-zA-Z]/', '', $key)] = $value;
-                }
-                $newFolder['storageName'] = $storage->getName();
-                $newFolder['storageUid'] = $storage->getUid();
-                $folderArray[] = $newFolder;
-            }
-        } else {
-            throw new \RuntimeException('Could not find any storage to be displayed.', 1349276894);
-        }
-        return $folderArray;
-    }
 }
