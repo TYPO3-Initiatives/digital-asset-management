@@ -63,9 +63,9 @@ class MockJsonFileSystemService extends AbstractFileSystemService implements Fil
      *
      * @param string $path
      * @param string|array $keys
-     * @return string
+     * @return array
      */
-    public function getMetadata($path, $keys): string
+    public function getMetadata($path, $keys): array
     {
         // TODO: Implement getMetadata() method.
     }
