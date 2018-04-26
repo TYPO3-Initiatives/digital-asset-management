@@ -1,10 +1,11 @@
+
 div {
 	/*background-color: lightgrey;*/
 	/*border: 1px solid red;*/
 }
 
 /* reset TYPO3 default styles */
-.module-body {
+.digital-asset-management .module-body {
 	padding: 0;
 }
 
@@ -13,11 +14,11 @@ div {
 	/*padding-left: 20px;*/
 	/*line-height: 30%;*/
 /*}*/
-.page-header {
+.digital-asset-management .page-header {
 	margin: 0;
 }
-.page-header h1,
-.page-header h1 small {
+.digital-asset-management .page-header h1,
+.digital-asset-management .page-header h1 small {
 	font-weight: 100;
 	margin-top: 10px;
 	margin-bottom: 10px;
@@ -28,7 +29,7 @@ div {
 	background-repeat: no-repeat;
 	background-size: auto;
 	background-position: center;
-	height: 130px;
+	height: 120px;
 	width: 100%;
 }
 
@@ -36,9 +37,26 @@ div {
 	cursor: pointer;
 }
 
+/* Icons */
 .digital-asset-management .card:hover {
 	background-color: #dddddd;
 }
 .icon-apps-filetree-folder {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder.svg");
+}
+.icon-apps-filetree-mount {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-mount.svg");
+}
+
+.icon-mimetypes-media-image {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-media-image.svg");
+}
+.icon-mimetypes-excel {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-excel.svg");
+}
+.icon-mimetypes-word {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-word.svg");
+}
+.icon-mimetypes-powerpoint {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-powerpoint.svg");
 }
