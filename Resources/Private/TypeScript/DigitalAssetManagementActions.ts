@@ -21,7 +21,7 @@ import Icons = require('TYPO3/CMS/Backend/Icons');
  */
 class DigitalAssetManagementActions {
 
-	static folderPartial: string = '    <div class="card folder-action d-inline-block" data-method="getContent" ' +
+	static folderPartial: string = '    <div class="card folder-action d-inline-block {mimetype}" data-method="getContent" ' +
 		'data-parameter="{identifier}" style="width: 180px;">\n' +
 		'   <div class="icon folder-icon icon-apps-filetree-folder"></div>' +
 		'   <div class="card-body">\n' +
@@ -31,7 +31,7 @@ class DigitalAssetManagementActions {
 		'    </div>\n' +
 		'  </div>\n';
 
-	static filePartial: string = '<div class="card d-inline-block" style="width: 180px;">\n' +
+	static filePartial: string = '<div class="card d-inline-block {mimetype}" style="width: 180px;">\n' +
 		'    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
 		'    <div class="card-body">\n' +
 		'    <h5 class="card-title">{name}</h5>\n' +
@@ -39,6 +39,9 @@ class DigitalAssetManagementActions {
 		'    <a href="#" class="btn btn-primary">Go somewhere</a>\n' +
 		'    </div>\n' +
 		'  </div>\n';
+
+	static breadcrumbPartial: string = '&nbsp;&gt;&nbsp;<span class="folder-action" data-method="getContent" ' +
+		'data-parameter="{pathsegment}">{part}</span>';
 
 	/**
 	 *
@@ -88,6 +91,7 @@ class DigitalAssetManagementActions {
 				// });
 				// @todo: use moment.js for date-formatting?!
 				// @todo: how to get the thumbnail images without viewhelper?
+				folder.mimetype = 'folder';
 				html += my.replaceTemplateVars(my.folderPartial, folder);
 			}
 			$('.folders').html(html);
@@ -98,6 +102,8 @@ class DigitalAssetManagementActions {
 				console.log(file);
 				// @todo: use moment.js for date-formatting?!
 				// @todo: how to get the thumbnail images without viewhelper?
+				// Add mimetype as two classes: image/jpeg -> image jpeg
+				file.mimetype = file.mimetype.replace('/', ' ');
 				html += my.replaceTemplateVars(my.filePartial, file);
 			}
 			$('.files').html(html);
@@ -110,10 +116,16 @@ class DigitalAssetManagementActions {
 		let parts = identifier.split('/');
 		let html = '';
 		let path = '';
+		let my = this;
 		for (let i = 0; i < parts.length; i++) {
 			const part = parts[i];
-			path += '/' + part[i];
-			html += '&nbsp;&gt;&nbsp;<span class="folder-action" data-method="getContent" data-parameter="' + path + '">' + part + '</span>';
+			if (i === 0) {
+				path = 'todo Storagename';
+			} else {
+				path += '/' + part[i];
+			}
+			// Render single breadcrumb item
+			html += my.replaceTemplateVars(my.breadcrumbPartial, {pathsegment: path, part: part[i]});
 		}
 		$('.breadcrumb').html(html);
 	}
