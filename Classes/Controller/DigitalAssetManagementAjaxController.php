@@ -39,6 +39,7 @@ class DigitalAssetManagementAjaxController
         $response = new JsonResponse();
         $result = [];
         $params = $request->getQueryParams();
+        // Execute all query params starting with get using its values as parameter
         foreach ($params as $key => $param){
             if (strpos($key, 'get') === 0) {
                 $func = $key.'Action';
@@ -48,14 +49,6 @@ class DigitalAssetManagementAjaxController
                 }
             }
         }
-//        if (isset($params['getContent'])){
-//            $result['content'] = $this->getContentAction($params['getContent']);
-//        }
-//        if (isset($params['another action'])){
-//            $result['another'] = "blabla";
-//        }
-//         $result['request'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($request,null, 8, false, true,true);
-//         $result['response'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($response,null, 8, false, true,true);
         $response->setPayload($result);
         return $response;
     }
@@ -67,14 +60,15 @@ class DigitalAssetManagementAjaxController
      * @param string $path
      * @return array
      */
-    protected function getContentAction($path = "/"){
+    protected function getContentAction($path = "/")
+    {
         $backendUser = $this->getBackendUser();
         // Get all storage objects
         /** @var ResourceStorage[] $fileStorages */
         $fileStorages = $backendUser->getFileStorages();
         /** @var FileSystemInterface $service */
         $service = null;
-        $result['storages'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
+        $result['debug'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
         if (is_array($fileStorages)){
             //If there is only one storage show content of that as entrypoint
             if (count($fileStorages) === 1) {
