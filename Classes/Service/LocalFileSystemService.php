@@ -26,7 +26,9 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
      */
     public function read($path): string
     {
-        // TODO: Implement read() method.
+        if (is_file($path)) {
+            return file_get_contents($path);
+        }
     }
 
     /**
@@ -48,7 +50,7 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
      */
     public function exists($path): bool
     {
-        // TODO: Implement exists() method.
+        return is_file($path) || is_dir($path);
     }
 
     /**
@@ -57,7 +59,11 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
      */
     public function delete($path): bool
     {
-        // TODO: Implement delete() method.
+        if(is_file($path)){
+            // @todo: uncomment next line, but do not really delete files for now
+            // unlink($path);
+        }
+        return !$this->exists($path);
     }
 
     /**
@@ -97,11 +103,6 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
             foreach ($files as $file){
                 $fileArray[] = $file->getName();
             }
-            // $fileStorageArray = [];
-            // $storage = (array)$storage;
-            // foreach ($storage as $key => $value) {
-            //     $fileStorageArray[preg_replace('/[^a-zA-Z]/', '', $key)] = $value;
-            // }
         } else {
             throw new \RuntimeException('Could not find any storage to be displayed.', 1349276894);
         }
@@ -130,11 +131,6 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
                 $file['storageUid'] = $storage->getUid();
                 $fileArray[] = $file;
             }
-            // $fileStorageArray = [];
-            // $storage = (array)$storage;
-            // foreach ($storage as $key => $value) {
-            //     $fileStorageArray[preg_replace('/[^a-zA-Z]/', '', $key)] = $value;
-            // }
         } else {
             throw new \RuntimeException('Could not find any storage to be displayed.', 1349276894);
         }
@@ -160,11 +156,6 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
             foreach ($folders as $folder){
                 $folderArray[] = $folder->getName();
             }
-            // $fileStorageArray = [];
-            // $storage = (array)$storage;
-            // foreach ($storage as $key => $value) {
-            //     $fileStorageArray[preg_replace('/[^a-zA-Z]/', '', $key)] = $value;
-            // }
         } else {
             throw new \RuntimeException('Could not find any storage to be displayed.', 1349276894);
         }
@@ -197,11 +188,6 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
                 $newFolder['storageUid'] = $storage->getUid();
                 $folderArray[] = $newFolder;
             }
-            // $fileStorageArray = [];
-            // $storage = (array)$storage;
-            // foreach ($storage as $key => $value) {
-            //     $fileStorageArray[preg_replace('/[^a-zA-Z]/', '', $key)] = $value;
-            // }
         } else {
             throw new \RuntimeException('Could not find any storage to be displayed.', 1349276894);
         }
