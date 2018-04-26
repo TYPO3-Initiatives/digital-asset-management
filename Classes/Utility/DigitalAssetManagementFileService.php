@@ -15,26 +15,23 @@ namespace TYPO3\CMS\DigitalAssetManagement\Utility;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Resource\File;
+use TYPO3\CMS\Core\Resource\FileReference;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  *
  *
  * @package TYPO3\CMS\DigitalAssetManagement\Utility
  */
-
-use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Resource\File;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-
-
 class DigitalAssetManagementFileService
 {
     /**
-    * Get the number of file references or '-' if resource is not a file
-    * @param $file
-    * return count FileReference
-    */
+     * Get the number of file references or '-' if resource is not a file
+     * @param $file
+     * @return FileReference|string
+     */
     public static function countFileReference($resource) {
         if($resource instanceof File ) {
             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_file');
