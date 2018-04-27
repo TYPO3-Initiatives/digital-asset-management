@@ -75,6 +75,7 @@ class DigitalAssetManagementController
         //        $this->moduleTemplate->loadJavascriptLib('EXT:digital_asset_management/Resources/Public/JavaScript/DigitalAssetManagementActions.js');
         //$this->moduleTemplate->loadJavascriptLib('https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js');
         $this->moduleTemplate->getPageRenderer()->addCssFile('EXT:digital_asset_management/Resources/Public/Css/digitalassetmanagement.css');
+        $this->moduleTemplate->getPageRenderer()->addInlineLanguageLabelFile(GeneralUtility::getFileAbsFileName('EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf'));
         //Include bootstrap css
         //@todo: include bootstrap css from TYPO3 not from CDN, how to?
         $this->moduleTemplate->getPageRenderer()->addCssFile('https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css');

@@ -13,7 +13,7 @@
 
 import * as $ from 'jquery';
 import 'bootstrap';
-import Icons = require('TYPO3/CMS/Backend/Icons');
+// import Icons = require('TYPO3/CMS/Backend/Icons');
 
 /**
  * Module: TYPO3/CMS/Backend/InfoWindow
@@ -35,7 +35,7 @@ class DigitalAssetManagementActions {
 		'    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
 		'    <div class="card-body">\n' +
 		'    <h5 class="card-title">{name}</h5>\n' +
-		'    <p class="card-text">Size: {size} <br>Modified: {uid}</p>\n' +
+		'    <p class="card-text">{lll:mlang.lablel.filesize}: {size} <br>{lll:mlang.lablel.modified}: {uid}</p>\n' +
 		'    <a href="#" class="btn btn-primary">Go somewhere</a>\n' +
 		'    </div>\n' +
 		'  </div>\n';
@@ -51,7 +51,7 @@ class DigitalAssetManagementActions {
 		// @todo: why does only 'top.' work here?
 		console.log(top.TYPO3.lang['localize.wizard.header']);
 		// todo: how include own labels?
-		console.log(top.TYPO3.lang['mlang_tabs_tab']);
+		console.log(top.TYPO3.lang['mlang.lablel.modified']);
 		console.log('DigitalAssetManagement.init');
 		my.renderBreadcrumb('/');
 		my.request('getContent', '/');
@@ -171,7 +171,11 @@ class DigitalAssetManagementActions {
 		return template.replace(
 				/{(\w*)}/g,
 				function(m: string, key: string): string {
-					return data.hasOwnProperty( key ) ? data[ key ] : ' -missing prop:' + key + '-';
+						if (key.indexOf('{lll:')) {
+							return TYPO3.lang[key.replace(/lll:/, '')];
+						} else {
+						return data.hasOwnProperty(key) ? data[key] : ' -missing prop:' + key + '-';
+					}
 				}
 			);
 	}
