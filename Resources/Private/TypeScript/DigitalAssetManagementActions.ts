@@ -31,7 +31,8 @@ class DigitalAssetManagementActions {
 		'  </div>\n';
 
 	static filePartial: string = '<div class="card d-inline-block {mimetype}" style="width: 180px;">\n' +
-		'    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
+		// '    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
+		'    <div class="icon icon-mimetypes-{mimetype}"></div>' +
 		'    <div class="card-body">\n' +
 		'    <h5 class="card-title">{name}</h5>\n' +
 		'    <p class="card-text">{lll:dam.labels.filesize}: {size} <br>{lll:dam.labels.modified}: {modification_date}</p>\n' +

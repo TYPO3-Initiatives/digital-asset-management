@@ -25,6 +25,15 @@ div {
 }
 
 
+.digital-asset-management .card {
+	cursor: pointer;
+}
+
+.digital-asset-management .card:hover {
+	background-color: #dddddd;
+}
+
+/* Icons */
 .digital-asset-management .icon {
 	background-repeat: no-repeat;
 	background-size: auto;
@@ -33,14 +42,15 @@ div {
 	width: 100%;
 }
 
-.digital-asset-management .card {
-	cursor: pointer;
+.digital-asset-management .icon.small {
+	background-position: left bottom;
+	background-size: 20%;
 }
 
-/* Icons */
-.digital-asset-management .card:hover {
-	background-color: #dddddd;
+.icon {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-other-other.svg");
 }
+
 .icon-apps-filetree-folder {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder.svg");
 }
@@ -48,7 +58,7 @@ div {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-mount.svg");
 }
 
-.icon-mimetypes-media-image {
+.icon-mimetypes-image {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-media-image.svg");
 }
 .icon-mimetypes-excel {
