@@ -16,6 +16,7 @@ namespace TYPO3\CMS\DigitalAssetManagement\Service;
 */
 
 use TYPO3\CMS\Core\Resource\ResourceStorage;
+use TYPO3\CMS\Core\Resource\File;
 
 abstract class AbstractFileSystemService implements FileSystemInterface
 {
@@ -103,8 +104,12 @@ abstract class AbstractFileSystemService implements FileSystemInterface
      */
     public function info($path): array
     {
-        // @todo: get from sys_file, else
-        return ($this->infoFile($path));
+        if ($this->storage) {
+            $storage = $this->storage;
+            // $file returns a TYPO3\CMS\Core\Resource\File object
+            $file = $storage->getFile($path);
+            return $file->toArray();
+        }
     }
 
     /**
@@ -133,39 +138,16 @@ abstract class AbstractFileSystemService implements FileSystemInterface
      *  if there are more than one storages the storages are returned
      *
      * @param string $path
-     * @return array[string]
-     */
-    public function listFiles($path): array
-    {
-        $fileArray = [];
-        if ($this->storage) {
-            $storage = $this->storage;
-            if( $path === '/') {
-                $startingFolder = $storage->getRootLevelFolder();
-            } else {
-                $startingFolder = $storage->getFolder($path);
-            }
-            /** @var File[] $files */
-            $files = $storage->getFilesInFolder($startingFolder);
-            foreach ($files as $file){
-                $fileArray[] = $file->getName();
-            }
-        } else {
-            throw new \RuntimeException('Could not find any storage to be displayed.', 1349276894);
-        }
-        return $fileArray;
-    }
-
-    /**
-     * @param $path
+     * @param bool $withMetadata
      * @return array
      */
-    public function listFilesWithMetadata($path): array
+    public function listFiles($path, $withMetadata = false): array
     {
         $fileArray = [];
         if ($this->storage) {
             $storage = $this->storage;
             if( $path === '/') {
+                // respect file mounts
                 $startingFolder = $storage->getRootLevelFolder();
             } else {
                 $startingFolder = $storage->getFolder($path);
@@ -174,9 +156,18 @@ abstract class AbstractFileSystemService implements FileSystemInterface
             $files = $storage->getFilesInFolder($startingFolder);
             foreach ($files as $file){
                 $file = $file->toArray();
-                $file['storageName'] = $storage->getName();
-                $file['storageUid'] = $storage->getUid();
-                $fileArray[] = $file;
+                $newFile = [];
+                foreach ($file as $key => $value) {
+                    if ($withMetadata || in_array($key, ['uid', 'name', 'identifier', 'url', 'mimetype', 'size', 'permissions', 'modification_date'] )) {
+                        $newFile[$key] = $value;
+                    }
+                }
+                //$newFile['storageName'] = $storage->getName();
+                //$newFile['storageUid'] = $storage->getUid();
+                if ($withMetadata) {
+                    // todo: get the real metadata
+                }
+                $fileArray[] = $newFile;
             }
         } else {
             throw new \RuntimeException('Could not find any storage to be displayed.', 1349276894);
@@ -186,7 +177,7 @@ abstract class AbstractFileSystemService implements FileSystemInterface
 
     /**
      * @param string $path
-     * @return array of strings
+     * @return array
      */
     public function listFolder($path): array
     {
@@ -201,38 +192,15 @@ abstract class AbstractFileSystemService implements FileSystemInterface
             /** @var Folder[] $folders */
             $folders = $storage->getFoldersInFolder($startingFolder);
             foreach ($folders as $folder){
-                $folderArray[] = $folder->getName();
-            }
-        } else {
-            throw new \RuntimeException('Could not find any storage to be displayed.', 1349276894);
-        }
-        return $folderArray;
-    }
-
-    /**
-     * @param $path
-     * @return array
-     */
-    public function listFolderWithMetadata($path): array
-    {
-        $newFolder = [];
-        if ($this->storage) {
-            $storage = $this->storage;
-            if ($path === '/') {
-                $startingFolder = $storage->getRootLevelFolder();
-            } else {
-                $startingFolder = $storage->getFolder($path);
-            }
-            /** @var Folder[] $folders */
-            $folders = $storage->getFoldersInFolder($startingFolder);
-            $folderArray = [];
-            foreach ($folders as $folder) {
                 $folder = (array)$folder;
+                $newFolder = [];
                 foreach ($folder as $key => $value) {
-                    $newFolder[preg_replace('/[^a-zA-Z]/', '', $key)] = $value;
+                    // replace protected /u0000 in key
+                    $newKey = substr($key, 3);
+                    if (in_array($newKey, ['name', 'identifier'])) {
+                        $newFolder[$newKey] = $value;
+                    }
                 }
-                $newFolder['storageName'] = $storage->getName();
-                $newFolder['storageUid'] = $storage->getUid();
                 $folderArray[] = $newFolder;
             }
         } else {
@@ -258,6 +226,6 @@ abstract class AbstractFileSystemService implements FileSystemInterface
     public function __construct($storage)
     {
         $this->storage = $storage;
-        $this->storageInfo =$this->storage->getStorageRecord();
+        $this->storageInfo = $this->storage->getStorageRecord();
     }
 }

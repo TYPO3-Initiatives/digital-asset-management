@@ -85,7 +85,7 @@ class DigitalAssetManagementAjaxController
                         }
                     }
                     if ($service) {
-                        return ['files' => $service->listFilesWithMetadata($path), 'folders' => $service->listFolderWithMetadata($path)];
+                        return ['files' => $service->listFiles($path), 'folders' => $service->listFolder($path)];
                     }
                 }
             } else if (count($fileStorages) > 1) {

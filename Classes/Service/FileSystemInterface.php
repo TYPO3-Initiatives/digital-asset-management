@@ -63,25 +63,16 @@ interface FileSystemInterface
 
     /**
      * @param string $path
-     * @return array of strings
-     */
-    public function listFiles($path): array;
-
-    /**
-     * @param $path
+     * @param bool $withMetadata
      * @return array
      */
-    public function listFilesWithMetadata($path): array;
+    public function listFiles($path, $withMetadata): array;
 
     /**
      * @param string $path
-     * @return array of strings
+     * @param bool $withMetadata
+     * @return array
      */
     public function listFolder($path): array;
 
-    /**
-     * @param $path
-     * @return array
-     */
-    public function listFolderWithMetadata($path): array;
 }
