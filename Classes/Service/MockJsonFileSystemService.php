@@ -81,18 +81,9 @@ class MockJsonFileSystemService extends AbstractFileSystemService implements Fil
 
     /**
      * @param string $path
-     * @return array of strings
-     */
-    public function listFiles($path): array
-    {
-        // TODO: Implement listFiles() method.
-    }
-
-    /**
-     * @param $path
      * @return array
      */
-    public function listFilesWithMetadata($path): array
+    public function listFiles($path, $withMetadata = false): array
     {
         $mock = [
             [
@@ -229,18 +220,9 @@ class MockJsonFileSystemService extends AbstractFileSystemService implements Fil
 
     /**
      * @param string $path
-     * @return array of strings
-     */
-    public function listFolder($path): array
-    {
-        // TODO: Implement listFolder() method.
-    }
-
-    /**
-     * @param $path
      * @return array
      */
-    public function listFolderWithMetadata($path): array
+    public function listFolder($path): array
     {
         $mock = [
             [
