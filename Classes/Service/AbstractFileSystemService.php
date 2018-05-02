@@ -16,7 +16,8 @@ namespace TYPO3\CMS\DigitalAssetManagement\Service;
 */
 
 use TYPO3\CMS\Core\Resource\ResourceStorage;
-use TYPO3\CMS\Core\Resource\File;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractFileSystemService implements FileSystemInterface
 {
@@ -92,10 +93,58 @@ abstract class AbstractFileSystemService implements FileSystemInterface
      */
     public function delete($path): bool
     {
-        if($this->deleteFile($path)){
+        if ($this->deleteFile($path)) {
             // @todo: delete from sys_file
         }
         return !$this->exists($path);
+    }
+
+    /**
+     * get file metadata
+     *
+     * @param string $identifier
+     * @return array
+     */
+    private function getMetadata($identifier): array
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_file_metadata');
+        $statement = $queryBuilder
+            ->select('sys_file_metadata.title', 'sys_file_metadata.width', 'sys_file_metadata.height',
+                     'sys_file_metadata.description', 'sys_file_metadata.alternative')
+            ->from('sys_file_metadata')
+            ->join('sys_file_metadata', 'sys_file', 'file',
+                $queryBuilder->expr()->eq('file.uid','sys_file_metadata.file')
+            )
+            ->where(
+                $queryBuilder->expr()->eq('file.identifier', $queryBuilder->createNamedParameter($identifier))
+            )
+            ->execute()
+            ->fetch();
+        return $statement;
+    }
+
+    /**
+     * get entries where file is referenced
+     *
+     * @param string $identifier
+     * @return array
+     */
+    private function getReferences($identifier): array
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_file_reference');
+        $statement = $queryBuilder
+            ->select('sys_file_reference.title', 'sys_file_reference.tablenames AS table', 'sys_file_reference.uid',
+                     'sys_file_reference.fieldname AS field', 'sorting_foreign AS sorting', 'sys_file_reference.pid')
+            ->from('sys_file_reference')
+            ->join('sys_file_reference', 'sys_file', 'file',
+                $queryBuilder->expr()->eq('file.uid','sys_file_reference.uid_local')
+            )
+            ->where(
+                $queryBuilder->expr()->eq('file.identifier', $queryBuilder->createNamedParameter($identifier))
+            )
+            ->execute()
+            ->fetchAll();
+        return $statement;
     }
 
     /**
@@ -104,29 +153,14 @@ abstract class AbstractFileSystemService implements FileSystemInterface
      */
     public function info($path): array
     {
+        $result = [];
         if ($this->storage) {
             $storage = $this->storage;
             // $file returns a TYPO3\CMS\Core\Resource\File object
             $file = $storage->getFile($path);
-            return $file->toArray();
-        }
-    }
-
-    /**
-     * get file metadata by key such as
-     *  modification-timestamp, filename, size, mimetype
-     *
-     * @param string $path
-     * @param string|array $keys
-     * @return array
-     */
-    public function getMetadata($path, $keys): array
-    {
-        $result = [];
-        // @todo: get from sys_file, else
-        if (method_exists($this, 'getMetadataFile')) {
-            $arr = $this->getMetadataFile();
-            $result = array_merge($result, $arr);
+            $result = $file->toArray();
+            $result['meta'] = $this->getMetadata($file->getIdentifier());
+            $result['references'] = $this->getReferences($file->getIdentifier());
         }
         return $result;
     }
@@ -139,6 +173,7 @@ abstract class AbstractFileSystemService implements FileSystemInterface
      *
      * @param string $path
      * @param bool $withMetadata
+     * @throws \RuntimeException
      * @return array
      */
     public function listFiles($path, $withMetadata = false): array
@@ -155,17 +190,17 @@ abstract class AbstractFileSystemService implements FileSystemInterface
             /** @var File[] $files */
             $files = $storage->getFilesInFolder($startingFolder);
             foreach ($files as $file){
-                $file = $file->toArray();
+                $fileArr = $file->toArray();
                 $newFile = [];
-                foreach ($file as $key => $value) {
-                    if ($withMetadata || in_array($key, ['uid', 'name', 'identifier', 'url', 'mimetype', 'size', 'permissions', 'modification_date'] )) {
+                foreach ($fileArr as $key => $value) {
+                    if ($withMetadata || in_array($key, ['uid', 'name', 'identifier', 'storage', 'url', 'mimetype', 'size', 'permissions', 'modification_date'] )) {
                         $newFile[$key] = $value;
                     }
                 }
-                //$newFile['storageName'] = $storage->getName();
-                //$newFile['storageUid'] = $storage->getUid();
+                $newFile['storage_name'] = $storage->getName();
                 if ($withMetadata) {
-                    // todo: get the real metadata
+                    $newFile['meta'] = $this->getMetadata($file->getIdentifier());
+                    $newFile['references'] = $this->getReferences($file->getIdentifier());
                 }
                 $fileArray[] = $newFile;
             }
@@ -177,6 +212,7 @@ abstract class AbstractFileSystemService implements FileSystemInterface
 
     /**
      * @param string $path
+     * @throws \RuntimeException
      * @return array
      */
     public function listFolder($path): array
@@ -201,6 +237,8 @@ abstract class AbstractFileSystemService implements FileSystemInterface
                         $newFolder[$newKey] = $value;
                     }
                 }
+                $newFolder['storage_name'] = $storage->getName();
+                $newFolder['storage'] = $storage->getUid();
                 $folderArray[] = $newFolder;
             }
         } else {

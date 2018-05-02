@@ -52,16 +52,6 @@ interface FileSystemInterface
     public function info($path): array;
 
     /**
-     * get file metadata by key such as
-     *  filename, filesize, filetime, mimetype
-     *
-     * @param string $path
-     * @param string|array $keys
-     * @return array
-     */
-    public function getMetadata($path, $keys): array;
-
-    /**
      * @param string $path
      * @param bool $withMetadata
      * @return array
