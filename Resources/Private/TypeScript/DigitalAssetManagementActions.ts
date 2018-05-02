@@ -27,7 +27,6 @@ class DigitalAssetManagementActions {
 		'   <div class="card-body">\n' +
 		'   <h5 class="card-title">{name}</h5>\n' +
 		'    <p class="card-text">&nbsp;</p>\n' +
-		'    <a href="#" class="btn btn-primary">Go somewhere</a>\n' +
 		'    </div>\n' +
 		'  </div>\n';
 
@@ -35,13 +34,13 @@ class DigitalAssetManagementActions {
 		'    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
 		'    <div class="card-body">\n' +
 		'    <h5 class="card-title">{name}</h5>\n' +
-		'    <p class="card-text">{lll:mlang.lablel.filesize}: {size} <br>{lll:mlang.lablel.modified}: {uid}</p>\n' +
+		'    <p class="card-text">{lll:dam.labels.filesize}: {size} <br>{lll:dam.labels.modified}: {modification_date}</p>\n' +
 		'    <a href="#" class="btn btn-primary">Go somewhere</a>\n' +
 		'    </div>\n' +
 		'  </div>\n';
 
-	static breadcrumbPartial: string = '&nbsp;&gt;&nbsp;<span class="folder-action" data-method="getContent" ' +
-		'data-parameter="{pathsegment}">{part}</span>';
+	static breadcrumbPartial: string = '<span class="folder-action" data-method="getContent" ' +
+		'data-parameter="{pathsegment}">{label}</span>';
 
 	/**
 	 *
@@ -51,9 +50,9 @@ class DigitalAssetManagementActions {
 		// @todo: why does only 'top.' work here?
 		console.log(top.TYPO3.lang['localize.wizard.header']);
 		// todo: how include own labels?
-		console.log(top.TYPO3.lang['mlang.lablel.modified']);
+		console.log(top.TYPO3.lang['dam.labels.filesize']);
 		console.log('DigitalAssetManagement.init');
-		my.renderBreadcrumb('/');
+		// my.renderBreadcrumb('/');
 		my.request('getContent', '/');
 		$('.digital-asset-management').on('click', '.folder-action', function(): void {
 			let method = $(this).data('method');
@@ -85,7 +84,6 @@ class DigitalAssetManagementActions {
 			let html = '';
 			for (let i = 0; i < data.getContent.folders.length; i++) {
 				const folder = data.getContent.folders[i];
-				console.log(folder);
 				// Icons.getIcon('apps-filetree-folder', 'large').done( (iconMarkup: string): void => {
 				// 	$('.folder-icon').html(iconMarkup);
 				// });
@@ -99,7 +97,6 @@ class DigitalAssetManagementActions {
 			// icon mimetypes-pdf
 			for (let i = 0; i < data.getContent.files.length; i++) {
 				const file = data.getContent.files[i];
-				console.log(file);
 				// @todo: use moment.js for date-formatting?!
 				// @todo: how to get the thumbnail images without viewhelper?
 				// Add mimetype as two classes: image/jpeg -> image jpeg
@@ -112,22 +109,58 @@ class DigitalAssetManagementActions {
 		}
 	}
 
-	protected static renderBreadcrumb(identifier: string): void {
-		let parts = identifier.split('/');
+	protected static renderBreadcrumb(data: any): void {
 		let html = '';
 		let path = '';
-		let my = this;
-		for (let i = 0; i < parts.length; i++) {
-			const part = parts[i];
-			if (i === 0) {
-				path = 'todo Storagename';
-			} else {
-				path += '/' + part[i];
+		let label;
+		let item;
+		let parts = [];
+		let my = DigitalAssetManagementActions;
+		console.log('renderBreadCrumb');
+		console.log(data);
+		if (data.getContent) {
+			item = {identifier: data.actionparam};
+			parts = item.identifier.split('/');
+			// if (data.getContent.folders.length) {
+			// 	item = data.getContent.folders[0];
+			// 	parts = item.identifier.split('/');
+			// 	parts.pop();
+			// 	parts.pop();
+			// } else if (data.getContent.files.length) {
+			// 	item = data.getContent.files[0];
+			// 	parts = item.identifier.split('/');
+			// 	parts.pop();
+			// }
+			console.log(parts);
+			for (let i = 0; i < parts.length; i++) {
+				const part = parts[i];
+				if (i === 0) {
+					// 	// @todo: insert storage name
+					path = '/';
+					label = 'Dateien';
+				} else {
+					path += '/' + part;
+					label = part;
+					html += '&nbsp;&gt;&nbsp;';
+				}
+				// Render single breadcrumb item
+				console.log('render breadcrumb identifier: ' + item.identifier + ', path: ' + path + ', part: ' + part);
+				html += my.replaceTemplateVars(my.breadcrumbPartial, {pathsegment: path, part: part, label: label});
 			}
-			// Render single breadcrumb item
-			html += my.replaceTemplateVars(my.breadcrumbPartial, {pathsegment: path, part: part[i]});
+			if (html) {
+				$('.breadcrumb').html(html);
+			}
+			if (data.getContent.files.length) {
+				$('.files').removeClass('empty');
+			} else {
+				$('.files').addClass('empty');
+			}
+			if (data.getContent.folders.length) {
+				$('.folders').removeClass('empty');
+			} else {
+				$('.folders').addClass('empty');
+			}
 		}
-		$('.breadcrumb').html(html);
 	}
 
 	/**
@@ -145,9 +178,7 @@ class DigitalAssetManagementActions {
 			.done((data: any): void => {
 				switch (method) {
 					case 'getContent':
-						console.log(data);
-
-						my.renderBreadcrumb(parameter);
+						my.renderBreadcrumb(data);
 						my.renderContent(data);
 						break;
 					default:
@@ -169,12 +200,13 @@ class DigitalAssetManagementActions {
 	 */
 	protected static replaceTemplateVars(template: string, data: object): string {
 		return template.replace(
-				/{(\w*)}/g,
+				/{([:a-zA-Z_\.-]*)}/g,
 				function(m: string, key: string): string {
-						if (key.indexOf('{lll:')) {
-							return TYPO3.lang[key.replace(/lll:/, '')];
-						} else {
-						return data.hasOwnProperty(key) ? data[key] : ' -missing prop:' + key + '-';
+					// console.log('translate key: '+ key + ', ' + data[key] );
+					if (key.indexOf('lll:') === 0) {
+						return TYPO3.lang[key.replace(/lll:/, '')] || key;
+					} else {
+						return data.hasOwnProperty(key) ? data[key] : '###missing prop:' + key + '#';
 					}
 				}
 			);
