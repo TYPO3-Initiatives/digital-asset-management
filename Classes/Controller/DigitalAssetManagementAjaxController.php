@@ -60,7 +60,7 @@ class DigitalAssetManagementAjaxController
      * @param string $path
      * @return array
      */
-    protected function getContentAction($path = "/")
+    protected function getContentAction($path = "")
     {
         $backendUser = $this->getBackendUser();
         // Get all storage objects
@@ -71,26 +71,41 @@ class DigitalAssetManagementAjaxController
         $result['debug'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
         if (is_array($fileStorages)){
             //If there is only one storage show content of that as entrypoint
-            if (count($fileStorages) === 1) {
+            if ((count($fileStorages) === 1) || ($path !== '')) {
+                $storageId = 0;
+                if ($path !== '') {
+                    list($storageId, $path) = explode(':', $path, 2);
+                }
                 /** @var ResourceStorage $fileStorage  */
-                $fileStorage = reset($fileStorages);
-                if ($fileStorage) {
-                    $storageInfo = $fileStorage->getStorageRecord();
-                    if (isset($storageInfo['driver'])) {
-                        switch ($storageInfo['driver']) {
-                            case 'Local':
-                                // $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
-                                $service = new \TYPO3\CMS\DigitalAssetManagement\Service\MockJsonFileSystemService($fileStorage);
-                                break;
+                foreach ($fileStorages as $fileStorage) {
+                    if ($fileStorage->getUid() == $storageId) {
+                        $storageInfo = $fileStorage->getStorageRecord();
+                        if (isset($storageInfo['driver'])) {
+                            switch ($storageInfo['driver']) {
+                                case 'Local':
+                                    $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
+                                    //$service = new \TYPO3\CMS\DigitalAssetManagement\Service\MockJsonFileSystemService($fileStorage);
+                                    break;
+                            }
+                        }
+                        if ($service) {
+                            return ['files' => $service->listFiles($path), 'folders' => $service->listFolder($path)];
                         }
                     }
-                    if ($service) {
-                        return ['files' => $service->listFiles($path), 'folders' => $service->listFolder($path)];
-                    }
                 }
-            } else if (count($fileStorages) > 1) {
-                //@todo: support multiple file storages
-                return 'todo support multiple file storages';
+            } else { //if (count($fileStorages) > 1) {
+                $folders = [];
+                foreach ($fileStorages as $fileStorage) {
+                    $storageInfo = $fileStorage->getStorageRecord();
+                    $folder = [];
+                    $folder['identifier'] = $storageInfo['uid'] . ':';
+                    $folder['name'] = $storageInfo['name'];
+                    $folder['storage_name'] = $storageInfo['name'];
+                    $folder['storage'] = $storageInfo['uid'];
+                    $folder['type'] = 'storage';
+                    $folders[] = $folder;
+                }
+                return ['files' => [], 'folders' => $folders];
             }
         }
     }

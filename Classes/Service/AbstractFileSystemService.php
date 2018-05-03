@@ -148,6 +148,8 @@ abstract class AbstractFileSystemService implements FileSystemInterface
     }
 
     /**
+     * get file info
+     *
      * @param string $path
      * @return array
      */
@@ -194,10 +196,15 @@ abstract class AbstractFileSystemService implements FileSystemInterface
                 $newFile = [];
                 foreach ($fileArr as $key => $value) {
                     if ($withMetadata || in_array($key, ['uid', 'name', 'identifier', 'storage', 'url', 'mimetype', 'size', 'permissions', 'modification_date'] )) {
-                        $newFile[$key] = $value;
+                        if ($key === 'identifier') {
+                            $newFile[$key] = $storage->getUid() . ':' . $value;
+                        } else {
+                            $newFile[$key] = $value;
+                        }
                     }
                 }
                 $newFile['storage_name'] = $storage->getName();
+                $newFile['type'] = 'file';
                 if ($withMetadata) {
                     $newFile['meta'] = $this->getMetadata($file->getIdentifier());
                     $newFile['references'] = $this->getReferences($file->getIdentifier());
@@ -233,12 +240,15 @@ abstract class AbstractFileSystemService implements FileSystemInterface
                 foreach ($folder as $key => $value) {
                     // replace protected /u0000 in key
                     $newKey = substr($key, 3);
-                    if (in_array($newKey, ['name', 'identifier'])) {
+                    if ($newKey === 'identifier') {
+                        $newFolder[$newKey] = $storage->getUid() . ':' . $value;
+                    } elseif ($newKey === 'name') {
                         $newFolder[$newKey] = $value;
                     }
                 }
                 $newFolder['storage_name'] = $storage->getName();
                 $newFolder['storage'] = $storage->getUid();
+                $newFolder['type'] = 'folder';
                 $folderArray[] = $newFolder;
             }
         } else {
