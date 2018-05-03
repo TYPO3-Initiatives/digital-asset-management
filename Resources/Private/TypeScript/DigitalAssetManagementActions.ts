@@ -33,7 +33,8 @@ class DigitalAssetManagementActions {
 
 	static filePartial: string = '<div class="card d-inline-block {mimetype}" style="width: 180px;">\n' +
 		// '    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
-		'    <div class="thumbnail"><img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="{thumburl}"></div>' +
+		'    <div class="thumbnail">'+
+		'<img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="{thumburl}"></div>' +
 		'    <div class="icon icon-mimetypes-{mimetype}"></div>' +
 		'    <div class="card-body">\n' +
 		'    <h5 class="card-title">{name}</h5>\n' +
@@ -42,7 +43,7 @@ class DigitalAssetManagementActions {
 		'  </div>\n';
 
 	static breadcrumbPartial: string = '<span class="folder-action" data-method="getContent" ' +
-		'data-parameter="{pathsegment}">{label}</span>';
+		'data-parameter="{identifier}">{label}</span>';
 
 	/**
 	 *
@@ -101,11 +102,10 @@ class DigitalAssetManagementActions {
 			// icon mimetypes-pdf
 			for (let i = 0; i < data.getContent.files.length; i++) {
 				const file = data.getContent.files[i];
-				// @todo: use moment.js for date-formatting?!
 				// @todo: how to get the thumbnail images without viewhelper?
 				// Add mimetype as two classes: image/jpeg -> image jpeg
 				file.mimetype = file.mimetype.replace('/', ' ');
-				file.modification_date_formated = moment(file.modification_date).format(TYPO3.settings.DateTimePicker.DateFormat[1] || 'YYYY-MM-DD');
+				file.modification_date_formated = moment(file.modification_date).format(top.TYPO3.settings.DateTimePicker.DateFormat[1] || 'YYYY-MM-DD');
 				html += my.replaceTemplateVars(my.filePartial, file);
 			}
 			$('.files').html(html);
@@ -116,47 +116,20 @@ class DigitalAssetManagementActions {
 
 	protected static renderBreadcrumb(data: any): void {
 		let html = '';
-		let path = '';
-		let label;
-		let item;
-		let parts = [];
 		let my = DigitalAssetManagementActions;
 		console.log('renderBreadCrumb');
 		console.log(data);
-		if (data.getContent) {
-			// item = {identifier: data.actionparam};
-			// parts = item.identifier.split('/');
-			// Get one item with identifier get get infos for rendering the breadcrumb
-			if (data.getContent.folders.length) {
-				item = data.getContent.folders[0];
-				parts = item.identifier.split('/');
-				parts.pop();
-				parts.pop();
-			} else if (data.getContent.files.length) {
-				item = data.getContent.files[0];
-				parts = item.identifier.split('/');
-				parts.pop();
-			}
-			console.log(parts);
-			for (let i = 0; i < parts.length; i++) {
-				const part = parts[i];
-				if (i === 0) {
-					// 	// @todo: insert storage or mount name
-					if (item.type === "storage") {
-						path = item.storage + ':';
-						label = item.storage_name || TYPO3.lang['dam.label.files'];
-					} else {
-						path = item.uid + ':';
-						label = item.name || TYPO3.lang['dam.label.files'];
-					}
+		if (data.getContent && data.getContent.breadcrumbs) {
+			for (let i = 0; i < data.getContent.breadcrumbs.length; i++) {
+				const part = data.getContent.breadcrumbs[i];
+				if (part.type === 'home') {
+					part.label = TYPO3.lang['dam.labels.files'];
 				} else {
-					path += '/' + part;
-					label = part;
+					part.label = part.name;
 					html += '&nbsp;&gt;&nbsp;';
 				}
 				// Render single breadcrumb item
-				console.log('render breadcrumb identifier: ' + item.identifier + ', path: ' + path + ', part: ' + part);
-				html += my.replaceTemplateVars(my.breadcrumbPartial, {pathsegment: path, part: part, label: label});
+				html += my.replaceTemplateVars(my.breadcrumbPartial, part);
 			}
 			if (html) {
 				$('.breadcrumb').html(html).removeClass('empty');
@@ -204,7 +177,7 @@ class DigitalAssetManagementActions {
 					case 'getContent':
 						my.renderBreadcrumb(data);
 						my.renderContent(data);
-						my.loadThumbs();
+						// my.loadThumbs();
 						break;
 					default:
 						top.TYPO3.Notification.warning('Request failed', 'Unknown method: ' + method);
