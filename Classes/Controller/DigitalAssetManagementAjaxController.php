@@ -89,7 +89,7 @@ class DigitalAssetManagementAjaxController
             /** @var ResourceStorage $fileStorage  */
             foreach ($fileStorages as $fileStorage) {
                 $storageInfo = $fileStorage->getStorageRecord();
-                if ($storageId && ($storageInfo['uid'] == $storageId)) {
+                if ((count($fileStorages) == 1) || ($storageId && ($storageInfo['uid'] == $storageId))) {
                     $identifier = $storageInfo['uid'] . ':';
                     $fileMounts = $fileStorage->getFileMounts();
                     if (!empty($fileMounts)) {
@@ -107,11 +107,13 @@ class DigitalAssetManagementAjaxController
                         unset($fileMounts);
                     } else {
                         $identifier .= '/';
-                        $breadcrumbs[] = [
-                            'identifier' => $identifier,
-                            'name' => $storageInfo['name'],
-                            'type' => 'storage'
-                        ];
+                        if (count($fileStorages) > 1) {
+                            $breadcrumbs[] = [
+                                'identifier' => $identifier,
+                                'name' => $storageInfo['name'],
+                                'type' => 'storage'
+                            ];
+                        }
                     }
                     $aPath = explode('/', $relPath);
                     for ($i = 0; $i < count($aPath); $i++) {
@@ -119,7 +121,8 @@ class DigitalAssetManagementAjaxController
                             $identifier .= $aPath[$i] . '/';
                             $breadcrumbs[] = [
                                 'identifier' => $identifier,
-                                'name' => $aPath[$i]
+                                'name' => $aPath[$i],
+                                'type' => 'folder'
                             ];
                         }
                     }
