@@ -23,7 +23,7 @@ class DigitalAssetManagementActions {
 
 	static folderPartial: string = '    <div class="card folder-action d-inline-block {mimetype}" data-method="getContent" ' +
 		'data-parameter="{identifier}" style="width: 180px;">\n' +
-		'   <div class="icon folder-icon icon-apps-filetree-folder"></div>' +
+		'   <div class="icon folder-icon {type}"></div>' +
 		'   <div class="card-body">\n' +
 		'   <h5 class="card-title">{name}</h5>\n' +
 		'    <p class="card-text">&nbsp;</p>\n' +
@@ -54,7 +54,8 @@ class DigitalAssetManagementActions {
 		console.log(top.TYPO3.lang['dam.labels.filesize']);
 		console.log('DigitalAssetManagement.init');
 		// my.renderBreadcrumb('/');
-		my.request('getContent', '/');
+		// @todo: get filetree starting point from user settings.
+		my.request('getContent', '');
 		$('.digital-asset-management').on('click', '.folder-action', function(): void {
 			let method = $(this).data('method');
 			let parameter = $(this).data('parameter');
@@ -120,18 +121,19 @@ class DigitalAssetManagementActions {
 		console.log('renderBreadCrumb');
 		console.log(data);
 		if (data.getContent) {
-			item = {identifier: data.actionparam};
-			parts = item.identifier.split('/');
-			// if (data.getContent.folders.length) {
-			// 	item = data.getContent.folders[0];
-			// 	parts = item.identifier.split('/');
-			// 	parts.pop();
-			// 	parts.pop();
-			// } else if (data.getContent.files.length) {
-			// 	item = data.getContent.files[0];
-			// 	parts = item.identifier.split('/');
-			// 	parts.pop();
-			// }
+			// item = {identifier: data.actionparam};
+			// parts = item.identifier.split('/');
+			// Get one item with identifier get get infos for rendering the breadcrumb
+			if (data.getContent.folders.length) {
+				item = data.getContent.folders[0];
+				parts = item.identifier.split('/');
+				parts.pop();
+				parts.pop();
+			} else if (data.getContent.files.length) {
+				item = data.getContent.files[0];
+				parts = item.identifier.split('/');
+				parts.pop();
+			}
 			console.log(parts);
 			for (let i = 0; i < parts.length; i++) {
 				const part = parts[i];

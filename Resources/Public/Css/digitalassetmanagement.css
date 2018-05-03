@@ -51,7 +51,15 @@ div {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-other-other.svg");
 }
 
-.icon-apps-filetree-folder {
+.icon.storage {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-root.svg");
+}
+
+.icon.mount {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-mount.svg");
+}
+
+.icon.folder {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder.svg");
 }
 .icon-apps-filetree-mount {
