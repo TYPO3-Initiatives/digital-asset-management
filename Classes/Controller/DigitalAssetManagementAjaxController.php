@@ -79,17 +79,53 @@ class DigitalAssetManagementAjaxController
             }
             $files = [];
             $folders = [];
+            $breadcrumbs = [];
+            $breadcrumbs[] = [
+                'identifier' => '',
+                'name' => 'home'
+            ];
+            $relPath = $path;
             /** @var ResourceStorage $fileStorage  */
             foreach ($fileStorages as $fileStorage) {
-                if ($storageId && ($fileStorage->getUid() == $storageId)) {
+                $storageInfo = $fileStorage->getStorageRecord();
+                if ($storageId && ($storageInfo['uid'] == $storageId)) {
+                    $identifier = $storageInfo['uid'] . ':';
+                    $fileMounts = $fileStorage->getFileMounts();
+                    if (!empty($fileMounts)) {
+                        foreach ($fileMounts as $fileMount) {
+                            if (strpos ( $path, $fileMount['path'] ) === 0) {
+                                $identifier .= $fileMount['path'];
+                                $breadcrumbs[] = [
+                                    'identifier' => $identifier,
+                                    'name' => $fileMount['title']
+                                ];
+                                $relPath = str_replace($fileMount['path'], '', $relPath);                            }
+                        }
+                        unset($fileMounts);
+                    } else {
+                        $breadcrumbs[] = [
+                            'identifier' => $identifier,
+                            'name' => $storageInfo['name']
+                        ];
+                    }
+                    $aPath = explode('/', $relPath);
+                    for ($i = 0; $i < count($aPath); $i++) {
+                        if ($aPath[$i] !== '') {
+                            $identifier .= $aPath[$i];
+                            $breadcrumbs[] = [
+                                'identifier' => $identifier,
+                                'name' => $aPath[$i]
+                            ];
+                        }
+                    }
                     $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
                     if ($service) {
                         $files = $service->listFiles($path);
                         $folders = $service->listFolder($path);
                         unset($service);
                     }
+                    break;
                 } elseif ($storageId === null) {
-                    $storageInfo = $fileStorage->getStorageRecord();
                     $fileMounts = $fileStorage->getFileMounts();
                     if (!empty($fileMounts)) {
                         foreach ($fileMounts as $fileMount) {
@@ -114,7 +150,7 @@ class DigitalAssetManagementAjaxController
                     unset($storageInfo);
                 }
             }
-            return ['files' => $files, 'folders' => $folders];
+            return ['files' => $files, 'folders' => $folders, 'breadcrumbs' => $breadcrumbs];
         }
     }
 
