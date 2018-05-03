@@ -82,7 +82,8 @@ class DigitalAssetManagementAjaxController
             $breadcrumbs = [];
             $breadcrumbs[] = [
                 'identifier' => '',
-                'name' => 'home'
+                'name' => 'home',
+                'type' => 'home'
             ];
             $relPath = $path;
             /** @var ResourceStorage $fileStorage  */
@@ -97,21 +98,25 @@ class DigitalAssetManagementAjaxController
                                 $identifier .= $fileMount['path'];
                                 $breadcrumbs[] = [
                                     'identifier' => $identifier,
-                                    'name' => $fileMount['title']
+                                    'name' => $fileMount['title'],
+                                    'type' => 'mount'
                                 ];
-                                $relPath = str_replace($fileMount['path'], '', $relPath);                            }
+                                $relPath = str_replace($fileMount['path'], '', $relPath);
+                            }
                         }
                         unset($fileMounts);
                     } else {
+                        $identifier .= '/';
                         $breadcrumbs[] = [
                             'identifier' => $identifier,
-                            'name' => $storageInfo['name']
+                            'name' => $storageInfo['name'],
+                            'type' => 'storage'
                         ];
                     }
                     $aPath = explode('/', $relPath);
                     for ($i = 0; $i < count($aPath); $i++) {
                         if ($aPath[$i] !== '') {
-                            $identifier .= $aPath[$i];
+                            $identifier .= $aPath[$i] . '/';
                             $breadcrumbs[] = [
                                 'identifier' => $identifier,
                                 'name' => $aPath[$i]
