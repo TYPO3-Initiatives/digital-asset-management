@@ -72,8 +72,8 @@ class DigitalAssetManagementAjaxController
         if (is_array($fileStorages)){
             //If there is only one storage show content of that as entrypoint
             if ((count($fileStorages) === 1) || ($path !== "")) {
-                $storageId = 0;
-                if ($path !== "") {
+                $storageId = (count($fileStorages) === 1) ? reset($fileStorages)->getUid() : 0;
+                if (($path !== "") && (strlen($path)>1)) {
                     list($storageId, $path) = explode(":", $path, 2);
                 }
                 if ($path === "") {
