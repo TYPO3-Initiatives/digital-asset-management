@@ -55,7 +55,7 @@ class DigitalAssetManagementAjaxController
 
     /**
      * get file and folder content for a path
-     * / means get all storages or the root level of a single available storage
+     * empty string means get all storages or mounts of the be-user or the root level of a single available storage
      *
      * @param string $path
      * @return array
