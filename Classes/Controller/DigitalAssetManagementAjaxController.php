@@ -70,46 +70,51 @@ class DigitalAssetManagementAjaxController
         $service = null;
         $result['debug'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
         if (is_array($fileStorages)){
-            //If there is only one storage show content of that as entrypoint
-            if ((count($fileStorages) === 1) || ($path !== "")) {
-                $storageId = (count($fileStorages) === 1) ? reset($fileStorages)->getUid() : 0;
-                if (($path !== "") && (strlen($path)>1)) {
-                    list($storageId, $path) = explode(":", $path, 2);
-                }
-                if ($path === "") {
-                    $path = "/";
-                }
-                /** @var ResourceStorage $fileStorage  */
-                foreach ($fileStorages as $fileStorage) {
-                    if ($fileStorage->getUid() == $storageId) {
-                        $storageInfo = $fileStorage->getStorageRecord();
-                        if (isset($storageInfo['driver'])) {
-                            switch ($storageInfo['driver']) {
-                                case 'Local':
-                                    $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
-                                    //$service = new \TYPO3\CMS\DigitalAssetManagement\Service\MockJsonFileSystemService($fileStorage);
-                                    break;
-                            }
-                        }
-                        if ($service) {
-                            return ['files' => $service->listFiles($path), 'folders' => $service->listFolder($path)];
-                        }
-                    }
-                }
-            } else { //if (count($fileStorages) > 1) {
-                $folders = [];
-                foreach ($fileStorages as $fileStorage) {
-                    $storageInfo = $fileStorage->getStorageRecord();
-                    $folder = [];
-                    $folder['identifier'] = $storageInfo['uid'] . ':';
-                    $folder['name'] = $storageInfo['name'];
-                    $folder['storage_name'] = $storageInfo['name'];
-                    $folder['storage'] = $storageInfo['uid'];
-                    $folder['type'] = 'storage';
-                    $folders[] = $folder;
-                }
-                return ['files' => [], 'folders' => $folders];
+            $storageId = null;
+            if (($path !== "") && (strlen($path)>1)) {
+                list($storageId, $path) = explode(":", $path, 2);
             }
+            if ($path === "") {
+                $path = "/";
+            }
+            $files = [];
+            $folders = [];
+            /** @var ResourceStorage $fileStorage  */
+            foreach ($fileStorages as $fileStorage) {
+                if ($storageId && ($fileStorage->getUid() == $storageId)) {
+                    $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
+                    if ($service) {
+                        $files = $service->listFiles($path);
+                        $folders = $service->listFolder($path);
+                        unset($service);
+                    }
+                } elseif ($storageId === null) {
+                    $storageInfo = $fileStorage->getStorageRecord();
+                    $fileMounts = $fileStorage->getFileMounts();
+                    if (!empty($fileMounts)) {
+                        foreach ($fileMounts as $fileMount) {
+                            $folders[] = [
+                                'identifier' => $storageInfo['uid'] . ':' . $fileMount['path'],
+                                'name' => $fileMount['title'],
+                                'storage_name' => $storageInfo['name'],
+                                'storage' => $storageInfo['uid'],
+                                'type' => 'mount'
+                            ];
+                        }
+                        unset($fileMounts);
+                    } else {
+                        $folders[] = [
+                            'identifier' => $storageInfo['uid'] . ':',
+                            'name' => $storageInfo['name'],
+                            'storage_name' => $storageInfo['name'],
+                            'storage' => $storageInfo['uid'],
+                            'type' => 'storage'
+                        ];
+                    }
+                    unset($storageInfo);
+                }
+            }
+            return ['files' => $files, 'folders' => $folders];
         }
     }
 
