@@ -33,6 +33,14 @@ div {
 	background-color: #dddddd;
 }
 
+/* Thumbnails */
+.digital-asset-management .thumbnail {
+	height: 120px;
+	width: 100%;
+	position: absolute;
+}
+
+
 /* Icons */
 .digital-asset-management .icon {
 	background-repeat: no-repeat;

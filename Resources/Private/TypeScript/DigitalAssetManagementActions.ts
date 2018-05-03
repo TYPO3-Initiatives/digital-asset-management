@@ -13,6 +13,7 @@
 
 import * as $ from 'jquery';
 import 'bootstrap';
+import moment = require('moment');
 // import Icons = require('TYPO3/CMS/Backend/Icons');
 
 /**
@@ -32,11 +33,11 @@ class DigitalAssetManagementActions {
 
 	static filePartial: string = '<div class="card d-inline-block {mimetype}" style="width: 180px;">\n' +
 		// '    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
+		'    <div class="thumbnail"><img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="{thumburl}"></div>' +
 		'    <div class="icon icon-mimetypes-{mimetype}"></div>' +
 		'    <div class="card-body">\n' +
 		'    <h5 class="card-title">{name}</h5>\n' +
-		'    <p class="card-text">{lll:dam.labels.filesize}: {size} <br>{lll:dam.labels.modified}: {modification_date}</p>\n' +
-		'    <a href="#" class="btn btn-primary">Go somewhere</a>\n' +
+		'    <p class="card-text">{lll:dam.labels.filesize}: {size} <br>{lll:dam.labels.modified}: {modification_date_formated}</p>\n' +
 		'    </div>\n' +
 		'  </div>\n';
 
@@ -92,6 +93,7 @@ class DigitalAssetManagementActions {
 				// @todo: use moment.js for date-formatting?!
 				// @todo: how to get the thumbnail images without viewhelper?
 				folder.mimetype = 'folder';
+				//folder.modification_date_formated = moment(folder.modification_date).format(TYPO3.settings.DateTimePicker.DateFormat[1] || 'YYYY-MM-DD');
 				html += my.replaceTemplateVars(my.folderPartial, folder);
 			}
 			$('.folders').html(html);
@@ -103,6 +105,7 @@ class DigitalAssetManagementActions {
 				// @todo: how to get the thumbnail images without viewhelper?
 				// Add mimetype as two classes: image/jpeg -> image jpeg
 				file.mimetype = file.mimetype.replace('/', ' ');
+				file.modification_date_formated = moment(file.modification_date).format(TYPO3.settings.DateTimePicker.DateFormat[1] || 'YYYY-MM-DD');
 				html += my.replaceTemplateVars(my.filePartial, file);
 			}
 			$('.files').html(html);
@@ -138,9 +141,14 @@ class DigitalAssetManagementActions {
 			for (let i = 0; i < parts.length; i++) {
 				const part = parts[i];
 				if (i === 0) {
-					// 	// @todo: insert storage name
-					path = '/';
-					label = 'Dateien';
+					// 	// @todo: insert storage or mount name
+					if (item.type === "storage") {
+						path = item.storage + ':';
+						label = item.storage_name || TYPO3.lang['dam.label.files'];
+					} else {
+						path = item.uid + ':';
+						label = item.name || TYPO3.lang['dam.label.files'];
+					}
 				} else {
 					path += '/' + part;
 					label = part;
@@ -151,7 +159,9 @@ class DigitalAssetManagementActions {
 				html += my.replaceTemplateVars(my.breadcrumbPartial, {pathsegment: path, part: part, label: label});
 			}
 			if (html) {
-				$('.breadcrumb').html(html);
+				$('.breadcrumb').html(html).removeClass('empty');
+			} else {
+				$('.breadcrumb').html('').addClass('empty');
 			}
 			if (data.getContent.files.length) {
 				$('.files').removeClass('empty');
@@ -164,6 +174,17 @@ class DigitalAssetManagementActions {
 				$('.folders').addClass('empty');
 			}
 		}
+	}
+
+	protected static loadThumbs() {
+		$('.card').each(function(index, el){
+			let $el = $(this).find('.thumbnail img');
+			let src = $el.attr('data-src');
+			if (src) {
+				$el.attr('src', src);
+				$(this).find('.icon').addClass('small');
+			}
+		});
 	}
 
 	/**
@@ -183,6 +204,7 @@ class DigitalAssetManagementActions {
 					case 'getContent':
 						my.renderBreadcrumb(data);
 						my.renderContent(data);
+						my.loadThumbs();
 						break;
 					default:
 						top.TYPO3.Notification.warning('Request failed', 'Unknown method: ' + method);

@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
+
 namespace TYPO3\CMS\DigitalAssetManagement\Service;
 
 /*
@@ -31,8 +32,11 @@ class MockJsonFileSystemService extends AbstractFileSystemService implements Fil
      * @param string $content
      * @return bool success
      */
-    public function writeFile($path, $content): bool
-    {
+    public
+    function writeFile(
+        $path,
+        $content
+    ): bool {
         // TODO: Implement writeFile() method.
     }
 
@@ -97,7 +101,7 @@ class MockJsonFileSystemService extends AbstractFileSystemService implements Fil
                 "indexed" => true,
                 "uid" => 84,
                 "permissions" => [
-                "read" => true,
+                    "read" => true,
                     "write" => true,
                     "delete" => true
                 ],
@@ -129,7 +133,7 @@ class MockJsonFileSystemService extends AbstractFileSystemService implements Fil
                 "indexed" => true,
                 "uid" => 85,
                 "permissions" => [
-                "read" => true,
+                    "read" => true,
                     "write" => true,
                     "delete" => true
                 ],
@@ -161,7 +165,7 @@ class MockJsonFileSystemService extends AbstractFileSystemService implements Fil
                 "indexed" => true,
                 "uid" => 86,
                 "permissions" => [
-                "read" => true,
+                    "read" => true,
                     "write" => true,
                     "delete" => true
                 ],
@@ -193,7 +197,7 @@ class MockJsonFileSystemService extends AbstractFileSystemService implements Fil
                 "indexed" => true,
                 "uid" => 83,
                 "permissions" => [
-                "read" => false,
+                    "read" => false,
                     "write" => false,
                     "delete" => false
                 ],
@@ -211,8 +215,8 @@ class MockJsonFileSystemService extends AbstractFileSystemService implements Fil
                 "atime" => 1524668466,
                 "mtime" => 1523946896,
                 "ctime" => 1524039300,
-                "storageName" => "fileadmin/ (auto-created)",
-                "storageUid" => 1
+                "storage_name" => "fileadmin/ (auto-created)",
+                "storage_uid" => 1
             ]
         ];
         return $mock;
@@ -225,53 +229,37 @@ class MockJsonFileSystemService extends AbstractFileSystemService implements Fil
     public function listFolder($path): array
     {
         $mock = [
+            // "actionparam" => "",
+            // "getContent" => [
+            //     "files" => [],
+            //     "folders" => [
             [
-                "storage" => [],
-                "identifier" => "/introduction/",
-                "name" => "introduction",
-                "fileAndFolderNameFilters" => [],
-                "storageName" => "fileadmin/ (auto-created)",
-                "storageUid" => 1
+                "identifier" => "1:",
+                "name" => "fileadmin/ (auto-created)",
+                "storage_name" => "fileadmin/ (auto-created)",
+                "storage" => 1,
+                "type" => "storage"
             ],
             [
-                "storage" => [],
-                "identifier" => "/lns-backend-login/",
-                "name" => "lns-backend-login",
-                "fileAndFolderNameFilters" => [],
-                "storageName" => "fileadmin/ (auto-created)",
-                "storageUid" => 1
+                "identifier" => "2:",
+                "name" => "files/",
+                "storage_name" => "files/",
+                "storage" => 2,
+                "type" => "storage"
             ],
             [
-                "storage" => [],
-                "identifier" => "/lns_distribution/",
-                "name" => "lns_distribution",
-                "fileAndFolderNameFilters" => [],
-                "storageName" => "fileadmin/ (auto-created)",
-                "storageUid" => 1
+                "identifier" => "/filemount",
+                "name" => "filemount/",
+                "mount_name" => "filemount/",
+                "mount" => 2,
+                "type" => "mount"
             ],
             [
-                "storage" => [],
-                "identifier" => "/styleguide/",
-                "name" => "styleguide",
-                "fileAndFolderNameFilters" => [],
-                "storageName" => "fileadmin/ (auto-created)",
-                "storageUid" => 1
-            ],
-            [
-                "storage" => [],
-                "identifier" => "/user_upload/",
-                "name" => "user_upload",
-                "fileAndFolderNameFilters" => [],
-                "storageName" => "fileadmin/ (auto-created)",
-                "storageUid" => 1
-            ],
-            [
-                "storage" => [],
-                "identifier" => "/_temp_/",
-                "name" => "_temp_",
-                "fileAndFolderNameFilters" => [],
-                "storageName" => "fileadmin/ (auto-created)",
-                "storageUid" => 1
+                "identifier" => "/folder",
+                "name" => "folder",
+                "storage_name" => "filemount/",
+                "storage" => 1,
+                "type" => "folder"
             ]
         ];
         return $mock;
