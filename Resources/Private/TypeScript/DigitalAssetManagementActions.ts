@@ -151,7 +151,7 @@ class DigitalAssetManagementActions {
 
 	/**
 	 *  load thumbnail from getThumbnail
-	 *  @todo: only request images which are in the viewport
+	 *  @todo: only request images which are in the viewport, and trigger this when scrolling
 	 */
 	protected static loadThumbs() {
 		let my = DigitalAssetManagementActions;
@@ -159,25 +159,27 @@ class DigitalAssetManagementActions {
 			let $el = $(this).find('img');
 			let src = $el.attr('data-src');
 			console.log('src ' + src);
-			let query = {};
-			query['getThumbnail'] = src;
 			if (src) {
-				$.ajax({
-					url: TYPO3.settings.ajaxUrls.dam_request,
-					data: query
-				}).done((data): void => {
-					console.log(data);
-				}).fail((err: any): void => {
-					console.log('DigitalAssetManagement request promise fail ' + JSON.stringify(err));
-					top.TYPO3.Notification.warning('Request failed', 'Thumbnail can not be displayed. ' + err.readyState);
-					my.renderError(err);
-				});
-
-				// // $el.css('background-image', 'url(\''+src+'\')');
-				// $el.attr('src', src);
-				// $(this).find('.icon').addClass('small');
+				my.request('getThumbnail', src);
 			}
 		});
+	}
+
+	protected static renderThumb(data) {
+		let my = DigitalAssetManagementActions;
+		console.log('renderThumb');
+		console.log(data);
+		if (data.getThumbnail && data.getThumbnail.thumbnail) {
+			$('.grid.image').each(function (index, el) {
+				let $el = $(this).find('img');
+				console.log('renderThumb check image');
+				if (data.actionparam === $el.attr('data-src')){
+					console.log('renderThumb reffer');
+					$el.attr('src', data.getThumbnail.thumbnail);
+					$(this).find('.icon').addClass('small');
+				}
+			});
+		}
 	}
 
 	/**
@@ -198,6 +200,9 @@ class DigitalAssetManagementActions {
 						my.renderBreadcrumb(data);
 						my.renderContent(data);
 						my.loadThumbs();
+						break;
+					case 'getThumbnail':
+						my.renderThumb(data);
 						break;
 					default:
 						top.TYPO3.Notification.warning('Request failed', 'Unknown method: ' + method);
