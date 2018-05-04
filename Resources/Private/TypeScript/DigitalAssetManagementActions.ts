@@ -34,7 +34,7 @@ class DigitalAssetManagementActions {
 	static filePartial: string = '<div class="grid file {mimetype}">\n' +
 		// '    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
 		'    <div class="preview" >'+
-		'<img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="{thumburl}"></div>' +
+		'<img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="{identifier}"></div>' +
 		'    <div class="info">\n' +
 		'    <h5>{name}</h5>\n' +
 		'    <p>{lll:dam.labels.filesize}: {size} <br>{lll:dam.labels.modified}: {modification_date_formated}</p>\n' +
@@ -149,15 +149,33 @@ class DigitalAssetManagementActions {
 		}
 	}
 
+	/**
+	 *  load thumbnail from getThumbnail
+	 *  @todo: only request images which are in the viewport
+	 */
 	protected static loadThumbs() {
+		let my = DigitalAssetManagementActions;
 		$('.grid.image').each(function(index, el){
 			let $el = $(this).find('img');
 			let src = $el.attr('data-src');
 			console.log('src ' + src);
+			let query = {};
+			query['getThumbnail'] = src;
 			if (src) {
-				// $el.css('background-image', 'url(\''+src+'\')');
-				$el.attr('src', src);
-				$(this).find('.icon').addClass('small');
+				$.ajax({
+					url: TYPO3.settings.ajaxUrls.dam_request,
+					data: query
+				}).done((data): void => {
+					console.log(data);
+				}).fail((err: any): void => {
+					console.log('DigitalAssetManagement request promise fail ' + JSON.stringify(err));
+					top.TYPO3.Notification.warning('Request failed', 'Thumbnail can not be displayed. ' + err.readyState);
+					my.renderError(err);
+				});
+
+				// // $el.css('background-image', 'url(\''+src+'\')');
+				// $el.attr('src', src);
+				// $(this).find('.icon').addClass('small');
 			}
 		});
 	}
