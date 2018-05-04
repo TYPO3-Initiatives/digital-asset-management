@@ -181,7 +181,7 @@ abstract class AbstractFileSystemService implements FileSystemInterface
      */
     public function thumbnail($path, $base64 = false, $width = null, $height = 200, $method = 'fit', $quality = 75, $sharpen = false): string
     {
-        if (!file_exists($path)) return $path;
+        if (!file_exists($path)) return '';
         $result = '';
         // Check the image dimensions
         $dimensions = getimagesize($path);
