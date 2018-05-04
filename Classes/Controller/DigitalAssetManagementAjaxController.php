@@ -71,7 +71,7 @@ class DigitalAssetManagementAjaxController
         $result['debug'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
         if (is_array($fileStorages)){
             $storageId = null;
-            if (($path !== "") && (strlen($path)>1)) {
+            if (($path !== "") && (strlen($path) > 1)) {
                 list($storageId, $path) = explode(":", $path, 2);
             }
             if ($path === "") {
@@ -89,7 +89,7 @@ class DigitalAssetManagementAjaxController
             /** @var ResourceStorage $fileStorage  */
             foreach ($fileStorages as $fileStorage) {
                 $storageInfo = $fileStorage->getStorageRecord();
-                if ((count($fileStorages) == 1) || ($storageId && ($storageInfo['uid'] == $storageId))) {
+                if ((count($fileStorages) === 1) || ($storageId && ($storageInfo['uid'] === $storageId))) {
                     $identifier = $storageInfo['uid'] . ':';
                     $fileMounts = $fileStorage->getFileMounts();
                     if (!empty($fileMounts)) {
@@ -163,8 +163,8 @@ class DigitalAssetManagementAjaxController
     }
 
     /**
-     * get file and folder content for a path
-     * empty string means get all storages or mounts of the be-user or the root level of a single available storage
+     * get thumbnail from image file
+     * only local storages are supported until now
      *
      * @param string $path
      * @return array
@@ -183,8 +183,7 @@ class DigitalAssetManagementAjaxController
             if ($storageId && !empty($path)) {
                 /** @var ResourceStorage $fileStorage  */
                 foreach ($fileStorages as $fileStorage) {
-                    $storageInfo = $fileStorage->getStorageRecord();
-                    if ($storageInfo['uid'] == $storageId) {
+                    if (($fileStorage->getUid() == $storageId) && ($fileStorage->getDriverType() === 'Local')) {
                         $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
                         if ($service) {
                             $file = $fileStorage->getFile($path);
