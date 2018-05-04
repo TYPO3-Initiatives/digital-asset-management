@@ -168,6 +168,146 @@ abstract class AbstractFileSystemService implements FileSystemInterface
     }
 
     /**
+     * get file thumbnail
+     *
+     * @param string $path
+     * @param bool $base64
+     * @param int $width
+     * @param int $height
+     * @param string $method crop, fit, adapt
+     * @param int $quality // the quality of any generated JPGs on a scale of 0 to 100
+     * @param bool $sharpen  // Shrinking images can blur details, perform a sharpen on re-scaled images?
+     * @return string
+     */
+    public function thumbnail($path, $base64 = false, $width = null, $height = 200, $method = 'fit', $quality = 75, $sharpen = false): string
+    {
+        if (!file_exists($path)) return $path;
+        $result = '';
+        // Check the image dimensions
+        $dimensions = getimagesize($path);
+        $source_width = $dimensions[0];
+        $source_height = $dimensions[1];
+        $mime = $dimensions['mime'];
+        $source_ratio = $source_width / $source_height;
+        $dst_width = $width;
+        $dst_height = $height;
+        $new_width = $dst_width;
+        $new_height = $dst_height;
+        $offset_x = 0;
+        $offset_y = 0;
+        if ($method == 'crop') {
+            if (!(($source_width <= $dst_width) && ($source_height <= $dst_height))) {
+                $dst_ratio = $dst_width / $dst_height;
+                if ($source_ratio > $dst_ratio) {
+                    $new_width = $dst_height * $source_ratio;
+                } else {
+                    $new_height = $dst_width / $source_ratio;
+                }
+                $offset_x = (int) floor((($new_width - $dst_width) / 2) * $source_width / $new_width);
+                $offset_y = (int) round((($new_height - $dst_height) / 2) * $source_height / $new_height);
+            } else {
+                return '';
+            }
+        } elseif ($method == 'fit') {
+            if (empty($dst_width)) {
+                $dst_width = $source_ratio * $dst_height;
+            }
+            if (empty($dst_height)) {
+                $dst_height = $dst_width / $source_ratio;
+            }
+            $dst_ratio = $dst_width / $dst_height;
+            if ($source_ratio < $dst_ratio) {
+                $dst_width = $dst_height * $source_ratio;
+                $new_width = $dst_width;
+                $new_height = $dst_height;
+            } else {
+                $dst_height = $dst_width / $source_ratio;
+                $new_height = $dst_height;#
+                $new_width = $dst_width;
+            }
+        } elseif ($method == 'adapt') {
+            if (!(($source_width <= $dst_width) || ($source_height <= $dst_height))) {
+                if ($source_ratio < 1) {
+                    $dst_height = $dst_width / $source_ratio;
+                    $new_height = $dst_height;
+                } else {
+                    $dst_width = $dst_height * $source_ratio;
+                    $new_width = $dst_width;
+                }
+            } else {
+                return '';
+            }
+        }
+        $new_width = (int) ceil($new_width);
+        $new_height = (int) ceil($new_height);
+        $dst_width = (int) ceil($dst_width);
+        $dst_height = (int) ceil($dst_height);
+        $dst = ImageCreateTrueColor($dst_width, $dst_height);
+        $whiteBackground = imagecolorallocate($dst, 255, 255, 255);
+        imagefill($dst,0,0,$whiteBackground); // fill the background with white
+        switch ($mime) {
+            case 'image/png':
+                $src = ImageCreateFromPng($path); // original image
+                imagealphablending($dst, false);
+                imagesavealpha($dst, true);
+                $transparent = imagecolorallocatealpha($dst, 255, 255, 255, 127);
+                imagefilledrectangle($dst, 0, 0, $new_width, $new_height, $transparent);
+                break;
+            case 'image/gif':
+                $src = ImageCreateFromGif($path); // original image
+                break;
+            case 'image/jpg':
+            case 'image/jpeg':
+            case 'image/djpeg':
+                $src = ImageCreateFromJpeg($path); // original image
+                ImageInterlace($dst, 1); // Enable interlancing (progressive JPG, smaller size file)
+                break;
+        }
+        ImageCopyResampled($dst, $src, 0, 0, $offset_x, $offset_y, $new_width, $new_height, $source_width, $source_height); // do the resize in memory
+        ImageDestroy($src);
+        // sharpen the image?
+        // NOTE: requires PHP compiled with the bundled version of GD (see http://php.net/manual/en/function.imageconvolution.php)
+        if ($sharpen == true && function_exists('imageconvolution')) {
+            $intFinal = $new_width * (750.0 / $source_width);
+            $intA = 52;
+            $intB = -0.27810650887573124;
+            $intC = .00047337278106508946;
+            $intRes = $intA + $intB * $intFinal + $intC * $intFinal * $intFinal;
+            $intSharpness =  max(round($intRes), 0);
+            $arrMatrix = array(
+                array(-1, -2, -1),
+                array(-2, $intSharpness + 12, -2),
+                array(-1, -2, -1)
+            );
+            imageconvolution($dst, $arrMatrix, $intSharpness, 0);
+        }
+        // Enable output buffering
+        ob_start();
+        switch ($mime) {
+            case 'image/png':
+                $ok = ImagePng($dst, null, 9);
+                break;
+            case 'image/gif':
+                $ok = ImageGif($dst);
+                break;
+            default:
+                $ok = ImageJpeg($dst, null, $quality);
+                break;
+        }
+        if ($ok) {
+            // Capture the output
+            $result = ob_get_clean();
+            if ($base64) {
+                $result = 'data:' . $mime . ';base64,' . base64_encode($result);
+            }
+        }
+        // Clear the output buffer
+        ob_end_clean();
+        ImageDestroy($dst);
+        return $result;
+    }
+
+    /**
      * array of files/folders/storages as an assoziative array
      * this can be:
      *  if there is only one storage the content of that storage is returned
@@ -208,6 +348,9 @@ abstract class AbstractFileSystemService implements FileSystemInterface
                 if ($withMetadata) {
                     $newFile['meta'] = $this->getMetadata($file->getIdentifier());
                     $newFile['references'] = $this->getReferences($file->getIdentifier());
+                }
+                if ($newFile['mimetype'] === 'image/jpeg') {
+                    $newFile['thumburl'] = $this->thumbnail($_SERVER["DOCUMENT_ROOT"].$newFile['url'], true);
                 }
                 $fileArray[] = $newFile;
             }

@@ -163,6 +163,43 @@ class DigitalAssetManagementAjaxController
     }
 
     /**
+     * get file and folder content for a path
+     * empty string means get all storages or mounts of the be-user or the root level of a single available storage
+     *
+     * @param string $path
+     * @return array
+     */
+    protected function getThumbnailAction($path = "")
+    {
+        $backendUser = $this->getBackendUser();
+        // Get all storage objects
+        /** @var ResourceStorage[] $fileStorages */
+        $fileStorages = $backendUser->getFileStorages();
+        /** @var FileSystemInterface $service */
+        $service = null;
+        $result['debug'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
+        if (is_array($fileStorages) && (strlen($path)>6)) {
+            list($storageId, $path) = explode(":", $path, 2);
+            if ($storageId && !empty($path)) {
+                /** @var ResourceStorage $fileStorage  */
+                foreach ($fileStorages as $fileStorage) {
+                    $storageInfo = $fileStorage->getStorageRecord();
+                    if ($storageInfo['uid'] == $storageId) {
+                        $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
+                        if ($service) {
+                            $file = $fileStorage->getFile($path);
+                            $thumb = $service->thumbnail(rtrim($_SERVER["DOCUMENT_ROOT"],"/").$file->getPublicUrl(), true);
+                            unset($service);
+                        }
+                        break;
+                    }
+                }
+            }
+            return ['thumbnail' => $thumb];
+        }
+    }
+
+    /**
      * Returns an instance of LanguageService
      *
      * @return \TYPO3\CMS\Core\Localization\LanguageService
