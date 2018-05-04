@@ -188,7 +188,7 @@ class DigitalAssetManagementAjaxController
                         $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
                         if ($service) {
                             $file = $fileStorage->getFile($path);
-                            $thumb = $service->thumbnail(rtrim($_SERVER["DOCUMENT_ROOT"],"/").$file->getPublicUrl(), true);
+                            $thumb = $service->thumbnail($_SERVER["DOCUMENT_ROOT"].$file->getPublicUrl(), true);
                             unset($service);
                         }
                         break;

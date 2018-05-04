@@ -349,9 +349,10 @@ abstract class AbstractFileSystemService implements FileSystemInterface
                     $newFile['meta'] = $this->getMetadata($file->getIdentifier());
                     $newFile['references'] = $this->getReferences($file->getIdentifier());
                 }
-                if ($newFile['mimetype'] === 'image/jpeg') {
+                // json base64 inline thumbnail
+                /*if ($newFile['mimetype'] === 'image/jpeg') {
                     $newFile['thumburl'] = $this->thumbnail($_SERVER["DOCUMENT_ROOT"].$newFile['url'], true);
-                }
+                }*/
                 $fileArray[] = $newFile;
             }
         } else {
