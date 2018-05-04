@@ -34,7 +34,7 @@ class DigitalAssetManagementActions {
 	static filePartial: string = '<div class="grid file {mimetype}">\n' +
 		// '    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
 		'    <div class="preview" >'+
-		'<img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="/{thumburl}"></div>' +
+		'<img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="{thumburl}"></div>' +
 		'    <div class="info">\n' +
 		'    <h5>{name}</h5>\n' +
 		'    <p>{lll:dam.labels.filesize}: {size} <br>{lll:dam.labels.modified}: {modification_date_formated}</p>\n' +
