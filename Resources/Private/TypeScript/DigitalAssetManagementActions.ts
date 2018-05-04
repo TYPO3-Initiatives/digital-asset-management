@@ -22,8 +22,8 @@ import moment = require('moment');
  */
 class DigitalAssetManagementActions {
 
-	static folderPartial: string = '    <div class="card folder-action d-inline-block {mimetype}" data-method="getContent" ' +
-		'data-parameter="{identifier}" style="width: 180px;">\n' +
+	static folderPartial: string = '    <div class="grid folder-action {mimetype}" data-method="getContent" ' +
+		'data-parameter="{identifier}">\n' +
 		'   <div class="icon folder-icon {type}"></div>' +
 		'   <div class="card-body">\n' +
 		'   <h5 class="card-title">{name}</h5>\n' +
@@ -31,15 +31,15 @@ class DigitalAssetManagementActions {
 		'    </div>\n' +
 		'  </div>\n';
 
-	static filePartial: string = '<div class="card d-inline-block {mimetype}" style="width: 180px;">\n' +
+	static filePartial: string = '<div class="grid file {mimetype}">\n' +
 		// '    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
-		'    <div class="thumbnail">'+
-		'<img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="{thumburl}"></div>' +
-		'    <div class="icon icon-mimetypes-{mimetype}"></div>' +
-		'    <div class="card-body">\n' +
-		'    <h5 class="card-title">{name}</h5>\n' +
-		'    <p class="card-text">{lll:dam.labels.filesize}: {size} <br>{lll:dam.labels.modified}: {modification_date_formated}</p>\n' +
-		'    </div>\n' +
+		'    <div class="preview" >'+
+		'<img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="/{url}"></div>' +
+		'    <div class="info">\n' +
+		'    <h5>{name}</h5>\n' +
+		'    <p>{lll:dam.labels.filesize}: {size} <br>{lll:dam.labels.modified}: {modification_date_formated}</p>\n' +
+		'    </div>' +
+		'<div class="icon icon-mimetypes-{mimetype}" />\n'+
 		'  </div>\n';
 
 	static breadcrumbPartial: string = '<span class="folder-action" data-method="getContent" ' +
@@ -150,10 +150,12 @@ class DigitalAssetManagementActions {
 	}
 
 	protected static loadThumbs() {
-		$('.card').each(function(index, el){
-			let $el = $(this).find('.thumbnail img');
+		$('.grid.image').each(function(index, el){
+			let $el = $(this).find('img');
 			let src = $el.attr('data-src');
+			console.log('src ' + src);
 			if (src) {
+				// $el.css('background-image', 'url(\''+src+'\')');
 				$el.attr('src', src);
 				$(this).find('.icon').addClass('small');
 			}
@@ -177,7 +179,7 @@ class DigitalAssetManagementActions {
 					case 'getContent':
 						my.renderBreadcrumb(data);
 						my.renderContent(data);
-						// my.loadThumbs();
+						my.loadThumbs();
 						break;
 					default:
 						top.TYPO3.Notification.warning('Request failed', 'Unknown method: ' + method);
