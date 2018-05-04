@@ -105,7 +105,7 @@ class DigitalAssetManagementActions {
 				// @todo: how to get the thumbnail images without viewhelper?
 				// Add mimetype as two classes: image/jpeg -> image jpeg
 				file.mimetype = file.mimetype.replace('/', ' ');
-				file.modification_date_formated = moment(file.modification_date).format(top.TYPO3.settings.DateTimePicker.DateFormat[1] || 'YYYY-MM-DD');
+				file.modification_date_formated = moment.unix(file.modification_date).format(top.TYPO3.settings.DateTimePicker.DateFormat[1] || 'YYYY-MM-DD');
 				html += my.replaceTemplateVars(my.filePartial, file);
 			}
 			$('.files').html(html);
