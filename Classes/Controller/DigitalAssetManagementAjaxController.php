@@ -177,7 +177,7 @@ class DigitalAssetManagementAjaxController
         $fileStorages = $backendUser->getFileStorages();
         /** @var FileSystemInterface $service */
         $service = null;
-        $result['debug'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
+        //$result['debug'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
         if (is_array($fileStorages) && (strlen($path)>6)) {
             list($storageId, $path) = explode(":", $path, 2);
             if ($storageId && !empty($path)) {
@@ -188,7 +188,7 @@ class DigitalAssetManagementAjaxController
                         $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
                         if ($service) {
                             $file = $fileStorage->getFile($path);
-                            $thumb = $service->thumbnail($_SERVER["DOCUMENT_ROOT"].$file->getPublicUrl(), true);
+                            $thumb = $service->thumbnail(rtrim($_SERVER["DOCUMENT_ROOT"],"/").'/'.$file->getPublicUrl(), true);
                             unset($service);
                         }
                         break;
