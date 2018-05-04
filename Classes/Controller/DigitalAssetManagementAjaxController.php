@@ -178,6 +178,7 @@ class DigitalAssetManagementAjaxController
         /** @var FileSystemInterface $service */
         $service = null;
         //$result['debug'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
+        $path = urldecode($path);
         if (is_array($fileStorages) && (strlen($path)>6)) {
             list($storageId, $path) = explode(":", $path, 2);
             if ($storageId && !empty($path)) {

@@ -188,6 +188,7 @@ abstract class AbstractFileSystemService implements FileSystemInterface
         $source_width = $dimensions[0];
         $source_height = $dimensions[1];
         $mime = $dimensions['mime'];
+        if (!in_array($mime, ['image/png', 'image/gif', 'image/jpeg', 'image/jpg'] )) return '';
         $source_ratio = $source_width / $source_height;
         $dst_width = $width;
         $dst_height = $height;
