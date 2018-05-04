@@ -38,13 +38,24 @@ div.digital-asset-management .grid:hover {
 	background-color: #dddddd;
 }
 
+div.digital-asset-management .grid.image:hover {
+	border: 1px solid #dddddd;
+}
+
 div.digital-asset-management .grid:hover .info {
 	background: rgba(255, 255, 255, 0.7);
 }
 
-.digital-asset-management .folder-action {
+div.digital-asset-management .folder-action {
 	cursor: pointer;
 }
+
+
+div.digital-asset-management .file {
+	cursor: pointer;
+}
+
+
 
 /* Breadcrumb */
 .digital-asset-management .breadcrumb .folder-action:hover {
@@ -65,7 +76,7 @@ div.digital-asset-management .grid:hover .info {
 
 div.grid {
 	position: relative;
-	/*border: 1px solid black;*/
+	border: 1px solid white;
 	min-width: 100px;
 	height: 200px;
 	float: left;
@@ -73,12 +84,12 @@ div.grid {
 }
 
 div.grid.image {
-	margin: 2px 2px 0 0;
+	margin: 20px 2px 0 0;
 }
 
 div.folder, div.preview {
 	position: relative;
-	min-width: 160px;
+	/*min-width: 160px;*/
 	height: 100%;
 }
 
@@ -209,6 +220,11 @@ div.info img.jpg, div.info img.png, div.info img.gif {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-mount.svg");
 }
 
+
+
+.icon-mimetypes-audio {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-media-audio.svg");
+}
 .icon-mimetypes-image {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-media-image.svg");
 }
@@ -229,4 +245,16 @@ div.info img.jpg, div.info img.png, div.info img.gif {
 }
 .icon-mimetypes-powerpoint {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-powerpoint.svg");
+}
+.icon-mimetypes-text {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-text-text.svg");
+}
+.icon-mimetypes-text.html {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-text-html.svg");
+}
+.icon-mimetypes-text.javascript {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-text-js.svg");
+}
+.icon-mimetypes-text.typoscript {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-text-typoscript.svg");
 }
