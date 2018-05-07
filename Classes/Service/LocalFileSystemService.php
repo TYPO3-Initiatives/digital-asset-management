@@ -118,5 +118,4 @@ class LocalFileSystemService extends AbstractFileSystemService implements FileSy
         }
         return $result;
     }
-
 }
