@@ -12,6 +12,26 @@
       <trans-unit id="mlang_tabs_tab">
         <source>Digital Asset Management</source>
       </trans-unit>
+
+      <trans-unit id="dam.labels.dam">
+        <source>Digital Asset Management</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.hereareyourfiles">
+        <source>Here are your files</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.view">
+        <source>View</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.view.list">
+        <source>List</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.view.symbols">
+        <source>Symbols</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.view.photos">
+        <source>Photos</source>
+      </trans-unit>
+
       <trans-unit id="dam.labels.files">
         <source>Files</source>
       </trans-unit>
