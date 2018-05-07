@@ -3,7 +3,8 @@
 	  data-namespace-typo3-fluid="true">
 
 <div class="page-header bg-dark text-white">
-	<h1>Digital Asset Management <small>Here are your files.</small></h1>
+	<h1><f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.dam" />&nbsp;
+		<small><f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.hereareyourfiles" />.</small></h1>
 </div>
 <div class="container-fluid digital-asset-management">
 	<div class="row">
@@ -20,56 +21,55 @@
 			</div>
 		</div>
 		<div class="col-xs-12 col-md-10">
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+				<a class="navbar-brand" href="#">Navbar</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav mr-auto">
+						<li class="nav-item active">
+							<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#">Link</a>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.view"/>
+							</a>
+							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+								<div class="dropdown-item view-action" data-action="view-list">
+									<f:image class="ui-icon" src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/content/content-menu-thumbnail.svg"/>
+									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.view.list"/></div>
+								<div class="dropdown-item view-action" data-action="view-symbols">
+									<f:image src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/content/content-image.svg"/>
+									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.view.symbols"/></div>
+								<div class="dropdown-divider"></div>
+								<div class="dropdown-item view-action" data-action="view-photo">
+									<f:image src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/content/content-menu-thumbnail.svg"/>
+									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.view.photos"/></div>
+							</div>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link disabled" href="#">Disabled</a>
+						</li>
+					</ul>
+					<form class="form-inline my-2 my-lg-0">
+						<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+						<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+					</form>
+				</div>
+			</nav>
 			<div class="header">
-				<h1>Files <small class="breadcrumb">{storages.1.storageRecord.name}</small></h1>
+				<div class="breadcrumb"></div>
 			</div>
-			<div class="maincontent">
+			<div class="maincontent view-symbols">
 				<div class="row folders">
 				</div>
 				<div class="row files">
 				</div>
-
-				<f:comment>
-				<f:if condition="{content.folders}">
-					<f:then>
-						<div class="row">
-							<f:for each="{content.folders}" as="folder">
-								<div class="card d-inline-block" style="width: 180px;">
-									<core:iconForResource resource="{folder}" size="large" />
-									<div class="card-body">
-										<h5 class="card-title">{folder.name}</h5>
-										<p class="card-text">Items: {folder.uid}</p>
-									</div>
-								</div>
-							</f:for>
-						</div>
-					</f:then>
-					<f:else>
-						<p>No Folders found</p>
-					</f:else>
-				</f:if>
-				<f:if condition="{content.files}">
-					<f:then>
-						<div class="row">
-							<f:for each="{content.files}" as="file">
-								<div class="card d-inline-block" style="width: 180px;">
-									<f:image class="card-img-top" image="{file}" width="180c" height="120c"/>
-									<div class="card-body">
-										<h5 class="card-title">{file.name}</h5>
-										<p class="card-text">Size: {file.size} <br>Modified: {file.uid} {file.properties.modification_date -> f:format.date()}</p>
-										<a href="#" class="btn btn-primary">Go somewhere</a>
-									</div>
-								</div>
-							</f:for>
-						</div>
-					</f:then>
-					<f:else>
-						<p>No Files found</p>
-					</f:else>
-				</f:if>
-				</f:comment>
-
-
 			</div>
 		</div>
 		<div class="errorlog col-12"></div>
