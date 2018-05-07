@@ -29,9 +29,17 @@ div {
 	background-color: initial;
 	/*width: 180px;*/
 }
-.digital-asset-management .grid .folder {
-	cursor: pointer;
+
+.digital-asset-management .view-symbols .grid .folder {
 	width: 180px;
+}
+.digital-asset-management .view-list .grid .folder {
+	width: 24px;
+	display: inline-block;
+}
+.digital-asset-management .view-list .card-body {
+	display: inline-block;
+	padding: 0;
 }
 
 div.digital-asset-management .grid:hover {
@@ -42,9 +50,9 @@ div.digital-asset-management .grid.image:hover {
 	border: 1px solid #dddddd;
 }
 
-div.digital-asset-management .grid:hover .info {
-	background: rgba(255, 255, 255, 0.7);
-}
+/*div.digital-asset-management .grid:hover .info {*/
+	/*background: rgba(255, 255, 255, 0.7);*/
+/*}*/
 
 div.digital-asset-management .folder-action {
 	cursor: pointer;
@@ -74,7 +82,7 @@ div.digital-asset-management .file {
 	clear: both;
 }
 
-div.grid {
+div.digital-asset-management .view-symbols .grid {
 	position: relative;
 	border: 1px solid white;
 	min-width: 100px;
@@ -83,28 +91,82 @@ div.grid {
 	margin: 20px 20px 0 0;
 }
 
+div.digital-asset-management .view-symbols .folders .grid {
+	height: 150px;
+}
+
+
+div.digital-asset-management .view-list .grid {
+	position: relative;
+	border: 1px solid green;
+	width: 100%;
+	height: 40px;
+	margin: 10px 10px 0 0;
+	padding-top: 5px;
+	/* debug */
+	margin-bottom: 50px;
+}
+
+div.digital-asset-management .view-list .grid-cell {
+	display: inline-block;
+	/*min-width: 20%;*/
+}
+
+div.digital-asset-management .view-list .grid-cell.icon {
+	width: 5%;
+	float: left;
+}
+div.digital-asset-management .view-list .grid-cell.filename {
+	width: 30%;
+}
+div.digital-asset-management .view-list .grid-cell.filesize {
+	width: 10%;
+}
+div.digital-asset-management .view-list .grid-cell.moddate {
+	width: 20%;
+}
+
+
 div.grid.image {
 	margin: 20px 2px 0 0;
 }
 
-div.folder, div.preview {
+div.digital-asset-management .folder,
+div.digital-asset-management .view-symbols .preview {
 	position: relative;
 	/*min-width: 160px;*/
 	height: 100%;
 }
+div.digital-asset-management .view-list .preview {
+	display: none;
+}
+
+div.digital-asset-management .view-list .info {
+	padding: 2px;
+	bottom: 0;
+	width: 90%;
+	overflow: hidden;
+	display: inline-block;
+}
+
 
 /*div.folder {*/
 	/*background-color: yellow;*/
 	/*cursor: pointer;*/
 /*}*/
 
-img {
+div.digital-asset-management .view-symbols .preview img {
 	position: relative;
 	height: 100%;
 	width: auto;
 }
 
-div.info {
+.dropdown-item img {
+	width: 24px;
+}
+
+/* Symbol view */
+div.digital-asset-management .view-symbols .info {
 	position: absolute;
 	padding: 2px;
 	bottom: 0;
@@ -112,24 +174,27 @@ div.info {
 	width: 100%;
 	background: rgba(255, 255, 255, 0.8);
 	overflow: hidden;
+	text-align: center;
 }
 
-h5, p {
+.digital-asset-management .view-symbols h5,
+.digital-asset-management .view-symbols p {
 	margin: 0;
 	padding: 0;
-	font-size: 90%;
 	font-family: Arial, Helvetica, sans-serif;
 	color: #000;
 }
 
-div.info img.gpx {
+.digital-asset-management .view-symbols .info img.gpx {
 	height: 100px;
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
 }
 
-div.info img.jpg, div.info img.png, div.info img.gif {
+.digital-asset-management .view-symbols .info img.jpg,
+.digital-asset-management .view-symbols .info img.png,
+.digital-asset-management .view-symbols .info img.gif {
 	margin: 15px 5px;
 	height: 30px;
 	width: auto;
@@ -137,51 +202,8 @@ div.info img.jpg, div.info img.png, div.info img.gif {
 }
 
 
-
-
-
-/*.digital-asset-management .image .thumbnail {*/
-	/*!*background-image: url("/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png");*!*/
-	/*!*background-repeat: no-repeat;*!*/
-	/*!*background-size: auto;*!*/
-	/*!*background-position: center;*!*/
-	/*height: 180px;*/
-	/*width: 100%;*/
-	/*position: absolute;*/
-/*}*/
-
-/*.digital-asset-management .card .image,*/
-/*.digital-asset-management .card .thumbnail {*/
-	/*height: 180px;*/
-	/*!*min-width: 180px;*!*/
-	/*width: auto;*/
-/*}*/
-
-/*.digital-asset-management .card .thumbnail img {*/
-	/*width: auto;*/
-	/*height: 100%;*/
-/*}*/
-
-/*.digital-asset-management .card .image {*/
-	/*width: initial;*/
-	/*height: 180px;*/
-/*}*/
-
-/*.digital-asset-management .card .thumbnail {*/
-	/*background-size: auto 180px;*/
-	/*background-repeat: no-repeat;*/
-/*}*/
-
-
-
-
-
-
-
-
-
 /* Icons */
-.digital-asset-management .icon {
+.digital-asset-management .view-symbols .icon {
 	background-repeat: no-repeat;
 	background-size: auto;
 	background-position: center;
@@ -191,15 +213,36 @@ div.info img.jpg, div.info img.png, div.info img.gif {
 	top:0;
 }
 
+.digital-asset-management .view-list .icon {
+	background-repeat: no-repeat;
+	background-size: auto;
+	background-position: center;
+	position: relative;
+	display: inline-block;
+	height: 24px;
+	width: 24px;
+	top:5px;
+}
+
 .digital-asset-management .folder .icon {
 	position: relative;
 }
 
-.digital-asset-management .icon.small {
+.digital-asset-management .view-symbols .icon.small {
 	background-position: right bottom;
 	background-size: 30px;
 	height: 184px;
 }
+.digital-asset-management .view-list .icon.small {
+	background-position: center;
+}
+
+
+/* List view */
+.digital-asset-management .view-list .icon {
+	height: 20px;
+}
+
 
 .icon {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-other-other.svg");

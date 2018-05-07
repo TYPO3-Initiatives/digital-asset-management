@@ -24,22 +24,25 @@ class DigitalAssetManagementActions {
 
 	static folderPartial: string = '    <div class="grid folder-action {mimetype}" data-method="getContent" ' +
 		'data-parameter="{identifier}">\n' +
-		'   <div class="icon folder-icon {type}"></div>' +
-		'   <div class="card-body">\n' +
-		'   <h5 class="card-title">{name}</h5>\n' +
-		'    <p class="card-text">&nbsp;</p>\n' +
-		'    </div>\n' +
+		'   <div class="grid-cell" >\n'+
+		'      <div class="icon folder-icon {type}"></div>' +
+		'   </div>\n' +
+		'   <div class="info">\n' +
+		'      <div class="grid-cell filename"><h5 class="card-title">{name}</h5></div>\n' +
+		'   </div>\n' +
 		'  </div>\n';
 
 	static filePartial: string = '<div class="grid file {mimetype}">\n' +
 		// '    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
 		'    <div class="preview" >'+
-		'<img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="{identifier}"></div>' +
+		'<img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="{identifier}"></div>\n' +
+		'    <div class="grid-cell" >\n'+
+		'        <div class="icon icon-mimetypes-{mimetype}" /></div>\n'+
 		'    <div class="info">\n' +
-		'    <h5>{name}</h5>\n' +
-		'    <p>{lll:dam.labels.filesize}: {size} <br>{lll:dam.labels.modified}: {modification_date_formated}</p>\n' +
+		'      <div class="grid-cell filename"><h5>{name}</h5></div>\n' +
+		'      <div class="grid-cell filesize"><p><span class="grid-label">{lll:dam.labels.filesize}: </span>{size}</p></div>\n' +
+		'      <div class="grid-cell moddate"><p><span class="grid-label">{lll:dam.labels.modified}: </span>{modification_date_formated}</p></div>\n' +
 		'    </div>' +
-		'<div class="icon icon-mimetypes-{mimetype}" />\n'+
 		'  </div>\n';
 
 	static breadcrumbPartial: string = '<span class="folder-action" data-method="getContent" ' +
@@ -50,10 +53,6 @@ class DigitalAssetManagementActions {
 	 */
 	public static init(): void {
 		let my = DigitalAssetManagementActions;
-		// @todo: why does only 'top.' work here?
-		console.log(top.TYPO3.lang['localize.wizard.header']);
-		// todo: how include own labels?
-		console.log(top.TYPO3.lang['dam.labels.filesize']);
 		console.log('DigitalAssetManagement.init');
 		// my.renderBreadcrumb('/');
 		// @todo: get filetree starting point from user settings.
@@ -63,6 +62,15 @@ class DigitalAssetManagementActions {
 			let parameter = $(this).data('parameter');
 			console.log ( 'method: ' + method + ', par: ' + parameter);
 			my.request(method, parameter);
+		});
+		$('.digital-asset-management').on('click', '.view-action', function(): void {
+			let action = $(this).data('action');
+			let parameter = $(this).data('parameter');
+			console.log ( 'action: ' + action + ', par: ' + parameter);
+			// Remove all other view-* classes and add the clicked class
+			$('.maincontent').removeClass(function (index, className) {
+				return (className.match (/(^|\s)view-\S+/g) || []).join(' ');
+			}).addClass(action);
 		});
 	}
 
@@ -117,8 +125,6 @@ class DigitalAssetManagementActions {
 	protected static renderBreadcrumb(data: any): void {
 		let html = '';
 		let my = DigitalAssetManagementActions;
-		console.log('renderBreadCrumb');
-		console.log(data);
 		if (data.getContent && data.getContent.breadcrumbs) {
 			for (let i = 0; i < data.getContent.breadcrumbs.length; i++) {
 				const part = data.getContent.breadcrumbs[i];
@@ -158,7 +164,6 @@ class DigitalAssetManagementActions {
 		$('.grid.image').each(function(index, el){
 			let $el = $(this).find('img');
 			let src = $el.attr('data-src');
-			console.log('src ' + src);
 			if (src) {
 				my.request('getThumbnail', src);
 			}
@@ -167,14 +172,10 @@ class DigitalAssetManagementActions {
 
 	protected static renderThumb(data) {
 		let my = DigitalAssetManagementActions;
-		console.log('renderThumb');
-		console.log(data);
 		if (data.getThumbnail && data.getThumbnail.thumbnail) {
 			$('.grid.image').each(function (index, el) {
 				let $el = $(this).find('img');
-				console.log('renderThumb check image');
 				if (data.actionparam === $el.attr('data-src')){
-					console.log('renderThumb reffer');
 					$el.attr('src', data.getThumbnail.thumbnail);
 					$(this).find('.icon').addClass('small');
 				}
@@ -192,6 +193,7 @@ class DigitalAssetManagementActions {
 		let my = DigitalAssetManagementActions;
 		// @todo: why does TYPO3.sett... work here without top.?
 		let query = {};
+		let failedbefore = false;
 		query[method] = parameter;
 		$.getJSON(TYPO3.settings.ajaxUrls.dam_request, query)
 			.done((data: any): void => {
@@ -210,7 +212,10 @@ class DigitalAssetManagementActions {
 			})
 			.fail((err: any): void => {
 				console.log('DigitalAssetManagement request promise fail ' + JSON.stringify(err));
-				top.TYPO3.Notification.warning('Request failed', 'Content can not be displayed. ' + err.readyState);
+				if (!failedbefore) {
+					top.TYPO3.Notification.warning('Request failed', 'Content can not be displayed. ' + err.readyState);
+					failedbefore = true;
+				}
 				my.renderError(err);
 			});
 	}
