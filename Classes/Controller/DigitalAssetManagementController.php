@@ -75,14 +75,14 @@ class DigitalAssetManagementController
         //        $this->moduleTemplate->loadJavascriptLib('EXT:digital_asset_management/Resources/Public/JavaScript/DigitalAssetManagementActions.js');
         //$this->moduleTemplate->loadJavascriptLib('https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js');
         $this->moduleTemplate->getPageRenderer()->addCssFile('EXT:digital_asset_management/Resources/Public/Css/digitalassetmanagement.css');
-        $this->moduleTemplate->getPageRenderer()->addInlineLanguageLabelFile(GeneralUtility::getFileAbsFileName('EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf'));
+        $this->moduleTemplate->getPageRenderer()->addInlineLanguageLabelFile('EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf');
         //Include bootstrap css
         //@todo: include bootstrap css from TYPO3 not from CDN, how to?
         $this->moduleTemplate->getPageRenderer()->addCssFile('https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css');
         $this->initializeView('index');
         // Add shortcut button
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
-        $myButton = $buttonBar->makeShortcutButton()->setModuleName('my_info');
+        $myButton = $buttonBar->makeShortcutButton()->setModuleName('dam');
         $buttonBar->addButton($myButton);
         $this->moduleTemplate->setContent($this->view->render());
         return new HtmlResponse($this->moduleTemplate->renderContent());
