@@ -23,13 +23,30 @@ namespace TYPO3\CMS\DigitalAssetManagement\Utility;
  */
 class UserSettings
 {
+   /**
+    * @var \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+    */
+    protected $user;
+
+    /**
+     * Default constructor
+     */
+    public function __construct()
+    {
+        $this->user = $this->getBackendUser();
+    }
+
     /**
      * Get last visit path structure
      * @return string
      */
-    public static function getSavingPosition() : string
+    public function getSavingPosition() : string
     {
-        return unserialize($GLOBALS['BE_USER']->uc['damPath']);
+        $result = '';
+        if ($this->user->uc['damPath']) {
+            $result = $this->user->uc['damPath'];
+        }
+        return $result;
     }
 
     /**
@@ -37,11 +54,19 @@ class UserSettings
      *
      * @param $lastVisitPath
      */
-    public static function setSavingPosition($lastVisitPath) : void
+    public function setSavingPosition($lastVisitPath) : void
     {
-        $GLOBALS['BE_USER']->uc['damPath'] = serialize($lastVisitPath);
-        $GLOBALS['BE_USER']->writeUC();
+        $this->user->uc['damPath'] = $lastVisitPath;
+        $this->user->writeUC();
     }
 
-
+    /**
+     * Returns the current BE user.
+     *
+     * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+     */
+    protected function getBackendUser()
+    {
+        return $GLOBALS['BE_USER'];
+    }
 }

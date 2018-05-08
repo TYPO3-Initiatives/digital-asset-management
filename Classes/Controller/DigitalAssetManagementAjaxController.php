@@ -71,6 +71,12 @@ class DigitalAssetManagementAjaxController
         // $result['debug'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
         if (is_array($fileStorages)){
             $storageId = null;
+            if ($path === "") {
+                $settings = new \TYPO3\CMS\DigitalAssetManagement\Utility\UserSettings();
+                $path = $settings->getSavingPosition();
+            } elseif ($path === "*" ) {
+                $path = "";
+            }
             if (($path !== "") && (strlen($path) > 1)) {
                 list($storageId, $path) = explode(":", $path, 2);
             }
@@ -81,7 +87,7 @@ class DigitalAssetManagementAjaxController
             $folders = [];
             $breadcrumbs = [];
             $breadcrumbs[] = [
-                'identifier' => '',
+                'identifier' => '*',
                 'name' => 'home',
                 'type' => 'home'
             ];
@@ -196,6 +202,8 @@ class DigitalAssetManagementAjaxController
                             $folders = $service->listFolder($path);
                             unset($service);
                         }
+                        $settings = new \TYPO3\CMS\DigitalAssetManagement\Utility\UserSettings();
+                        $settings->setSavingPosition($identifier);
                         break;
                     }
                 }
