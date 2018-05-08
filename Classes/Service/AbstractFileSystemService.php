@@ -316,10 +316,18 @@ abstract class AbstractFileSystemService implements FileSystemInterface
      *
      * @param string $path
      * @param bool $withMetadata
+     * @param int $start
+     * @param int $maxNumberOfItems
+     * @param string $sort Property name used to sort the items.
+     *                     Among them may be: '' (empty, no sorting), name,
+     *                     fileext, size, tstamp and rw.
+     *                     If a driver does not support the given property, it
+     *                     should fall back to "name".
+     * @param bool $sortRev TRUE to indicate reverse sorting (last to first)
      * @throws \RuntimeException
      * @return array
      */
-    public function listFiles($path, $withMetadata = false): array
+    public function listFiles($path, $withMetadata = false, $start = 0, $maxNumberOfItems = 0, $sort = '', $sortRev = false): array
     {
         $fileArray = [];
         if ($this->storage) {
@@ -331,7 +339,7 @@ abstract class AbstractFileSystemService implements FileSystemInterface
                 $startingFolder = $storage->getFolder($path);
             }
             /** @var File[] $files */
-            $files = $storage->getFilesInFolder($startingFolder);
+            $files = $storage->getFilesInFolder($startingFolder, $start, $maxNumberOfItems, true, false, $sort, $sortRev);
             foreach ($files as $file){
                 $fileArr = $file->toArray();
                 $newFile = [];
@@ -350,10 +358,6 @@ abstract class AbstractFileSystemService implements FileSystemInterface
                     $newFile['meta'] = $this->getMetadata($file->getIdentifier());
                     $newFile['references'] = $this->getReferences($file->getIdentifier());
                 }
-                // json base64 inline thumbnail
-                /*if ($newFile['mimetype'] === 'image/jpeg') {
-                    $newFile['thumburl'] = $this->thumbnail($_SERVER["DOCUMENT_ROOT"].$newFile['url'], true);
-                }*/
                 $fileArray[] = $newFile;
             }
         } else {
@@ -364,10 +368,19 @@ abstract class AbstractFileSystemService implements FileSystemInterface
 
     /**
      * @param string $path
+     * @param int $start
+     * @param int $maxNumberOfItems
+     * @param string $sort Property name used to sort the items.
+     *                     Among them may be: '' (empty, no sorting), name,
+     *                     fileext, size, tstamp and rw.
+     *                     If a driver does not support the given property, it
+     *                     should fall back to "name".
+     * @param bool $sortRev TRUE to indicate reverse sorting (last to first)
+     *
      * @throws \RuntimeException
      * @return array
      */
-    public function listFolder($path): array
+    public function listFolder($path, $start = 0, $maxNumberOfItems = 0, $sort = '', $sortRev = false): array
     {
         $folderArray = [];
         if ($this->storage) {
@@ -378,7 +391,7 @@ abstract class AbstractFileSystemService implements FileSystemInterface
                 $startingFolder = $storage->getFolder($path);
             }
             /** @var Folder[] $folders */
-            $folders = $storage->getFoldersInFolder($startingFolder);
+            $folders = $storage->getFoldersInFolder($startingFolder, $start, $maxNumberOfItems, true,  false, $sort, $sortRev);
             foreach ($folders as $folder){
                 $folder = (array)$folder;
                 $newFolder = [];
