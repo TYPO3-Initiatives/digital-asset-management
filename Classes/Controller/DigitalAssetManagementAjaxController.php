@@ -46,7 +46,7 @@ class DigitalAssetManagementAjaxController
             if ($key === 'method') {
                 $result['method'] = $param;
                 $func = $param . 'Action';
-            } else {
+            } elseif ($key === 'params') {
                 $result['params'] = $param;
             }
         }
