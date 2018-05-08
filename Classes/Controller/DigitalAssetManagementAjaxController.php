@@ -68,7 +68,7 @@ class DigitalAssetManagementAjaxController
         $fileStorages = $backendUser->getFileStorages();
         /** @var FileSystemInterface $service */
         $service = null;
-        $result['debug'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
+        // $result['debug'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
         if (is_array($fileStorages)){
             $storageId = null;
             if (($path !== "") && (strlen($path) > 1)) {
@@ -87,55 +87,44 @@ class DigitalAssetManagementAjaxController
             ];
             $relPath = $path;
             /** @var ResourceStorage $fileStorage  */
-            foreach ($fileStorages as $fileStorage) {
-                $storageInfo = $fileStorage->getStorageRecord();
-                if ((count($fileStorages) === 1) || ($storageId && ($storageInfo['uid'] === $storageId))) {
-                    $identifier = $storageInfo['uid'] . ':';
-                    $fileMounts = $fileStorage->getFileMounts();
-                    if (!empty($fileMounts)) {
-                        foreach ($fileMounts as $fileMount) {
-                            if (strpos ( $path, $fileMount['path'] ) === 0) {
-                                $identifier .= $fileMount['path'];
-                                $breadcrumbs[] = [
-                                    'identifier' => $identifier,
+            if ($storageId === null) {
+                // no storage, mountpoint and folder selected
+                if (count($fileStorages) > 1) {
+                    // more than one storage
+                    foreach ($fileStorages as $fileStorage) {
+                        $storageInfo = $fileStorage->getStorageRecord();
+                        $fileMounts = $fileStorage->getFileMounts();
+                        if (!empty($fileMounts)) {
+                            // mount points exists in the storage
+                            foreach ($fileMounts as $fileMount) {
+                                $folders[] = [
+                                    'identifier' => $storageInfo['uid'] . ':' . $fileMount['path'],
                                     'name' => $fileMount['title'],
+                                    'storage_name' => $storageInfo['name'],
+                                    'storage' => $storageInfo['uid'],
                                     'type' => 'mount'
                                 ];
-                                $relPath = str_replace($fileMount['path'], '', $relPath);
                             }
-                        }
-                        unset($fileMounts);
-                    } else {
-                        $identifier .= '/';
-                        if (count($fileStorages) > 1) {
-                            $breadcrumbs[] = [
-                                'identifier' => $identifier,
+                            unset($fileMounts);
+                        } else {
+                            // no mountpoint exists in the storage
+                            $folders[] = [
+                                'identifier' => $storageInfo['uid'] . ':',
                                 'name' => $storageInfo['name'],
+                                'storage_name' => $storageInfo['name'],
+                                'storage' => $storageInfo['uid'],
                                 'type' => 'storage'
                             ];
                         }
+                        unset($storageInfo);
                     }
-                    $aPath = explode('/', $relPath);
-                    for ($i = 0; $i < count($aPath); $i++) {
-                        if ($aPath[$i] !== '') {
-                            $identifier .= $aPath[$i] . '/';
-                            $breadcrumbs[] = [
-                                'identifier' => $identifier,
-                                'name' => $aPath[$i],
-                                'type' => 'folder'
-                            ];
-                        }
-                    }
-                    $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
-                    if ($service) {
-                        $files = $service->listFiles($path);
-                        $folders = $service->listFolder($path);
-                        unset($service);
-                    }
-                    break;
-                } elseif ($storageId === null) {
+                } else {
+                    // only one storage
+                    $fileStorage = reset($fileStorages);
+                    $storageInfo = $fileStorage->getStorageRecord();
                     $fileMounts = $fileStorage->getFileMounts();
-                    if (!empty($fileMounts)) {
+                    if (count($fileMounts) > 1) {
+                        // more than one mountpoint
                         foreach ($fileMounts as $fileMount) {
                             $folders[] = [
                                 'identifier' => $storageInfo['uid'] . ':' . $fileMount['path'],
@@ -147,15 +136,68 @@ class DigitalAssetManagementAjaxController
                         }
                         unset($fileMounts);
                     } else {
-                        $folders[] = [
-                            'identifier' => $storageInfo['uid'] . ':',
-                            'name' => $storageInfo['name'],
-                            'storage_name' => $storageInfo['name'],
-                            'storage' => $storageInfo['uid'],
-                            'type' => 'storage'
-                        ];
+                        // only one mountpoint
+                        $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
+                        if ($service) {
+                            $files = $service->listFiles($path);
+                            $folders = $service->listFolder($path);
+                            unset($service);
+                        }
                     }
                     unset($storageInfo);
+                }
+            } else {
+                // storage or mountpoint selected
+                foreach ($fileStorages as $fileStorage) {
+                    $storageInfo = $fileStorage->getStorageRecord();
+                    if ((count($fileStorages) === 1) || ($storageId && ($storageInfo['uid'] == $storageId))) {
+                        // selected storage
+                        $identifier = $storageInfo['uid'] . ':';
+                        $fileMounts = $fileStorage->getFileMounts();
+                        if (!empty($fileMounts)) {
+                            // mountpoint exists
+                            foreach ($fileMounts as $fileMount) {
+                                if (strpos($path, $fileMount['path']) === 0) {
+                                    $identifier .= $fileMount['path'];
+                                    $breadcrumbs[] = [
+                                        'identifier' => $identifier,
+                                        'name' => $fileMount['title'],
+                                        'type' => 'mount'
+                                    ];
+                                    $relPath = str_replace($fileMount['path'], '', $relPath);
+                                }
+                            }
+                            unset($fileMounts);
+                        } else {
+                            // no mountpoint exists but more than one storage
+                            $identifier .= '/';
+                            if (count($fileStorages) > 1) {
+                                $breadcrumbs[] = [
+                                    'identifier' => $identifier,
+                                    'name' => $storageInfo['name'],
+                                    'type' => 'storage'
+                                ];
+                            }
+                        }
+                        $aPath = explode('/', $relPath);
+                        for ($i = 0; $i < count($aPath); $i++) {
+                            if ($aPath[$i] !== '') {
+                                $identifier .= $aPath[$i] . '/';
+                                $breadcrumbs[] = [
+                                    'identifier' => $identifier,
+                                    'name' => $aPath[$i],
+                                    'type' => 'folder'
+                                ];
+                            }
+                        }
+                        $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
+                        if ($service) {
+                            $files = $service->listFiles($path);
+                            $folders = $service->listFolder($path);
+                            unset($service);
+                        }
+                        break;
+                    }
                 }
             }
             return ['files' => $files, 'folders' => $folders, 'breadcrumbs' => $breadcrumbs];
