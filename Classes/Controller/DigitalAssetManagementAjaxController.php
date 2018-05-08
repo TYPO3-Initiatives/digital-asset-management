@@ -38,16 +38,20 @@ class DigitalAssetManagementAjaxController
     {
         $response = new JsonResponse();
         $result = [];
+        $result['method'] = '';
+        $result['params'] = [];
         $params = $request->getQueryParams();
         // Execute all query params starting with get using its values as parameter
-        foreach ($params as $key => $param){
-            if (strpos($key, 'get') === 0) {
-                $func = $key.'Action';
-                if (is_callable([$this, $func])) {
-                    $result['actionparam'] = $param;
-                    $result[$key] = call_user_func(array(DigitalAssetManagementAjaxController::class, $func), $param);
-                }
+        foreach ($params as $key => $param) {
+            if ($key === 'method') {
+                $result['method'] = $param;
+                $func = $param . 'Action';
+            } else {
+                $result['params'] = $param;
             }
+        }
+        if ($func && is_callable([$this, $func])) {
+            $result['result'] = call_user_func(array(DigitalAssetManagementAjaxController::class, $func), $result['params']);
         }
         $response->setPayload($result);
         return $response;
@@ -57,11 +61,16 @@ class DigitalAssetManagementAjaxController
      * get file and folder content for a path
      * empty string means get all storages or mounts of the be-user or the root level of a single available storage
      *
-     * @param string $path
+     * @param string|array $params
      * @return array
      */
-    protected function getContentAction($path = "")
+    protected function getContentAction($params = "")
     {
+        if (is_array($params)) {
+            $path = reset($params);
+        } else {
+            $path = $params;
+        }
         $backendUser = $this->getBackendUser();
         // Get all storage objects
         /** @var ResourceStorage[] $fileStorages */
@@ -216,11 +225,16 @@ class DigitalAssetManagementAjaxController
      * get thumbnail from image file
      * only local storages are supported until now
      *
-     * @param string $path
+     * @param string|array $params
      * @return array
      */
-    protected function getThumbnailAction($path = "")
+    protected function getThumbnailAction($params = "")
     {
+        if (is_array($params)) {
+            $path = reset($params);
+        } else {
+            $path = $params;
+        }
         $backendUser = $this->getBackendUser();
         // Get all storage objects
         /** @var ResourceStorage[] $fileStorages */
