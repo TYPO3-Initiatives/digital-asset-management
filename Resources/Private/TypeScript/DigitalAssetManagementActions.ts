@@ -16,6 +16,21 @@ import 'bootstrap';
 import moment = require('moment');
 // import Icons = require('TYPO3/CMS/Backend/Icons');
 
+
+interface ResponseObject {
+	method: string;
+	params: any;
+	result: any;
+
+	request: any;
+	response: any;
+}
+
+interface RequestCallback {
+	(data: ResponseObject): void;
+}
+
+
 /**
  * Module: TYPO3/CMS/Backend/InfoWindow
  * @exports TYPO3/CMS/Backend/InfoWindow
@@ -24,7 +39,7 @@ class DigitalAssetManagementActions {
 
 	static folderPartial: string = '    <div class="grid folder-action {mimetype}" data-method="getContent" ' +
 		'data-parameter="{identifier}">\n' +
-		'   <div class="grid-cell" >\n'+
+		'   <div class="grid-cell" >\n' +
 		'      <div class="icon folder-icon {type}"></div>' +
 		'   </div>\n' +
 		'   <div class="info">\n' +
@@ -34,14 +49,15 @@ class DigitalAssetManagementActions {
 
 	static filePartial: string = '<div class="grid file {mimetype}">\n' +
 		// '    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
-		'    <div class="preview" >'+
+		'    <div class="preview" >' +
 		'<img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="{identifier}"></div>\n' +
-		'    <div class="grid-cell" >\n'+
-		'        <div class="icon icon-mimetypes-{mimetype}" /></div>\n'+
+		'    <div class="grid-cell" >\n' +
+		'        <div class="icon icon-mimetypes-{mimetype}" /></div>\n' +
 		'    <div class="info">\n' +
 		'      <div class="grid-cell filename"><h5>{name}</h5></div>\n' +
 		'      <div class="grid-cell filesize"><p><span class="grid-label">{lll:dam.labels.filesize}: </span>{size}</p></div>\n' +
-		'      <div class="grid-cell moddate"><p><span class="grid-label">{lll:dam.labels.modified}: </span>{modification_date_formated}</p></div>\n' +
+		'      <div class="grid-cell moddate"><p><span class="grid-label">{lll:dam.labels.modified}: \<n></n>' +
+		'		</span>{modification_date_formated}</p></div>\n' +
 		'    </div>' +
 		'  </div>\n';
 
@@ -56,19 +72,19 @@ class DigitalAssetManagementActions {
 		console.log('DigitalAssetManagement.init');
 		// my.renderBreadcrumb('/');
 		// @todo: get filetree starting point from user settings.
-		my.request('getContent', '');
+		my.request('getContent', '', my.genericRequestCallback);
 		$('.digital-asset-management').on('click', '.folder-action', function(): void {
-			let method = $(this).data('method');
-			let parameter = $(this).data('parameter');
+			let method = this.dataset.method;
+			let parameter = this.dataset.parameter;
 			console.log ( 'method: ' + method + ', par: ' + parameter);
-			my.request(method, parameter);
+			my.request(method, parameter, my.genericRequestCallback);
 		});
 		$('.digital-asset-management').on('click', '.view-action', function(): void {
-			let action = $(this).data('action');
-			let parameter = $(this).data('parameter');
+			let action = this.dataset.action;
+			let parameter = this.dataset.parameter;
 			console.log ( 'action: ' + action + ', par: ' + parameter);
 			// Remove all other view-* classes and add the clicked class
-			$('.maincontent').removeClass(function (index, className) {
+			$('.maincontent').removeClass(function (index: number, className: string): string {
 				return (className.match (/(^|\s)view-\S+/g) || []).join(' ');
 			}).addClass(action);
 		});
@@ -84,18 +100,18 @@ class DigitalAssetManagementActions {
 
 	/**
 	 *
-	 * @param data object
+	 * @param data ResponseObject
 	 */
-	public static renderContent(data: any): void {
+	public static renderContent(data: ResponseObject): void {
 		let my = DigitalAssetManagementActions;
 		if (data && data.request) {
 			$('.errorlog').html(data.request + data.response);
 		}
-		if (data.getContent && (data.getContent.files || data.getContent.folder)) {
+		if (data.result && (data.result.files || data.result.folder)) {
 			// Show folders and files
 			let html = '';
-			for (let i = 0; i < data.getContent.folders.length; i++) {
-				const folder = data.getContent.folders[i];
+			for (let i = 0; i < data.result.folders.length; i++) {
+				const folder = data.result.folders[i];
 				// Icons.getIcon('apps-filetree-folder', 'large').done( (iconMarkup: string): void => {
 				// 	$('.folder-icon').html(iconMarkup);
 				// });
@@ -108,8 +124,8 @@ class DigitalAssetManagementActions {
 			$('.folders').html(html);
 			html = '';
 			// icon mimetypes-pdf
-			for (let i = 0; i < data.getContent.files.length; i++) {
-				const file = data.getContent.files[i];
+			for (let i = 0; i < data.result.files.length; i++) {
+				const file = data.result.files[i];
 				// @todo: how to get the thumbnail images without viewhelper?
 				// Add mimetype as two classes: image/jpeg -> image jpeg
 				file.mimetype = file.mimetype.replace('/', ' ');
@@ -122,12 +138,12 @@ class DigitalAssetManagementActions {
 		}
 	}
 
-	protected static renderBreadcrumb(data: any): void {
+	protected static renderBreadcrumb(data: ResponseObject): void {
 		let html = '';
 		let my = DigitalAssetManagementActions;
-		if (data.getContent && data.getContent.breadcrumbs) {
-			for (let i = 0; i < data.getContent.breadcrumbs.length; i++) {
-				const part = data.getContent.breadcrumbs[i];
+		if (data.result && data.result.breadcrumbs) {
+			for (let i = 0; i < data.result.breadcrumbs.length; i++) {
+				const part = data.result.breadcrumbs[i];
 				if (part.type === 'home') {
 					part.label = TYPO3.lang['dam.labels.files'];
 				} else {
@@ -142,12 +158,12 @@ class DigitalAssetManagementActions {
 			} else {
 				$('.breadcrumb').html('').addClass('empty');
 			}
-			if (data.getContent.files.length) {
+			if (data.result.files.length) {
 				$('.files').removeClass('empty');
 			} else {
 				$('.files').addClass('empty');
 			}
-			if (data.getContent.folders.length) {
+			if (data.result.folders.length) {
 				$('.folders').removeClass('empty');
 			} else {
 				$('.folders').addClass('empty');
@@ -165,18 +181,18 @@ class DigitalAssetManagementActions {
 			let $el = $(this).find('img');
 			let src = $el.attr('data-src');
 			if (src) {
-				my.request('getThumbnail', src);
+				my.request('getThumbnail', src, my.renderThumb);
 			}
 		});
 	}
 
-	protected static renderThumb(data) {
+	protected static renderThumb(data: ResponseObject) {
 		let my = DigitalAssetManagementActions;
-		if (data.getThumbnail && data.getThumbnail.thumbnail) {
+		if (data.result && data.result.thumbnail) {
 			$('.grid.image').each(function (index, el) {
 				let $el = $(this).find('img');
-				if (data.actionparam === $el.attr('data-src')){
-					$el.attr('src', data.getThumbnail.thumbnail);
+				if (data.params === $el.attr('data-src')){
+					$el.attr('src', data.result.thumbnail);
 					$(this).find('.icon').addClass('small');
 				}
 			});
@@ -187,28 +203,19 @@ class DigitalAssetManagementActions {
 	 * query a json backenendroute
 	 *
 	 * @param {string} method
-	 * @param {string} parameter
+	 * @param {array} parameter
+	 * @param {string} callback
 	 */
-	protected static request(method: string, parameter: string): void {
+	protected static request(method: string, parameter: string, callback: RequestCallback): void {
 		let my = DigitalAssetManagementActions;
 		// @todo: why does TYPO3.sett... work here without top.?
 		let query = {};
 		let failedbefore = false;
-		query[method] = parameter;
+		query['method'] = method;
+		query['params']	= parameter;
 		$.getJSON(TYPO3.settings.ajaxUrls.dam_request, query)
-			.done((data: any): void => {
-				switch (method) {
-					case 'getContent':
-						my.renderBreadcrumb(data);
-						my.renderContent(data);
-						my.loadThumbs();
-						break;
-					case 'getThumbnail':
-						my.renderThumb(data);
-						break;
-					default:
-						top.TYPO3.Notification.warning('Request failed', 'Unknown method: ' + method);
-				}
+			.done((data: ResponseObject): void => {
+				callback(data);
 			})
 			.fail((err: any): void => {
 				console.log('DigitalAssetManagement request promise fail ' + JSON.stringify(err));
@@ -220,7 +227,27 @@ class DigitalAssetManagementActions {
 			});
 	}
 
+	protected static genericRequestCallback(data: ResponseObject): void {
+		let my = DigitalAssetManagementActions;
+		let method = data.method;
+		switch (method) {
+			case 'getContent':
+				my.renderBreadcrumb(data);
+				my.renderContent(data);
+				my.loadThumbs();
+				break;
+			case 'getThumbnail':
+				my.renderThumb(data);
+				break;
+			default:
+				top.TYPO3.Notification.warning('Request failed', 'Unknown method: ' + method);
+		}
+	};
+
+
 	/**
+	 * Replace template variables surrounded by {|}.
+	 * Replace language keys surrounded by {lll:|}.
 	 *
 	 * @param {string} template
 	 * @param {object} data
