@@ -67,9 +67,19 @@ class DigitalAssetManagementAjaxController
     protected function getContentAction($params = "")
     {
         if (is_array($params)) {
-            $path = reset($params);
+            $path = $params['path'];
+            $start = ($params['start'] ? $params['start'] : 0);
+            $count = ($params['count'] ? $params['count'] : 0);
+            $sort = ($params['sort'] ? $params['sort'] : '');
+            $reverse = ($params['reverse'] ? $params['reverse'] : false);
+            $meta = ($params['meta'] ? $params['meta'] : false);
         } else {
             $path = $params;
+            $start = 0;
+            $count = 0;
+            $sort = '';
+            $reverse = false;
+            $meta = false;
         }
         $backendUser = $this->getBackendUser();
         // Get all storage objects
@@ -207,8 +217,8 @@ class DigitalAssetManagementAjaxController
                         }
                         $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
                         if ($service) {
-                            $files = $service->listFiles($path);
-                            $folders = $service->listFolder($path);
+                            $files = $service->listFiles($path, $meta, $start, $count, $sort, $reverse);
+                            $folders = $service->listFolder($path, $start, $count, $sort, $reverse );
                             unset($service);
                         }
                         $settings = new \TYPO3\CMS\DigitalAssetManagement\Utility\UserSettings();
