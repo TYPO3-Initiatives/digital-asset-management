@@ -31,6 +31,9 @@ use TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService;
  */
 class DigitalAssetManagementAjaxController
 {
+    /** var array $result*/
+    private $result = [];
+
     /**
      * Main entry method: Dispatch to other actions - those method names that end with "Action".
      *
@@ -40,23 +43,22 @@ class DigitalAssetManagementAjaxController
     public function handleAjaxRequestAction(ServerRequestInterface $request): ResponseInterface
     {
         $response = new JsonResponse();
-        $result = [];
-        $result['method'] = '';
-        $result['params'] = [];
+        $this->result['method'] = '';
+        $this->result['params'] = [];
         $params = $request->getQueryParams();
         // Execute all query params starting with get using its values as parameter
         foreach ($params as $key => $param) {
             if ($key === 'method') {
-                $result['method'] = $param;
+                $this->result['method'] = $param;
                 $func = $param . 'Action';
             } elseif ($key === 'params') {
-                $result['params'] = $param;
+                $this->result['params'] = $param;
             }
         }
         if ($func && is_callable([$this, $func])) {
-            $result['result'] = call_user_func(array(DigitalAssetManagementAjaxController::class, $func), $result['params']);
+            $this->result['result'] = call_user_func(array(DigitalAssetManagementAjaxController::class, $func), $this->result['params']);
         }
-        $response->setPayload($result);
+        $response->setPayload($this->result);
         return $response;
     }
 
@@ -264,7 +266,7 @@ class DigitalAssetManagementAjaxController
      * only local storages are supported until now
      *
      * @param string|array $params
-     * @return void
+     * @return array
      */
     protected function reindexStorageAction($params = "")
     {
@@ -285,6 +287,8 @@ class DigitalAssetManagementAjaxController
                 $fileStorage->setEvaluatePermissions(true);
             }
         }
+        $this->result['method'] = 'getContent';
+        return $this->getContentAction('');
     }
 
 
