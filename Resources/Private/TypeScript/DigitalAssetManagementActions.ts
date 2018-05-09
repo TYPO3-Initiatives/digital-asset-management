@@ -198,7 +198,7 @@ class DigitalAssetManagementActions {
 				if (data.params === $el.attr('data-src')){
 					$el.attr('src', data.result.thumbnail);
 					$(this).find('.icon').addClass('small');
-					$(this).addClass('haspreview').css('width', 'auto');
+					// $(this).addClass('haspreview').css('width', 'auto');
 				}
 			});
 		}
