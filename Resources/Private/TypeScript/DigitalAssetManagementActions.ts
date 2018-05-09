@@ -115,7 +115,6 @@ class DigitalAssetManagementActions {
 				// Icons.getIcon('apps-filetree-folder', 'large').done( (iconMarkup: string): void => {
 				// 	$('.folder-icon').html(iconMarkup);
 				// });
-				// @todo: use moment.js for date-formatting?!
 				// @todo: how to get the thumbnail images without viewhelper?
 				folder.mimetype = 'folder';
 				//folder.modification_date_formated = moment(folder.modification_date).format(TYPO3.settings.DateTimePicker.DateFormat[1] || 'YYYY-MM-DD');
@@ -141,6 +140,7 @@ class DigitalAssetManagementActions {
 	protected static renderBreadcrumb(data: ResponseObject): void {
 		let html = '';
 		let my = DigitalAssetManagementActions;
+		let lastidentifier = '';
 		if (data.result && data.result.breadcrumbs) {
 			for (let i = 0; i < data.result.breadcrumbs.length; i++) {
 				const part = data.result.breadcrumbs[i];
@@ -148,11 +148,15 @@ class DigitalAssetManagementActions {
 					part.label = TYPO3.lang['dam.labels.files'];
 				} else {
 					part.label = part.name;
+					lastidentifier = part.identifier;
 					html += '&nbsp;&gt;&nbsp;';
 				}
 				// Render single breadcrumb item
 				html += my.replaceTemplateVars(my.breadcrumbPartial, part);
 			}
+			// Set actual identifier to reindex-action parameter
+			$('.folder-action[data-method="reindexStorage"]').attr('data-parameter', lastidentifier).removeClass('disabled');
+			// Add some classes
 			if (html) {
 				$('.breadcrumb').html(html).removeClass('empty');
 			} else {
@@ -194,6 +198,7 @@ class DigitalAssetManagementActions {
 				if (data.params === $el.attr('data-src')){
 					$el.attr('src', data.result.thumbnail);
 					$(this).find('.icon').addClass('small');
+					$(this).addClass('haspreview').css('width', 'auto');
 				}
 			});
 		}
