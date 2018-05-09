@@ -29,14 +29,47 @@
 
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul class="navbar-nav mr-auto">
-						<li class="nav-item active">
-							<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+						<li class="nav-item">
+							<div class="nav-link view-action active" data-action="newFile" data-parameter="">
+								<span class="icon icon-size-small icon-actions-document-new"></span>
+								<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.actions.new"/>
+							</div>
+						</li>
+						<li class="nav-item">
+								<div class="nav-link view-action active" data-action="upload" data-parameter="">
+									<span class="icon icon-size-small icon-actions-edit-upload"></span>
+									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.actions.upload"/>
+								</div>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="#">Link</a>
 						</li>
+					</ul>
+					<ul class="navbar-nav my-2">
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="navbarSortingDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="icon icon-size-small icon-actions-document-export-t3d"></span>
+								<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting"/>
+							</a>
+							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+								<div class="dropdown-item view-action" data-action="view-sorting-name">
+									<span class="icon icon-size-small icon-actions-edit-upload"></span>
+									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting.name"/></div>
+								<div class="dropdown-item view-action" data-action="view-sorting-date">
+									<span class="icon icon-size-small icon-actions-edit-pick-date"></span>
+									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting.date"/></div>
+								<div class="dropdown-divider"></div>
+								<div class="dropdown-item view-action" data-action="view-sorting-asc">
+									<span class="icon icon-size-small icon-actions-document-export-t3d"></span>
+									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting.asc"/></div>
+								<div class="dropdown-item view-action" data-action="view-sorting-dsc">
+									<span class="icon icon-size-small icon-actions-document-import-t3d"></span>
+									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting.dsc"/></div>
+							</div>
+						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<f:image src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-view.svg"/>
 								<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.view"/>
 							</a>
 							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -53,15 +86,16 @@
 							</div>
 						</li>
 						<li class="nav-item">
-							<div class="folder-action nav-link disabled" data-method="reindexStorage" data-parameter="">
+							<div class="folder-action nav-link disabled" data-method="reindexStorage" data-parameter="#current#">
 								<f:image src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-refresh.svg"/>
 							</div>
 						</li>
 					</ul>
-					<form class="form-inline my-2 my-lg-0">
-						<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-						<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-					</form>
+
+					<!--<form class="form-inline my-2 my-lg-0">-->
+						<!--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">-->
+						<!--<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
+					<!--</form>-->
 				</div>
 			</nav>
 			<div class="header">

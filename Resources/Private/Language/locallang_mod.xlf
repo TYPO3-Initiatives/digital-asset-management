@@ -31,6 +31,37 @@
       <trans-unit id="dam.labels.nav.view.photos">
         <source>Photos</source>
       </trans-unit>
+      <trans-unit id="dam.labels.nav.sorting">
+        <source>Sorting</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.sorting.name">
+        <source>Name</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.sorting.date">
+        <source>Modified</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.sorting.size">
+        <source>Size</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.sorting.asc">
+        <source>Ascending</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.sorting.dsc">
+        <source>Descending</source>
+      </trans-unit>
+
+      <trans-unit id="dam.labels.nav.actions.new">
+        <source>New file</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.actions.upload">
+        <source>Upload</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.actions.delete">
+        <source>Delete</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.actions.move">
+        <source>Move</source>
+      </trans-unit>
 
       <trans-unit id="dam.labels.files">
         <source>Files</source>

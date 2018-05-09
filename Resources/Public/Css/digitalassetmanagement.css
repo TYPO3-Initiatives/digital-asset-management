@@ -30,7 +30,9 @@ div {
 	/*width: 180px;*/
 }
 
-div.digital-asset-management .grid:hover {
+div.digital-asset-management .grid:hover,
+div.digital-asset-management .dropdown-item:hover,
+div.digital-asset-management .nav-item:hover {
 	background-color: #dddddd;
 }
 
