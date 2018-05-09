@@ -30,21 +30,14 @@ div {
 	/*width: 180px;*/
 }
 
-.digital-asset-management .view-symbols .grid .folder {
-	width: 180px;
-}
-.digital-asset-management .view-list .grid .folder {
-	width: 24px;
-	display: inline-block;
-}
-.digital-asset-management .view-list .card-body {
-	display: inline-block;
-	padding: 0;
-}
-
 div.digital-asset-management .grid:hover {
 	background-color: #dddddd;
 }
+
+/* should only apply to items with preview */
+/*div.digital-asset-management         .grid:hover .info {*/
+	/*background-color: rgba(200, 200, 200, 0.8);*/
+/*}*/
 
 div.digital-asset-management .grid.image:hover {
 	border: 1px solid #dddddd;
@@ -63,7 +56,9 @@ div.digital-asset-management .file {
 	cursor: pointer;
 }
 
-
+.dropdown-item img {
+	width: 24px;
+}
 
 /* Breadcrumb */
 .digital-asset-management .breadcrumb .folder-action:hover {
@@ -76,39 +71,44 @@ div.digital-asset-management .file {
 
 
 
-/* Thumbnails */
+
 
 .clear {
 	clear: both;
 }
 
-div.digital-asset-management .view-symbols .grid {
-	position: relative;
-	border: 1px solid white;
-	min-width: 100px;
-	height: 200px;
-	float: left;
-	margin: 20px 20px 0 0;
+
+/* view-list */
+
+div.digital-asset-management .view-list .grid .folder {
+	width: 24px;
+	display: inline-block;
 }
 
-div.digital-asset-management .view-symbols .folders .grid {
-	height: 150px;
+div.digital-asset-management .view-list .card-body {
+	display: inline-block;
+	padding: 0;
 }
-
 
 div.digital-asset-management .view-list .grid {
 	position: relative;
-	border: 1px solid green;
+	/*border: 1px solid green;*/
 	width: 100%;
 	height: 40px;
 	margin: 10px 10px 0 0;
 	padding-top: 5px;
 	/* debug */
-	margin-bottom: 50px;
+	/*margin-bottom: 50px;*/
 }
 
 div.digital-asset-management .view-list .grid-cell {
 	display: inline-block;
+	vertical-align: top;
+	/*min-width: 20%;*/
+}
+
+div.digital-asset-management .view-list .info .grid-cell {
+	vertical-align: baseline;
 	/*min-width: 20%;*/
 }
 
@@ -130,13 +130,6 @@ div.digital-asset-management .view-list .grid-cell.moddate {
 div.grid.image {
 	margin: 20px 2px 0 0;
 }
-
-div.digital-asset-management .folder,
-div.digital-asset-management .view-symbols .preview {
-	position: relative;
-	/*min-width: 160px;*/
-	height: 100%;
-}
 div.digital-asset-management .view-list .preview {
 	display: none;
 }
@@ -147,13 +140,35 @@ div.digital-asset-management .view-list .info {
 	width: 90%;
 	overflow: hidden;
 	display: inline-block;
+	vertical-align: baseline;
+}
+
+/* view-list icon */
+div.digital-asset-management .view-list .icon {
+	background-repeat: no-repeat;
+	background-size: auto;
+	background-position: center;
+	position: relative;
+	display: inline-block;
+	height: 24px;
+	width: 24px;
+	top:5px;
+}
+
+.digital-asset-management .view-list .icon.small {
+	background-position: center;
+}
+
+.digital-asset-management .view-list .icon {
+	height: 20px;
 }
 
 
-/*div.folder {*/
-	/*background-color: yellow;*/
-	/*cursor: pointer;*/
-/*}*/
+
+
+
+
+/* Symbol view */
 
 div.digital-asset-management .view-symbols .preview img {
 	position: relative;
@@ -161,11 +176,30 @@ div.digital-asset-management .view-symbols .preview img {
 	width: auto;
 }
 
-.dropdown-item img {
-	width: 24px;
+div.digital-asset-management .view-symbols .grid {
+	position: relative;
+	border: 1px solid white;
+	min-width: 100px;
+	height: 200px;
+	float: left;
+	margin: 20px 20px 0 0;
 }
 
-/* Symbol view */
+div.digital-asset-management .view-symbols .folders .grid {
+	height: 150px;
+}
+
+div.digital-asset-management .view-symbols .grid .folder {
+	width: 180px;
+}
+
+div.digital-asset-management .folder,
+div.digital-asset-management .view-symbols .preview {
+	position: relative;
+	/*min-width: 160px;*/
+	height: 100%;
+}
+
 div.digital-asset-management .view-symbols .info {
 	position: absolute;
 	padding: 2px;
@@ -177,33 +211,32 @@ div.digital-asset-management .view-symbols .info {
 	text-align: center;
 }
 
-.digital-asset-management .view-symbols h5,
-.digital-asset-management .view-symbols p {
+div.digital-asset-management .view-symbols h5,
+div.digital-asset-management .view-symbols p {
 	margin: 0;
 	padding: 0;
 	font-family: Arial, Helvetica, sans-serif;
 	color: #000;
 }
 
-.digital-asset-management .view-symbols .info img.gpx {
+div.digital-asset-management .view-symbols .info img.gpx {
 	height: 100px;
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
 }
 
-.digital-asset-management .view-symbols .info img.jpg,
-.digital-asset-management .view-symbols .info img.png,
-.digital-asset-management .view-symbols .info img.gif {
+div.digital-asset-management .view-symbols .info img.jpg,
+div.digital-asset-management .view-symbols .info img.png,
+div.digital-asset-management .view-symbols .info img.gif {
 	margin: 15px 5px;
 	height: 30px;
 	width: auto;
 	float: left
 }
 
-
-/* Icons */
-.digital-asset-management .view-symbols .icon {
+/* view-symbols Icons */
+div.digital-asset-management .view-symbols .icon {
 	background-repeat: no-repeat;
 	background-size: auto;
 	background-position: center;
@@ -213,37 +246,136 @@ div.digital-asset-management .view-symbols .info {
 	top:0;
 }
 
-.digital-asset-management .view-list .icon {
+div.digital-asset-management .view-symbols .icon.small {
+	background-position: left top;
+	background-size: 30px;
+	margin-top: 5px;
+	height: 30px;
+}
+
+
+/* view-photo */
+
+div.digital-asset-management .view-photo .preview img {
+	position: relative;
+	height: 100%;
+	width: auto;
+}
+
+div.digital-asset-management .view-photo .grid {
+	position: relative;
+	border: 1px solid white;
+	min-width: 100px;
+	height: 200px;
+	float: left;
+	margin: 20px 20px 0 0;
+}
+
+div.digital-asset-management .view-photo .grid.haspreview {
+	position: relative;
+	border: 1px solid white;
+	min-width: 100px;
+	float: left;
+
+	height: 400px;
+	margin: 10px 10px 0 0;
+}
+
+div.digital-asset-management .view-photo .folders .grid {
+	height: 150px;
+}
+
+div.digital-asset-management .view-photo .grid .folder {
+	width: 180px;
+}
+
+div.digital-asset-management .folder,
+div.digital-asset-management .view-photo .preview {
+	position: relative;
+	width: auto;
+	/*min-width: 160px;*/
+	height: 100%;
+}
+
+div.digital-asset-management .view-photo .info {
+	position: absolute;
+	padding: 2px;
+	bottom: 0;
+	max-height: 200px;
+	width: 100%;
+	background: rgba(255, 255, 255, 0.8);
+	overflow: hidden;
+	text-align: center;
+}
+
+div.digital-asset-management .view-photo .image.haspreview .info,
+div.digital-asset-management .view-photo .image.haspreview .icon {
+	display: none;
+}
+
+div.digital-asset-management .view-photo .image:hover .info,
+div.digital-asset-management .view-photo .image:hover .icon {
+	display: block;
+}
+
+div.digital-asset-management .view-photo h5,
+div.digital-asset-management .view-photo p {
+	margin: 0;
+	padding: 0;
+	font-family: Arial, Helvetica, sans-serif;
+	color: #000;
+}
+
+div.digital-asset-management .view-photo .info img.gpx {
+	height: 100px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div.digital-asset-management .view-photo .info img.jpg,
+div.digital-asset-management .view-photo .info img.png,
+div.digital-asset-management .view-photo .info img.gif {
+	margin: 15px 5px;
+	height: 30px;
+	width: auto;
+	float: left
+}
+
+/* view-photo Icons */
+div.digital-asset-management .view-photo .icon {
 	background-repeat: no-repeat;
 	background-size: auto;
 	background-position: center;
-	position: relative;
-	display: inline-block;
-	height: 24px;
-	width: 24px;
-	top:5px;
+	position: absolute;
+	height: 120px;
+	width: 100%;
+	top:0;
 }
 
-.digital-asset-management .folder .icon {
-	position: relative;
-}
-
-.digital-asset-management .view-symbols .icon.small {
-	background-position: right bottom;
+div.digital-asset-management .view-photo .icon.small {
+	background-position: left top;
 	background-size: 30px;
-	height: 184px;
-}
-.digital-asset-management .view-list .icon.small {
-	background-position: center;
+	margin-top: 5px;
+	height: 30px;
 }
 
 
-/* List view */
-.digital-asset-management .view-list .icon {
-	height: 20px;
+
+
+
+
+
+
+
+div.digital-asset-management .folder .icon {
+	position: relative;
 }
 
 
+
+
+/* ICONS */
 .icon {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-other-other.svg");
 }
