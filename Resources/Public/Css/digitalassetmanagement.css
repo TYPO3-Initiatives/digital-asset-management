@@ -395,6 +395,28 @@ div.digital-asset-management .folder .icon {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-mount.svg");
 }
 
+.icon-actions-edit-upload {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-edit-upload.svg");
+}
+.icon-actions-view {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-view.svg");
+}
+.icon-content-menu-thumbnail {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/content/content-menu-thumbnail.svg");
+}
+.icon-actions-edit-pick-date {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-edit-pick-date.svg");
+}
+.icon-actions-document-new {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-document-new.svg");
+}
+.icon-actions-document-export-t3d {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-document-export-t3d.svg");
+}
+.icon-actions-document-import-t3d {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-document-import-t3d.svg");
+}
+
 
 
 .icon-mimetypes-audio {
