@@ -47,7 +47,7 @@ class DigitalAssetManagementActions {
 		'   </div>\n' +
 		'  </div>\n';
 
-	static filePartial: string = '<div class="grid file {mimetype}">\n' +
+	static filePartial: string = '<div class="grid file {mimetype} folder-action" data-method="getMetadata" data-parameter="{identifier}">\n' +
 		// '    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
 		'    <div class="preview" >' +
 		'<img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="{identifier}"></div>\n' +
@@ -204,6 +204,18 @@ class DigitalAssetManagementActions {
 		}
 	}
 
+	protected static showMetadata(data: ResponseObject) {
+		let my = DigitalAssetManagementActions;
+		if (data.result && data.result.file) {
+			let html = '';
+			console.log(data.result.file);
+			for (let field in data.result.file){
+				console.log(field);
+			}
+			$('.metadata').html(JSON.stringify(data.result.file)).show();
+		}
+	}
+
 	/**
 	 * query a json backenendroute
 	 *
@@ -243,6 +255,9 @@ class DigitalAssetManagementActions {
 				break;
 			case 'getThumbnail':
 				my.renderThumb(data);
+				break;
+			case 'getMetadata':
+				my.showMetadata(data);
 				break;
 			default:
 				top.TYPO3.Notification.warning('Request failed', 'Unknown method: ' + method);
