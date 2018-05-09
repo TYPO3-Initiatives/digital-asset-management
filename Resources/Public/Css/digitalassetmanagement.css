@@ -25,9 +25,14 @@ div {
 }
 
 
-.digital-asset-management {
+div.digital-asset-management {
 	background-color: initial;
 	/*width: 180px;*/
+}
+
+div.digital-asset-management .nav-link,
+div.digital-asset-management .dropdown-item {
+	cursor: pointer;
 }
 
 div.digital-asset-management .grid:hover,
