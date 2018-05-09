@@ -52,17 +52,38 @@ interface FileSystemInterface
     public function info($path): array;
 
     /**
+     * returns an array of folders in a defined path
+     *
      * @param string $path
-     * @param bool $withMetadata
+     * @param int $start
+     * @param int $maxNumberOfItems
+     * @param string $sort Property name used to sort the items.
+     *                     Among them may be: '' (empty, no sorting), name,
+     *                     fileext, size, tstamp and rw.
+     *                     If a driver does not support the given property, it
+     *                     should fall back to "name".
+     * @param bool $sortRev TRUE to indicate reverse sorting (last to first)
+     *
+     * @throws \RuntimeException
      * @return array
      */
-    public function listFiles($path, $withMetadata): array;
+    public function listFolder($path, $start = 0, $maxNumberOfItems = 0, $sort = '', $sortRev = false): array;
 
     /**
+     * returns an array of files in a defined path
+     *
      * @param string $path
      * @param bool $withMetadata
+     * @param int $start
+     * @param int $maxNumberOfItems
+     * @param string $sort Property name used to sort the items.
+     *                     Among them may be: '' (empty, no sorting), name,
+     *                     fileext, size, tstamp and rw.
+     *                     If a driver does not support the given property, it
+     *                     should fall back to "name".
+     * @param bool $sortRev TRUE to indicate reverse sorting (last to first)
+     * @throws \RuntimeException
      * @return array
      */
-    public function listFolder($path): array;
-
+    public function listFiles($path, $withMetadata = false, $start = 0, $maxNumberOfItems = 0, $sort = '', $sortRev = false): array;
 }

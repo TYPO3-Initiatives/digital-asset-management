@@ -18,8 +18,11 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\JsonResponse;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemInterface;
+use TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService;
 
 /**
  * Backend controller: The "Digital Asset Management" JSON response controller
@@ -64,7 +67,7 @@ class DigitalAssetManagementAjaxController
      * @param string|array $params
      * @return array
      */
-    protected function getContentAction($params = "")
+    protected function getContentAction($params = ""): array
     {
         // load user settings array updated by query values
         $userSettings = $this->getSettings($params);
@@ -149,7 +152,7 @@ class DigitalAssetManagementAjaxController
                         unset($fileMounts);
                     } else {
                         // only one mountpoint
-                        $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
+                        $service = new LocalFileSystemService($fileStorage);
                         if ($service) {
                             $files = $service->listFiles($path);
                             $folders = $service->listFolder($path);
@@ -203,7 +206,7 @@ class DigitalAssetManagementAjaxController
                             }
                         }
                         /** @var FileSystemInterface $service */
-                        $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
+                        $service = new LocalFileSystemService($fileStorage);
                         if ($service) {
                             $files = $service->listFiles($path, $userSettings['meta'], $userSettings['start'], $userSettings['count'], $userSettings['sort'], $userSettings['reverse']);
                             $folders = $service->listFolder($path, $userSettings['start'], $userSettings['count'], $userSettings['sort'], $userSettings['reverse']);
@@ -228,7 +231,7 @@ class DigitalAssetManagementAjaxController
      * @param string|array $params
      * @return array
      */
-    protected function getThumbnailAction($params = "")
+    protected function getThumbnailAction($params = ""): array
     {
         if (is_array($params)) {
             $path = reset($params);
@@ -240,11 +243,11 @@ class DigitalAssetManagementAjaxController
             list($storageId, $path) = explode(":", $path, 2);
             if ($storageId && !empty($path)) {
                 /** @var ResourceStorage $fileStorage */
-                $fileStorage = \TYPO3\CMS\Core\Resource\ResourceFactory::getInstance()->getStorageObject($storageId);
+                $fileStorage = ResourceFactory::getInstance()->getStorageObject($storageId);
                 $fileStorage->setEvaluatePermissions(true);
                 if (($fileStorage->getUid() == $storageId) && ($fileStorage->getDriverType() === 'Local')) {
                     /** @var FileSystemInterface $service */
-                    $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
+                    $service = new LocalFileSystemService($fileStorage);
                     if ($service) {
                         $file = $fileStorage->getFile($path);
                         $thumb = $service->thumbnail(rtrim($_SERVER["DOCUMENT_ROOT"], "/") . '/' . urldecode($file->getPublicUrl()), true);
@@ -261,7 +264,7 @@ class DigitalAssetManagementAjaxController
      * only local storages are supported until now
      *
      * @param string|array $params
-     * @return array
+     * @return void
      */
     protected function reindexStorageAction($params = "")
     {
@@ -274,7 +277,7 @@ class DigitalAssetManagementAjaxController
             list($storageId, $path) = explode(":", $path, 2);
             if ($storageId) {
                 /** @var ResourceStorage $fileStorage  */
-                $fileStorage = \TYPO3\CMS\Core\Resource\ResourceFactory::getInstance()->getStorageObject($storageId);
+                $fileStorage = ResourceFactory::getInstance()->getStorageObject($storageId);
                 $fileStorage->setEvaluatePermissions(false);
                 /** @var \TYPO3\CMS\Core\Resource\Index\Indexer $indexer */
                 $indexer = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Resource\Index\Indexer::class, $fileStorage);

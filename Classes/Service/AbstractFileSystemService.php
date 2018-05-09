@@ -309,10 +309,7 @@ abstract class AbstractFileSystemService implements FileSystemInterface
     }
 
     /**
-     * array of files/folders/storages as an assoziative array
-     * this can be:
-     *  if there is only one storage the content of that storage is returned
-     *  if there are more than one storages the storages are returned
+     * returns an array of files in a defined path
      *
      * @param string $path
      * @param bool $withMetadata
@@ -367,6 +364,8 @@ abstract class AbstractFileSystemService implements FileSystemInterface
     }
 
     /**
+     * returns an array of folders in a defined path
+     *
      * @param string $path
      * @param int $start
      * @param int $maxNumberOfItems
