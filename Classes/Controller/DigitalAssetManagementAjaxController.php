@@ -18,6 +18,7 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\JsonResponse;
+use TYPO3\CMS\Core\Resource\Index\Indexer;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -31,7 +32,7 @@ use TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService;
  */
 class DigitalAssetManagementAjaxController
 {
-    /** var array $result*/
+    /** @var array $result */
     private $result = [];
 
     /**
@@ -256,14 +257,46 @@ class DigitalAssetManagementAjaxController
                         unset($service);
                     }
                 }
+                unset($fileStorage);
                 return ['thumbnail' => $thumb];
             }
         }
     }
 
     /**
+     * get metadata of file
+     *
+     * @param string|array $params
+     * @return array
+     */
+    protected function getMetadataAction($params): array
+    {
+        if (is_array($params)) {
+            $path = reset($params);
+        } else {
+            $path = $params;
+        }
+        $service = null;
+        if (strlen($path)>6) {
+            list($storageId, $path) = explode(":", $path, 2);
+            if ($storageId && !empty($path)) {
+                /** @var ResourceStorage $fileStorage */
+                $fileStorage = ResourceFactory::getInstance()->getStorageObject($storageId);
+                $fileStorage->setEvaluatePermissions(true);
+                /** @var FileSystemInterface $service */
+                $service = new LocalFileSystemService($fileStorage);
+                if ($service) {
+                    $file = $service->info($path);
+                    unset($service);
+                }
+                unset($fileStorage);
+                return ['file' => $file];
+            }
+        }
+    }
+
+    /**
      * FAL reindexing actual storage
-     * only local storages are supported until now
      *
      * @param string|array $params
      * @return array
@@ -281,16 +314,17 @@ class DigitalAssetManagementAjaxController
                 /** @var ResourceStorage $fileStorage  */
                 $fileStorage = ResourceFactory::getInstance()->getStorageObject($storageId);
                 $fileStorage->setEvaluatePermissions(false);
-                /** @var \TYPO3\CMS\Core\Resource\Index\Indexer $indexer */
-                $indexer = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Resource\Index\Indexer::class, $fileStorage);
+                /** @var Indexer $indexer */
+                $indexer = GeneralUtility::makeInstance(Indexer::class, $fileStorage);
                 $indexer->processChangesInStorages();
                 $fileStorage->setEvaluatePermissions(true);
+                unset($indexer);
+                unset($fileStorage);
             }
         }
         $this->result['method'] = 'getContent';
         return $this->getContentAction('');
     }
-
 
     /**
      * Returns the DAM user settings
