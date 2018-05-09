@@ -66,33 +66,19 @@ class DigitalAssetManagementAjaxController
      */
     protected function getContentAction($params = "")
     {
-        if (is_array($params)) {
-            $path = $params['path'];
-            $start = ($params['start'] ? $params['start'] : 0);
-            $count = ($params['count'] ? $params['count'] : 0);
-            $sort = ($params['sort'] ? $params['sort'] : '');
-            $reverse = ($params['reverse'] ? $params['reverse'] : false);
-            $meta = ($params['meta'] ? $params['meta'] : false);
-        } else {
-            $path = $params;
-            $start = 0;
-            $count = 0;
-            $sort = '';
-            $reverse = false;
-            $meta = false;
-        }
+        // load user settings array updated by query values
+        $userSettings = $this->getSettings($params);
+        // get requested path from params
+        $path =  (is_array($params) ? $params['path'] : $params);
+        // get backend user
         $backendUser = $this->getBackendUser();
-        // Get all storage objects
+        // get all storage objects
         /** @var ResourceStorage[] $fileStorages */
         $fileStorages = $backendUser->getFileStorages();
-        /** @var FileSystemInterface $service */
-        $service = null;
-        // $result['debug'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
         if (is_array($fileStorages)){
             $storageId = null;
             if ($path === "") {
-                $settings = new \TYPO3\CMS\DigitalAssetManagement\Utility\UserSettings();
-                $path = $settings->getSavingPosition();
+                $path = $userSettings['path'];
             } elseif ($path === "*" ) {
                 $path = "";
             }
@@ -102,6 +88,7 @@ class DigitalAssetManagementAjaxController
             if ($path === "") {
                 $path = "/";
             }
+            // init return values
             $files = [];
             $folders = [];
             $breadcrumbs = [];
@@ -215,19 +202,22 @@ class DigitalAssetManagementAjaxController
                                 ];
                             }
                         }
+                        /** @var FileSystemInterface $service */
                         $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
                         if ($service) {
-                            $files = $service->listFiles($path, $meta, $start, $count, $sort, $reverse);
-                            $folders = $service->listFolder($path, $start, $count, $sort, $reverse );
+                            $files = $service->listFiles($path, $userSettings['meta'], $userSettings['start'], $userSettings['count'], $userSettings['sort'], $userSettings['reverse']);
+                            $folders = $service->listFolder($path, $userSettings['start'], $userSettings['count'], $userSettings['sort'], $userSettings['reverse']);
                             unset($service);
                         }
-                        $settings = new \TYPO3\CMS\DigitalAssetManagement\Utility\UserSettings();
-                        $settings->setSavingPosition($identifier);
+                        // store path to user settings
+                        $userSettings['path'] = $identifier;
                         break;
                     }
                 }
             }
-            return ['files' => $files, 'folders' => $folders, 'breadcrumbs' => $breadcrumbs];
+            // save user settings array
+            $this->setSettings($userSettings);
+            return ['files' => $files, 'folders' => $folders, 'breadcrumbs' => $breadcrumbs, 'settings' => $userSettings];
         }
     }
 
@@ -245,31 +235,109 @@ class DigitalAssetManagementAjaxController
         } else {
             $path = $params;
         }
-        $backendUser = $this->getBackendUser();
-        // Get all storage objects
-        /** @var ResourceStorage[] $fileStorages */
-        $fileStorages = $backendUser->getFileStorages();
-        /** @var FileSystemInterface $service */
         $service = null;
-        //$result['debug'] = \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($fileStorages,null, 8, false, true,true);
-        if (is_array($fileStorages) && (strlen($path)>6)) {
+        if (strlen($path)>6) {
             list($storageId, $path) = explode(":", $path, 2);
             if ($storageId && !empty($path)) {
-                /** @var ResourceStorage $fileStorage  */
-                foreach ($fileStorages as $fileStorage) {
-                    if (($fileStorage->getUid() == $storageId) && ($fileStorage->getDriverType() === 'Local')) {
-                        $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
-                        if ($service) {
-                            $file = $fileStorage->getFile($path);
-                            $thumb = $service->thumbnail(rtrim($_SERVER["DOCUMENT_ROOT"],"/").'/'.urldecode($file->getPublicUrl()), true);
-                            unset($service);
-                        }
-                        break;
+                /** @var ResourceStorage $fileStorage */
+                $fileStorage = \TYPO3\CMS\Core\Resource\ResourceFactory::getInstance()->getStorageObject($storageId);
+                $fileStorage->setEvaluatePermissions(true);
+                if (($fileStorage->getUid() == $storageId) && ($fileStorage->getDriverType() === 'Local')) {
+                    /** @var FileSystemInterface $service */
+                    $service = new \TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService($fileStorage);
+                    if ($service) {
+                        $file = $fileStorage->getFile($path);
+                        $thumb = $service->thumbnail(rtrim($_SERVER["DOCUMENT_ROOT"], "/") . '/' . urldecode($file->getPublicUrl()), true);
+                        unset($service);
                     }
                 }
+                return ['thumbnail' => $thumb];
             }
-            return ['thumbnail' => $thumb];
         }
+    }
+
+    /**
+     * FAL reindexing actual storage
+     * only local storages are supported until now
+     *
+     * @param string|array $params
+     * @return array
+     */
+    protected function reindexStorageAction($params = "")
+    {
+        if (is_array($params)) {
+            $path = reset($params);
+        } else {
+            $path = $params;
+        }
+        if (strlen($path)>1) {
+            list($storageId, $path) = explode(":", $path, 2);
+            if ($storageId) {
+                /** @var ResourceStorage $fileStorage  */
+                $fileStorage = \TYPO3\CMS\Core\Resource\ResourceFactory::getInstance()->getStorageObject($storageId);
+                $fileStorage->setEvaluatePermissions(false);
+                /** @var \TYPO3\CMS\Core\Resource\Index\Indexer $indexer */
+                $indexer = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Resource\Index\Indexer::class, $fileStorage);
+                $indexer->processChangesInStorages();
+                $fileStorage->setEvaluatePermissions(true);
+            }
+        }
+    }
+
+
+    /**
+     * Returns the DAM user settings
+     *
+     * @param string|array $params
+     * @return array
+     */
+    protected function getSettings($params): array
+    {
+        $backendUser = $this->getBackendUser();
+        // default settings
+        $userSettings = [
+            'path' => '',
+            'start' => 0,
+            'count' => 0,
+            'sort' => '',
+            'reverse' => false,
+            'meta' => false
+        ];
+        // get settings from user cache
+        if ($backendUser->uc['dam']) {
+            $userSettings = $backendUser->uc['dam'];
+        }
+        // overwrite settings by query params
+        if (is_array($params)) {
+            if ($params['start']) {
+                $userSettings['start'] = $params['start'];
+            }
+            if ($params['count']) {
+                $userSettings['count'] = $params['count'];
+            }
+            if ($params['sort']) {
+                $userSettings['sort'] = $params['sort'];
+            }
+            if ($params['reverse']) {
+                $userSettings['reverse'] = $params['reverse'];
+            }
+            if ($params['meta']) {
+                $userSettings['meta'] = $params['meta'];
+            }
+        }
+        return $userSettings;
+    }
+
+    /**
+     * Set the DAM user settings
+     *
+     * @param array $settings
+     */
+    protected function setSettings($settings)
+    {
+        $backendUser = $this->getBackendUser();
+        $backendUser->uc['dam'] = $settings;
+        $backendUser->writeUC();
     }
 
     /**
