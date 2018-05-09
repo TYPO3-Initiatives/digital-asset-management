@@ -107,10 +107,16 @@ abstract class AbstractFileSystemService implements FileSystemInterface
      */
     private function getMetadata($identifier): array
     {
+        $colums = $GLOBALS['TCA']['sys_file_metadata']['columns'];
+        $fields = [];
+        foreach ($colums as $col => $value) {
+            if (!in_array($col, ['fileinfo', 'l10n_diffsource', 'l10n_parent', 'sys_language_uid', 't3ver_label'] )) {
+                $fields[] = 'sys_file_metadata.' . $col;
+            }
+        }
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_file_metadata');
         $statement = $queryBuilder
-            ->select('sys_file_metadata.title', 'sys_file_metadata.width', 'sys_file_metadata.height',
-                     'sys_file_metadata.description', 'sys_file_metadata.alternative')
+            ->select(...$fields)
             ->from('sys_file_metadata')
             ->join('sys_file_metadata', 'sys_file', 'file',
                 $queryBuilder->expr()->eq('file.uid','sys_file_metadata.file')
@@ -120,6 +126,9 @@ abstract class AbstractFileSystemService implements FileSystemInterface
             )
             ->execute()
             ->fetch();
+        if (!$statement) {
+            $statement = [];
+        }
         return $statement;
     }
 
@@ -131,10 +140,16 @@ abstract class AbstractFileSystemService implements FileSystemInterface
      */
     private function getReferences($identifier): array
     {
+        $colums = $GLOBALS['TCA']['sys_file_reference']['columns'];
+        $fields = [];
+        foreach ($colums as $col => $value) {
+            if (!in_array($col, ['l10n_diffsource', 'l10n_parent', 'sys_language_uid', 't3ver_label'] )) {
+                $fields[] = 'sys_file_reference.' . $col;
+            }
+        }
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_file_reference');
         $statement = $queryBuilder
-            ->select('sys_file_reference.title', 'sys_file_reference.tablenames AS table', 'sys_file_reference.uid',
-                     'sys_file_reference.fieldname AS field', 'sorting_foreign AS sorting', 'sys_file_reference.pid')
+            ->select(...$fields)
             ->from('sys_file_reference')
             ->join('sys_file_reference', 'sys_file', 'file',
                 $queryBuilder->expr()->eq('file.uid','sys_file_reference.uid_local')
@@ -144,6 +159,9 @@ abstract class AbstractFileSystemService implements FileSystemInterface
             )
             ->execute()
             ->fetchAll();
+        if (!$statement) {
+            $statement = [];
+        }
         return $statement;
     }
 
