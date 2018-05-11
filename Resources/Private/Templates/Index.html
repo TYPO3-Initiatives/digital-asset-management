@@ -28,70 +28,8 @@
 				</button>
 
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav mr-auto">
-						<li class="nav-item">
-							<div class="nav-link view-action active" data-action="newFile" data-parameter="">
-								<span class="icon icon-size-small icon-actions-document-new"></span>
-								<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.actions.new"/>
-							</div>
-						</li>
-						<li class="nav-item">
-								<div class="nav-link view-action active" data-action="upload" data-parameter="">
-									<span class="icon icon-size-small icon-actions-edit-upload"></span>
-									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.actions.upload"/>
-								</div>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="#">Link</a>
-						</li>
-					</ul>
-					<ul class="navbar-nav my-2">
-						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle" href="#" id="navbarSortingDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<span class="icon icon-size-small icon-actions-document-export-t3d"></span>
-								<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting"/>
-							</a>
-							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-								<div class="dropdown-item view-action" data-action="view-sorting-name">
-									<span class="icon icon-size-small icon-actions-edit-upload"></span>
-									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting.name"/></div>
-								<div class="dropdown-item view-action" data-action="view-sorting-date">
-									<span class="icon icon-size-small icon-actions-edit-pick-date"></span>
-									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting.date"/></div>
-								<div class="dropdown-divider"></div>
-								<div class="dropdown-item view-action" data-action="view-sorting-asc">
-									<span class="icon icon-size-small icon-actions-document-export-t3d"></span>
-									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting.asc"/></div>
-								<div class="dropdown-item view-action" data-action="view-sorting-dsc">
-									<span class="icon icon-size-small icon-actions-document-import-t3d"></span>
-									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting.dsc"/></div>
-							</div>
-						</li>
-						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<f:image src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-view.svg"/>
-								<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.view"/>
-							</a>
-							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-								<div class="dropdown-item view-action" data-action="view-list">
-									<f:image class="ui-icon" src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/content/content-menu-thumbnail.svg"/>
-									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.view.list"/></div>
-								<div class="dropdown-item view-action" data-action="view-symbols">
-									<f:image src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/content/content-image.svg"/>
-									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.view.symbols"/></div>
-								<div class="dropdown-divider"></div>
-								<div class="dropdown-item view-action" data-action="view-photo">
-									<f:image src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/content/content-menu-thumbnail.svg"/>
-									<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.view.photos"/></div>
-							</div>
-						</li>
-						<li class="nav-item">
-							<div class="folder-action nav-link disabled" data-method="reindexStorage" data-parameter="#current#">
-								<f:image src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-refresh.svg"/>
-							</div>
-						</li>
-					</ul>
-
+					<f:render section="navbar-left" />
+					<f:render section="navbar-right" />
 					<!--<form class="form-inline my-2 my-lg-0">-->
 						<!--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">-->
 						<!--<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
@@ -101,16 +39,99 @@
 			<div class="header">
 				<div class="breadcrumb"></div>
 			</div>
-			<div class="maincontent view-symbols">
-				<div class="row folders">
-				</div>
-				<div class="row files">
+			<div class="row">
+				<div class="maincontent col-12 view-symbols">
+					<div class="row folders">
+					</div>
+					<div class="row files">
+					</div>
 				</div>
 			</div>
 		</div>
-		<div class="metadata">
+		<div class="sidebar hidden col-sm-12 col-md-6 col-lg-4">
+			<div class="well metadata"></div>
 		</div>
+
 		<div class="errorlog col-12"></div>
 	</div>
 </div>
 </html>
+
+
+<f:section name="navbar-left">
+	<ul class="navbar-nav mr-auto">
+		<li class="nav-item">
+			<div class="nav-link view-action active" data-action="newFile" data-parameter="">
+				<span class="icon icon-size-small icon-actions-document-new"></span>
+				<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.actions.new"/>
+			</div>
+		</li>
+		<li class="nav-item">
+			<div class="nav-link view-action active" data-action="upload" data-parameter="">
+				<span class="icon icon-size-small icon-actions-edit-upload"></span>
+				<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.actions.upload"/>
+			</div>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#">Link</a>
+		</li>
+	</ul>
+</f:section>
+
+
+<f:section name="navbar-right">
+	<ul class="navbar-nav my-2">
+		<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" href="#" id="navbarSortingDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<span class="icon icon-size-small icon-actions-document-export-t3d"></span>
+				<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting"/>
+			</a>
+			<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+				<div class="dropdown-item sort-action" data-action="sort-by-name">
+					<span class="icon icon-size-small icon-actions-edit-upload"></span>
+					<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting.name"/></div>
+				<div class="dropdown-item sort-action" data-action="sort-by-date">
+					<span class="icon icon-size-small icon-actions-edit-pick-date"></span>
+					<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting.date"/></div>
+				<div class="dropdown-divider"></div>
+				<div class="dropdown-item sort-action" data-action="sort-order-asc" data-parameter="asc">
+					<span class="icon icon-size-small icon-actions-document-export-t3d"></span>
+					<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting.asc"/></div>
+				<div class="dropdown-item sort-action" data-action="sort-order-dsc" data-parameter="dsc">
+					<span class="icon icon-size-small icon-actions-document-import-t3d"></span>
+					<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.sorting.dsc"/></div>
+			</div>
+		</li>
+		<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<f:image src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-view.svg"/>
+				<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.view"/>
+			</a>
+			<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+				<div class="dropdown-item view-action" data-action="view-list">
+					<f:image class="ui-icon" src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/content/content-menu-thumbnail.svg"/>
+					<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.view.list"/></div>
+				<div class="dropdown-item view-action" data-action="view-symbols">
+					<f:image src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/content/content-image.svg"/>
+					<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.view.symbols"/></div>
+				<div class="dropdown-divider"></div>
+				<div class="dropdown-item view-action" data-action="view-photo">
+					<f:image src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/content/content-menu-thumbnail.svg"/>
+					<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.view.photos"/></div>
+			</div>
+		</li>
+		<li class="nav-item">
+			<div class="ajax-action nav-link disabled" data-action="reindexStorage" data-parameter="#current#">
+				<f:image src="/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-refresh.svg"/>
+			</div>
+		</li>
+	</ul>
+</f:section>
+
+<f:section name="fileactions">
+
+</f:section>
+
+<f:section name="folderactions">
+
+</f:section>

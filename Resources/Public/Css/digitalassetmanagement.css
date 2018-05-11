@@ -24,6 +24,14 @@ div {
 	margin-bottom: 10px;
 }
 
+div.digital-asset-management .sidebar {
+	position: fixed;
+	top: 20%;
+}
+
+div.digital-asset-management .metadata {
+	overflow: fragments;
+}
 
 div.digital-asset-management {
 	background-color: initial;

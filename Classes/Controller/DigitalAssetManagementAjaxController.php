@@ -44,13 +44,13 @@ class DigitalAssetManagementAjaxController
     public function handleAjaxRequestAction(ServerRequestInterface $request): ResponseInterface
     {
         $response = new JsonResponse();
-        $this->result['method'] = '';
+        $this->result['action'] = '';
         $this->result['params'] = [];
         $params = $request->getQueryParams();
         // Execute all query params starting with get using its values as parameter
         foreach ($params as $key => $param) {
-            if ($key === 'method') {
-                $this->result['method'] = $param;
+            if ($key === 'action') {
+                $this->result['action'] = $param;
                 $func = $param . 'Action';
             } elseif ($key === 'params') {
                 $this->result['params'] = $param;
@@ -83,7 +83,7 @@ class DigitalAssetManagementAjaxController
         $fileStorages = $backendUser->getFileStorages();
         if (is_array($fileStorages)){
             $storageId = null;
-            if ($path === "") {
+            if ($path === "" || is_null($path)) {
                 $path = $userSettings['path'];
             } elseif ($path === "*" ) {
                 $path = "";
@@ -322,7 +322,7 @@ class DigitalAssetManagementAjaxController
                 unset($fileStorage);
             }
         }
-        $this->result['method'] = 'getContent';
+        $this->result['action'] = 'getContent';
         return $this->getContentAction('');
     }
 
@@ -350,20 +350,20 @@ class DigitalAssetManagementAjaxController
         }
         // overwrite settings by query params
         if (is_array($params)) {
-            if ($params['start']) {
-                $userSettings['start'] = $params['start'];
+            if (isset($params['start'])) {
+                $userSettings['start'] = (integer)$params['start'];
             }
-            if ($params['count']) {
-                $userSettings['count'] = $params['count'];
+            if (isset($params['count'])) {
+                $userSettings['count'] = (integer)$params['count'];
             }
-            if ($params['sort']) {
-                $userSettings['sort'] = $params['sort'];
+            if (isset($params['sort'])) {
+                $userSettings['sort'] = (string)$params['sort'];
             }
-            if ($params['reverse']) {
-                $userSettings['reverse'] = $params['reverse'];
+            if (isset($params['reverse'])) {
+                $userSettings['reverse'] = filter_var($params['reverse'], FILTER_VALIDATE_BOOLEAN);
             }
-            if ($params['meta']) {
-                $userSettings['meta'] = $params['meta'];
+            if (isset($params['meta'])) {
+                $userSettings['meta'] = filter_var($params['meta'], FILTER_VALIDATE_BOOLEAN);;
             }
         }
         return $userSettings;

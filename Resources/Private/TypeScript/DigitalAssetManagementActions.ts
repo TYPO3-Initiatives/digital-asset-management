@@ -18,7 +18,7 @@ import moment = require('moment');
 
 
 interface ResponseObject {
-	method: string;
+	action: string;
 	params: any;
 	result: any;
 
@@ -30,6 +30,19 @@ interface RequestCallback {
 	(data: ResponseObject): void;
 }
 
+interface Settings {
+	path: string;
+	start: number;
+	count: number;
+	sort: string;
+	reverse: boolean;
+	meta: boolean;
+}
+
+// interface Parameter {
+// 	action: string;
+// 	parameter: Settings; // todo: object or Settings?
+// }
 
 /**
  * Module: TYPO3/CMS/Backend/InfoWindow
@@ -64,29 +77,40 @@ class DigitalAssetManagementActions {
 	static breadcrumbPartial: string = '<span class="ajax-action" data-action="getContent" ' +
 		'data-parameter="{identifier}">{label}</span>';
 
+	static metadataPartial: string = '';
+
+	static settings: Settings;
+
 	/**
 	 *
 	 */
 	public static init(): void {
 		let my = DigitalAssetManagementActions;
 		console.log('DigitalAssetManagement.init');
-		// my.renderBreadcrumb('/');
-		// @todo: get filetree starting point from user settings.
-		my.request('getContent', '', my.genericRequestCallback);
+		my.request('getContent', {path: ''}, my.genericRequestCallback);
 		$('.digital-asset-management').on('click', '.ajax-action', function(): void {
-			let method = this.dataset.method;
-			let parameter = this.dataset.parameter;
-			console.log ( 'method: ' + method + ', par: ' + parameter);
-			my.request(method, parameter, my.genericRequestCallback);
+			let action = this.dataset.action;
+			let parameter = {path: this.dataset.parameter, sort: my.settings.sort, reverse: my.settings.reverse};
+			console.log ('ajax-action: ' + action + ', par: ' + JSON.stringify(parameter));
+			my.request(action, parameter, my.genericRequestCallback);
 		});
 		$('.digital-asset-management').on('click', '.view-action', function(): void {
 			let action = this.dataset.action;
 			let parameter = this.dataset.parameter;
-			console.log ( 'action: ' + action + ', par: ' + parameter);
+			console.log ( 'view-action: ' + action + ', par: ' + parameter);
 			// Remove all other view-* classes and add the clicked class
 			$('.maincontent').removeClass(function (index: number, className: string): string {
 				return (className.match (/(^|\s)view-\S+/g) || []).join(' ');
 			}).addClass(action);
+		});
+		$('.digital-asset-management').on('click', '.sort-action', function(): void {
+			let action = this.dataset.action;
+			let parameter = {path: my.settings.path};
+			console.log('sort-action');
+			my.sortAction(action, parameter);
+		});
+		$('body').on('click', function(): void {
+			$('.sidebar').addClass('hidden');
 		});
 	}
 
@@ -117,7 +141,8 @@ class DigitalAssetManagementActions {
 				// });
 				// @todo: how to get the thumbnail images without viewhelper?
 				folder.mimetype = 'folder';
-				//folder.modification_date_formated = moment(folder.modification_date).format(TYPO3.settings.DateTimePicker.DateFormat[1] || 'YYYY-MM-DD');
+				// folder.modification_date_formated = moment(folder.modification_date).
+				// format(TYPO3.settings.DateTimePicker.DateFormat[1] || 'YYYY-MM-DD');
 				html += my.replaceTemplateVars(my.folderPartial, folder);
 			}
 			$('.folders').html(html);
@@ -128,7 +153,8 @@ class DigitalAssetManagementActions {
 				// @todo: how to get the thumbnail images without viewhelper?
 				// Add mimetype as two classes: image/jpeg -> image jpeg
 				file.mimetype = file.mimetype.replace('/', ' ');
-				file.modification_date_formated = moment.unix(file.modification_date).format(top.TYPO3.settings.DateTimePicker.DateFormat[1] || 'YYYY-MM-DD');
+				file.modification_date_formated = moment.unix(file.modification_date)
+					.format(top.TYPO3.settings.DateTimePicker.DateFormat[1] || 'YYYY-MM-DD');
 				html += my.replaceTemplateVars(my.filePartial, file);
 			}
 			$('.files').html(html);
@@ -177,25 +203,26 @@ class DigitalAssetManagementActions {
 
 	/**
 	 *  load thumbnail from getThumbnail
+	 *  @return void
 	 *  @todo: only request images which are in the viewport, and trigger this when scrolling
 	 */
-	protected static loadThumbs() {
+	protected static loadThumbs(): void {
 		let my = DigitalAssetManagementActions;
-		$('.grid.image').each(function(index, el){
+		$('.grid.image').each(function(): void {
 			let $el = $(this).find('img');
 			let src = $el.attr('data-src');
 			if (src) {
-				my.request('getThumbnail', src, my.renderThumb);
+				my.request('getThumbnail', {path: src}, my.renderThumb);
 			}
 		});
 	}
 
-	protected static renderThumb(data: ResponseObject) {
+	protected static renderThumb(data: ResponseObject): void {
 		let my = DigitalAssetManagementActions;
 		if (data.result && data.result.thumbnail) {
-			$('.grid.image').each(function (index, el) {
+			$('.grid.image').each(function(): void {
 				let $el = $(this).find('img');
-				if (data.params === $el.attr('data-src')){
+				if (data.params.path === $el.attr('data-src')) {
 					$el.attr('src', data.result.thumbnail);
 					$(this).find('.icon').addClass('small');
 					// $(this).addClass('haspreview').css('width', 'auto');
@@ -204,32 +231,37 @@ class DigitalAssetManagementActions {
 		}
 	}
 
-	protected static showMetadata(data: ResponseObject) {
+	protected static showMetadata(data: ResponseObject): void {
 		let my = DigitalAssetManagementActions;
 		if (data.result && data.result.file) {
-			let html = '';
+			let html = '<h4>Metadata</h4>\n<dl class="row">\n';
 			console.log(data.result.file);
-			for (let field in data.result.file){
-				console.log(field);
+			for (let field in data.result.file) {
+				if (data.result.file.hasOwnProperty(field)) {
+					html += '<dt class="col-sm-4">' + field + '</dt><dd class="col-sm-8">' + data.result.file[field] + '</dd>';
+				}
 			}
-			$('.metadata').html(JSON.stringify(data.result.file)).show();
+			html += '</dl>';
+			$('.metadata').html(html);
+			$('.sidebar').removeClass('hidden');
 		}
 	}
 
 	/**
 	 * query a json backenendroute
 	 *
-	 * @param {string} method
-	 * @param {array} parameter
+	 * @param {string} action
+	 * @param {object} parameter
 	 * @param {string} callback
 	 */
-	protected static request(method: string, parameter: string, callback: RequestCallback): void {
+	protected static request(action: string, parameter: object, callback: RequestCallback): void {
 		let my = DigitalAssetManagementActions;
 		// @todo: why does TYPO3.sett... work here without top.?
-		let query = {};
+		let query = {action: '', params: {}};
 		let failedbefore = false;
-		query['method'] = method;
-		query['params']	= parameter;
+		query.action = action;
+		query.params = parameter;
+		console.log(query);
 		$.getJSON(TYPO3.settings.ajaxUrls.dam_request, query)
 			.done((data: ResponseObject): void => {
 				callback(data);
@@ -246,12 +278,29 @@ class DigitalAssetManagementActions {
 
 	protected static genericRequestCallback(data: ResponseObject): void {
 		let my = DigitalAssetManagementActions;
-		let method = data.method;
-		switch (method) {
+		let action = data.action;
+		if (data.result.settings) {
+			my.settings = data.result.settings;
+		}
+		switch (action) {
 			case 'getContent':
 				my.renderBreadcrumb(data);
 				my.renderContent(data);
 				my.loadThumbs();
+				if (my.settings.reverse) {
+					$('.sort-action[data-action="sort-order-asc"]').removeClass('active');
+					$('.sort-action[data-action="sort-order-dsc"]').addClass('active');
+				} else {
+					$('.sort-action[data-action="sort-order-asc"]').addClass('active');
+					$('.sort-action[data-action="sort-order-dsc"]').removeClass('active');
+				}
+				if (my.settings.sort === 'date') {
+					$('.sort-action[data-action="sort-by-name"]').removeClass('active');
+					$('.sort-action[data-action="sort-by-date"]').addClass('active');
+				} else {
+					$('.sort-action[data-action="sort-by-name"]').addClass('active');
+					$('.sort-action[data-action="sort-by-date"]').removeClass('active');
+				}
 				break;
 			case 'getThumbnail':
 				my.renderThumb(data);
@@ -260,10 +309,37 @@ class DigitalAssetManagementActions {
 				my.showMetadata(data);
 				break;
 			default:
-				top.TYPO3.Notification.warning('Request failed', 'Unknown method: ' + method);
+				top.TYPO3.Notification.warning('Request failed', 'Unknown action: ' + action);
 		}
-	};
+	}
 
+	protected static sortAction(action: string, parameter: object): void {
+		let my = DigitalAssetManagementActions;
+		console.log ( 'sort-action: ' + action + ', par: ' + JSON.stringify(parameter));
+		switch (action) {
+			case 'sort-order-asc':
+				my.settings.reverse = false;
+				break;
+			case 'sort-order-dsc':
+				my.settings.reverse = true;
+				break;
+			case 'sort-by-name':
+				my.settings.sort = 'name';
+				break;
+			case 'sort-by-date':
+				my.settings.sort = 'date';
+				break;
+			default:
+				// do nothing
+		}
+		parameter.reverse = my.settings.reverse || false;
+		parameter.sort = my.settings.sort || 'name';
+		// Remove all other view-* classes and add the clicked class
+		$('.maincontent').removeClass(function (index: number, className: string): string {
+			return (className.match (/(^|\s)sort-order-\S+/g) || []).join(' ');
+		}).addClass(action).attr('data-reverse', parameter.reverse );
+		my.request('getContent', parameter, my.genericRequestCallback);
+	}
 
 	/**
 	 * Replace template variables surrounded by {|}.
