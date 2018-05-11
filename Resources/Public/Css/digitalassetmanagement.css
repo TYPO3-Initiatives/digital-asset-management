@@ -54,7 +54,7 @@ div.digital-asset-management .grid.image:hover {
 	/*background: rgba(255, 255, 255, 0.7);*/
 /*}*/
 
-div.digital-asset-management .folder-action {
+div.digital-asset-management .ajax-action {
 	cursor: pointer;
 }
 
@@ -68,7 +68,7 @@ div.digital-asset-management .file {
 }
 
 /* Breadcrumb */
-.digital-asset-management .breadcrumb .folder-action:hover {
+.digital-asset-management .breadcrumb .ajax-action:hover {
 	text-decoration: underline;
 }
 

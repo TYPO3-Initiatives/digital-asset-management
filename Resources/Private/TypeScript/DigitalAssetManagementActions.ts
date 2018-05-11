@@ -37,7 +37,7 @@ interface RequestCallback {
  */
 class DigitalAssetManagementActions {
 
-	static folderPartial: string = '    <div class="grid folder-action {mimetype}" data-method="getContent" ' +
+	static folderPartial: string = '    <div class="grid ajax-action {mimetype}" data-action="getContent" ' +
 		'data-parameter="{identifier}">\n' +
 		'   <div class="grid-cell" >\n' +
 		'      <div class="icon folder-icon {type}"></div>' +
@@ -47,7 +47,7 @@ class DigitalAssetManagementActions {
 		'   </div>\n' +
 		'  </div>\n';
 
-	static filePartial: string = '<div class="grid file {mimetype} folder-action" data-method="getMetadata" data-parameter="{identifier}">\n' +
+	static filePartial: string = '<div class="grid file {mimetype} ajax-action" data-action="getMetadata" data-parameter="{identifier}">\n' +
 		// '    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
 		'    <div class="preview" >' +
 		'<img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="{identifier}"></div>\n' +
@@ -61,7 +61,7 @@ class DigitalAssetManagementActions {
 		'    </div>' +
 		'  </div>\n';
 
-	static breadcrumbPartial: string = '<span class="folder-action" data-method="getContent" ' +
+	static breadcrumbPartial: string = '<span class="ajax-action" data-action="getContent" ' +
 		'data-parameter="{identifier}">{label}</span>';
 
 	/**
@@ -73,7 +73,7 @@ class DigitalAssetManagementActions {
 		// my.renderBreadcrumb('/');
 		// @todo: get filetree starting point from user settings.
 		my.request('getContent', '', my.genericRequestCallback);
-		$('.digital-asset-management').on('click', '.folder-action', function(): void {
+		$('.digital-asset-management').on('click', '.ajax-action', function(): void {
 			let method = this.dataset.method;
 			let parameter = this.dataset.parameter;
 			console.log ( 'method: ' + method + ', par: ' + parameter);
@@ -155,7 +155,7 @@ class DigitalAssetManagementActions {
 				html += my.replaceTemplateVars(my.breadcrumbPartial, part);
 			}
 			// Set actual identifier to reindex-action parameter
-			$('.folder-action[data-method="reindexStorage"]').attr('data-parameter', lastidentifier).removeClass('disabled');
+			$('.ajax-action[data-action="reindexStorage"]').attr('data-parameter', lastidentifier).removeClass('disabled');
 			// Add some classes
 			if (html) {
 				$('.breadcrumb').html(html).removeClass('empty');
