@@ -341,7 +341,7 @@ class DigitalAssetManagementAjaxController
             'path' => '',
             'start' => 0,
             'count' => 0,
-            'sort' => '',
+            'sort' => 'name',
             'view' => 'symbols',
             'reverse' => false,
             'meta' => false
@@ -359,10 +359,12 @@ class DigitalAssetManagementAjaxController
                 $userSettings['count'] = (integer)$params['count'];
             }
             if (isset($params['sort'])) {
-                $userSettings['sort'] = (string)$params['sort'];
+                if (in_array($params['sort'], ['name', 'modified', 'size'])) {
+                    $userSettings['sort'] = (string)$params['sort'];
+                }
             }
             if (isset($params['view'])) {
-                if (in_array($params, ['list', 'symbols', 'photos'])) {
+                if (in_array($params['view'], ['list', 'symbols', 'photos'])) {
                     $userSettings['view'] = (string)$params['view'];
                 }
             }
