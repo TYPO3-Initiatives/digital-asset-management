@@ -23,7 +23,7 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemInterface;
-use TYPO3\CMS\DigitalAssetManagement\Service\LocalFileSystemService;
+use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemService;
 
 /**
  * Backend controller: The "Digital Asset Management" JSON response controller
@@ -86,6 +86,7 @@ class DigitalAssetManagementAjaxController
             if ($path === "" || is_null($path)) {
                 $path = $userSettings['path'];
             } elseif ($path === "*" ) {
+                $userSettings['path'] = '';
                 $path = "";
             }
             if (($path !== "") && (strlen($path) > 1)) {
@@ -155,7 +156,7 @@ class DigitalAssetManagementAjaxController
                         unset($fileMounts);
                     } else {
                         // only one mountpoint
-                        $service = new LocalFileSystemService($fileStorage);
+                        $service = new FileSystemService($fileStorage);
                         if ($service) {
                             $files = $service->listFiles($path);
                             $folders = $service->listFolder($path);
@@ -209,10 +210,10 @@ class DigitalAssetManagementAjaxController
                             }
                         }
                         /** @var FileSystemInterface $service */
-                        $service = new LocalFileSystemService($fileStorage);
+                        $service = new FileSystemService($fileStorage);
                         if ($service) {
                             $files = $service->listFiles($path, $userSettings['meta'], $userSettings['start'], $userSettings['count'], $userSettings['sort'], $userSettings['reverse']);
-                            $folders = $service->listFolder($path, $userSettings['start'], $userSettings['count'], $userSettings['sort'], $userSettings['reverse']);
+                            $folders = $service->listFolder($path, 0, 0, $userSettings['sort'], $userSettings['reverse']);
                             unset($service);
                         }
                         // store path to user settings
@@ -250,7 +251,7 @@ class DigitalAssetManagementAjaxController
                 $fileStorage->setEvaluatePermissions(true);
                 if (($fileStorage->getUid() == $storageId) && ($fileStorage->getDriverType() === 'Local')) {
                     /** @var FileSystemInterface $service */
-                    $service = new LocalFileSystemService($fileStorage);
+                    $service = new FileSystemService($fileStorage);
                     if ($service) {
                         $file = $fileStorage->getFile($path);
                         $thumb = $service->thumbnail(rtrim($_SERVER["DOCUMENT_ROOT"], "/") . '/' . urldecode($file->getPublicUrl()), true);
@@ -284,7 +285,7 @@ class DigitalAssetManagementAjaxController
                 $fileStorage = ResourceFactory::getInstance()->getStorageObject($storageId);
                 $fileStorage->setEvaluatePermissions(true);
                 /** @var FileSystemInterface $service */
-                $service = new LocalFileSystemService($fileStorage);
+                $service = new FileSystemService($fileStorage);
                 if ($service) {
                     $file = $service->info($path);
                     unset($service);
@@ -341,6 +342,7 @@ class DigitalAssetManagementAjaxController
             'start' => 0,
             'count' => 0,
             'sort' => '',
+            'view' => 'symbols',
             'reverse' => false,
             'meta' => false
         ];
@@ -358,6 +360,11 @@ class DigitalAssetManagementAjaxController
             }
             if (isset($params['sort'])) {
                 $userSettings['sort'] = (string)$params['sort'];
+            }
+            if (isset($params['view'])) {
+                if (in_array($params, ['list', 'symbols', 'photos'])) {
+                    $userSettings['view'] = (string)$params['view'];
+                }
             }
             if (isset($params['reverse'])) {
                 $userSettings['reverse'] = filter_var($params['reverse'], FILTER_VALIDATE_BOOLEAN);

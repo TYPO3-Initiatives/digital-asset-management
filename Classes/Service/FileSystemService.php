@@ -14,55 +14,27 @@ namespace TYPO3\CMS\DigitalAssetManagement\Service;
 *
 * The TYPO3 project - inspiring people to share!
 */
-
+use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-abstract class AbstractFileSystemService implements FileSystemInterface
+class FileSystemService implements FileSystemInterface
 {
-    /**
-     * @param string $path
-     * @return string
-     */
-    abstract protected function readFile($path): string;
-
-    /**
-     * @param string $path
-     * @param string $content
-     * @return bool success
-     */
-    abstract protected function writeFile($path, $content): bool;
-
-    /**
-     * @param string $path
-     * @return bool success
-     */
-    abstract protected function existsFile($path): bool;
-
-    /**
-     * @param string $path
-     * @return bool success
-     */
-    abstract protected function deleteFile($path): bool;
-
-    /**
-     * @param string $path
-     * @return array
-     */
-    abstract protected function infoFile($path): array;
-
     /**
      * @param string $path
      * @return string
      */
     public function read($path): string
     {
-        if (true) { // @todo: check sys_file
-            return ($this->readFile($path));
-        } else {
-            return '';
+        $result = '';
+        if ($this->storage) {
+            $storage = $this->storage;
+            // $file returns a TYPO3\CMS\Core\Resource\File object
+            $file = $storage->getFile($path);
+            $result = $file->getContents();
         }
+        return $result;
     }
 
     /**
@@ -72,9 +44,15 @@ abstract class AbstractFileSystemService implements FileSystemInterface
      */
     public function write($path, $content): bool
     {
-        if ($this->writeFile($path, $content)) {
-            // @todo: update sys_file
+        $result = false;
+        if ($this->storage) {
+            $storage = $this->storage;
+            // $file returns a TYPO3\CMS\Core\Resource\File object
+            $file = $storage->getFile($path);
+            $file = $file->setContents($content);
+            $result = ($file) ? true : false;
         }
+        return $result;
     }
 
     /**
@@ -83,8 +61,14 @@ abstract class AbstractFileSystemService implements FileSystemInterface
      */
     public function exists($path): bool
     {
-        // @todo: check sys_file
-        return ($this->existsFile($path));
+        $result = false;
+        if ($this->storage) {
+            $storage = $this->storage;
+            // $file returns a TYPO3\CMS\Core\Resource\File object
+            $file = $storage->getFile($path);
+            $result = $file->isIndexed(); // @todo: FileInterface should export method "exists"
+        }
+        return $result;
     }
 
     /**
@@ -93,8 +77,11 @@ abstract class AbstractFileSystemService implements FileSystemInterface
      */
     public function delete($path): bool
     {
-        if ($this->deleteFile($path)) {
-            // @todo: delete from sys_file
+        if ($this->storage) {
+            $storage = $this->storage;
+            // $file returns a TYPO3\CMS\Core\Resource\File object
+            $file = $storage->getFile($path);
+            $file->delete();
         }
         return !$this->exists($path);
     }
