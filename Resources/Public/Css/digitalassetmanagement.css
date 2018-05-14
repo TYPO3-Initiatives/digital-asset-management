@@ -269,6 +269,7 @@ div.digital-asset-management .view-symbols .icon.small {
 }
 
 
+
 /* view-photo */
 
 div.digital-asset-management .view-photo .preview img {
@@ -412,6 +413,9 @@ div.digital-asset-management .folder .icon {
 
 .icon-actions-edit-upload {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-edit-upload.svg");
+}
+.icon-actions-edit-download {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-edit-download.svg");
 }
 .icon-actions-view {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-view.svg");

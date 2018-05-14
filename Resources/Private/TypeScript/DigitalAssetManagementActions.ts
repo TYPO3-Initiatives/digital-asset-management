@@ -287,19 +287,19 @@ class DigitalAssetManagementActions {
 				my.renderBreadcrumb(data);
 				my.renderContent(data);
 				my.loadThumbs();
+				$('.sort-order').removeClass('active');
 				if (my.settings.reverse) {
-					$('.sort-action[data-action="sort-order-asc"]').removeClass('active');
 					$('.sort-action[data-action="sort-order-dsc"]').addClass('active');
 				} else {
 					$('.sort-action[data-action="sort-order-asc"]').addClass('active');
-					$('.sort-action[data-action="sort-order-dsc"]').removeClass('active');
 				}
+				$('.sort-field').removeClass('active');
 				if (my.settings.sort === 'date') {
-					$('.sort-action[data-action="sort-by-name"]').removeClass('active');
 					$('.sort-action[data-action="sort-by-date"]').addClass('active');
-				} else {
+				} else if (my.settings.sort === 'name') {
 					$('.sort-action[data-action="sort-by-name"]').addClass('active');
-					$('.sort-action[data-action="sort-by-date"]').removeClass('active');
+				} else if (my.settings.sort === 'size') {
+					$('.sort-action[data-action="sort-by-size"]').addClass('active');
 				}
 				break;
 			case 'getThumbnail':
@@ -326,6 +326,9 @@ class DigitalAssetManagementActions {
 			case 'sort-by-name':
 				my.settings.sort = 'name';
 				break;
+			case 'sort-by-size':
+				my.settings.sort = 'size';
+				break;
 			case 'sort-by-date':
 				my.settings.sort = 'date';
 				break;
@@ -334,6 +337,7 @@ class DigitalAssetManagementActions {
 		}
 		parameter.reverse = my.settings.reverse || false;
 		parameter.sort = my.settings.sort || 'name';
+		console.log ( 'sort-action: ' + action + ', par: ' + JSON.stringify(parameter));
 		// Remove all other view-* classes and add the clicked class
 		$('.maincontent').removeClass(function (index: number, className: string): string {
 			return (className.match (/(^|\s)sort-order-\S+/g) || []).join(' ');
