@@ -18,45 +18,57 @@ namespace TYPO3\CMS\DigitalAssetManagement\Service;
 interface FileSystemInterface
 {
     /**
-     * @param string $path
+     * read file content
+     *
+     * @param string $identifier
      * @return string
      */
-    public function read($path): string;
+    public function read($identifier): string;
 
     /**
-     * @param string $path
+     * write file file content
+     *
+     * @param string $identifier
      * @param string $content
      * @return bool success
      */
-    public function write($path, $content): bool;
+    public function write($identifier, $content): bool;
 
     /**
      * checks if file exists
-     * folders are created implicit
      *
-     * @param string $path
+     * @param string $identifier
      * @return bool success
      */
-    public function exists($path): bool;
+    public function exists($identifier): bool;
 
     /**
-     * @param string $path
+     * delete a single file
+     *
+     * @param string $identifier
      * @return bool success
      */
-    public function delete($path): bool;
+    public function delete($identifier): bool;
 
     /**
-     * @param string $path
+     * rename a single file
+     *
+     * @param string $identifier
+     * @param string $newName
+     * @return bool success
+     */
+    public function rename($identifier, $newName): bool;
+
+    /**
+     * @param string $identifier
      * @return array
      */
-    public function info($path): array;
+    public function info($identifier): array;
 
     /**
      * returns an array of folders in a defined path
      *
      * @param string $path
-     * @param int $start
-     * @param int $maxNumberOfItems
      * @param string $sort Property name used to sort the items.
      *                     Among them may be: '' (empty, no sorting), name,
      *                     fileext, size, tstamp and rw.
@@ -67,7 +79,7 @@ interface FileSystemInterface
      * @throws \RuntimeException
      * @return array
      */
-    public function listFolder($path, $start = 0, $maxNumberOfItems = 0, $sort = '', $sortRev = false): array;
+    public function listFolder($path, $sort = '', $sortRev = false): array;
 
     /**
      * returns an array of files in a defined path

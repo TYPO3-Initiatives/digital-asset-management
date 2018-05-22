@@ -66,6 +66,7 @@ class DigitalAssetManagementAjaxController
     /**
      * get file and folder content for a path
      * empty string means get all storages or mounts of the be-user or the root level of a single available storage
+     * $params['path']/$params = $storageId.':'.$identifier
      *
      * @param string|array $params
      * @return array
@@ -79,9 +80,9 @@ class DigitalAssetManagementAjaxController
         // get backend user
         $backendUser = $this->getBackendUser();
         // get all storage objects
-        /** @var ResourceStorage[] $fileStorages */
-        $fileStorages = $backendUser->getFileStorages();
-        if (is_array($fileStorages)){
+        /** @var ResourceStorage[] $storages */
+        $storages = $backendUser->getFileStorages();
+        if (is_array($storages)){
             $storageId = null;
             if ($path === "" || is_null($path)) {
                 $path = $userSettings['path'];
@@ -105,14 +106,14 @@ class DigitalAssetManagementAjaxController
                 'type' => 'home'
             ];
             $relPath = $path;
-            /** @var ResourceStorage $fileStorage  */
+            /** @var ResourceStorage $storage  */
             if ($storageId === null) {
                 // no storage, mountpoint and folder selected
-                if (count($fileStorages) > 1) {
+                if (count($storages) > 1) {
                     // more than one storage
-                    foreach ($fileStorages as $fileStorage) {
-                        $storageInfo = $fileStorage->getStorageRecord();
-                        $fileMounts = $fileStorage->getFileMounts();
+                    foreach ($storages as $storage) {
+                        $storageInfo = $storage->getStorageRecord();
+                        $fileMounts = $storage->getFileMounts();
                         if (!empty($fileMounts)) {
                             // mount points exists in the storage
                             foreach ($fileMounts as $fileMount) {
@@ -139,9 +140,9 @@ class DigitalAssetManagementAjaxController
                     }
                 } else {
                     // only one storage
-                    $fileStorage = reset($fileStorages);
-                    $storageInfo = $fileStorage->getStorageRecord();
-                    $fileMounts = $fileStorage->getFileMounts();
+                    $storage = reset($storages);
+                    $storageInfo = $storage->getStorageRecord();
+                    $fileMounts = $storage->getFileMounts();
                     if (count($fileMounts) > 1) {
                         // more than one mountpoint
                         foreach ($fileMounts as $fileMount) {
@@ -156,7 +157,7 @@ class DigitalAssetManagementAjaxController
                         unset($fileMounts);
                     } else {
                         // only one mountpoint
-                        $service = new FileSystemService($fileStorage);
+                        $service = new FileSystemService($storage);
                         if ($service) {
                             $files = $service->listFiles($path);
                             $folders = $service->listFolder($path);
@@ -167,12 +168,12 @@ class DigitalAssetManagementAjaxController
                 }
             } else {
                 // storage or mountpoint selected
-                foreach ($fileStorages as $fileStorage) {
-                    $storageInfo = $fileStorage->getStorageRecord();
-                    if ((count($fileStorages) === 1) || ($storageId && ($storageInfo['uid'] == $storageId))) {
+                foreach ($storages as $storage) {
+                    $storageInfo = $storage->getStorageRecord();
+                    if ((count($storages) === 1) || ($storageId && ($storageInfo['uid'] == $storageId))) {
                         // selected storage
                         $identifier = $storageInfo['uid'] . ':';
-                        $fileMounts = $fileStorage->getFileMounts();
+                        $fileMounts = $storage->getFileMounts();
                         if (!empty($fileMounts)) {
                             // mountpoint exists
                             foreach ($fileMounts as $fileMount) {
@@ -190,7 +191,7 @@ class DigitalAssetManagementAjaxController
                         } else {
                             // no mountpoint exists but more than one storage
                             $identifier .= '/';
-                            if (count($fileStorages) > 1) {
+                            if (count($storages) > 1) {
                                 $breadcrumbs[] = [
                                     'identifier' => $identifier,
                                     'name' => $storageInfo['name'],
@@ -210,16 +211,24 @@ class DigitalAssetManagementAjaxController
                             }
                         }
                         /** @var FileSystemInterface $service */
-                        $service = new FileSystemService($fileStorage);
+                        $service = new FileSystemService($storage);
                         if ($service) {
-                            $files = $service->listFiles($path, $userSettings['meta'], $userSettings['start'], $userSettings['count'], $userSettings['sort'], $userSettings['reverse']);
-                            $folders = $service->listFolder($path, 0, 0, $userSettings['sort'], $userSettings['reverse']);
+                            if( $path === '/') {
+                                $folder = $storage->getRootLevelFolder();
+                            } else {
+                                $folder = $storage->getFolder($path);
+                            }
+                            if ($userSettings['start'] == 0) {
+                                $folders = $service->listFolder($folder, 0, 0, $userSettings['sort'], $userSettings['reverse']);
+                            }
+                            $files = $service->listFiles($folder, $userSettings['meta'], $userSettings['start'], $userSettings['count'], $userSettings['sort'], $userSettings['reverse']);
                             unset($service);
                         }
                         // store path to user settings
                         $userSettings['path'] = $identifier;
                         break;
                     }
+                    unset($storageInfo);
                 }
             }
             // save user settings array
@@ -231,34 +240,30 @@ class DigitalAssetManagementAjaxController
     /**
      * get thumbnail from image file
      * only local storages are supported until now
+     * $params['path']/$params = $storageId.':'.$identifier
      *
      * @param string|array $params
      * @return array
      */
     protected function getThumbnailAction($params = ""): array
     {
-        if (is_array($params)) {
-            $path = reset($params);
-        } else {
-            $path = $params;
-        }
-        $service = null;
+        $path = (is_array($params) ? reset($params) : $params);
         if (strlen($path)>6) {
-            list($storageId, $path) = explode(":", $path, 2);
-            if ($storageId && !empty($path)) {
-                /** @var ResourceStorage $fileStorage */
-                $fileStorage = ResourceFactory::getInstance()->getStorageObject($storageId);
-                $fileStorage->setEvaluatePermissions(true);
-                if (($fileStorage->getUid() == $storageId) && ($fileStorage->getDriverType() === 'Local')) {
+            list($storageId, $identifier) = explode(":", $path, 2);
+            if ($storageId && !empty($identifier)) {
+                /** @var ResourceStorage $storage */
+                $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
+                $storage->setEvaluatePermissions(true);
+                if (($storage->getUid() == $storageId) && ($storage->getDriverType() === 'Local')) {
                     /** @var FileSystemInterface $service */
-                    $service = new FileSystemService($fileStorage);
+                    $service = new FileSystemService($storage);
                     if ($service) {
-                        $file = $fileStorage->getFile($path);
+                        $file = $storage->getFile($identifier);
                         $thumb = $service->thumbnail(rtrim($_SERVER["DOCUMENT_ROOT"], "/") . '/' . urldecode($file->getPublicUrl()), true);
                         unset($service);
                     }
                 }
-                unset($fileStorage);
+                unset($storage);
                 return ['thumbnail' => $thumb];
             }
         }
@@ -266,61 +271,128 @@ class DigitalAssetManagementAjaxController
 
     /**
      * get metadata of file
+     * $params['path']/$params = $storageId.':'.$identifier
      *
      * @param string|array $params
      * @return array
      */
     protected function getMetadataAction($params): array
     {
-        if (is_array($params)) {
-            $path = reset($params);
-        } else {
-            $path = $params;
-        }
-        $service = null;
+        $path = (is_array($params) ? reset($params) : $params);
         if (strlen($path)>6) {
-            list($storageId, $path) = explode(":", $path, 2);
-            if ($storageId && !empty($path)) {
-                /** @var ResourceStorage $fileStorage */
-                $fileStorage = ResourceFactory::getInstance()->getStorageObject($storageId);
-                $fileStorage->setEvaluatePermissions(true);
+            list($storageId, $identifier) = explode(":", $path, 2);
+            if ($storageId && !empty($identifier)) {
+                /** @var ResourceStorage $storage */
+                $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
+                $storage->setEvaluatePermissions(true);
                 /** @var FileSystemInterface $service */
-                $service = new FileSystemService($fileStorage);
+                $service = new FileSystemService($storage);
                 if ($service) {
-                    $file = $service->info($path);
+                    $file = $service->info($identifier);
                     unset($service);
                 }
-                unset($fileStorage);
+                unset($storage);
                 return ['file' => $file];
             }
         }
     }
 
     /**
+     * rename file
+     *
+     * @param array $params
+     * @return array
+     */
+    protected function renameFile($params): array
+    {
+        if (is_array($params)) {
+            if (strlen($params['path'])>6) {
+                list($storageId, $identifier) = explode(":", $params['path'], 2);
+                if ($storageId && !empty($identifier) && !empty($params['newName'])) {
+                    /** @var ResourceStorage $storage */
+                    $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
+                    $storage->setEvaluatePermissions(true);
+                    /** @var FileSystemInterface $service */
+                    $service = new FileSystemService($storage);
+                    if ($service) {
+                        $file = $service->rename($identifier, $params['newName']);
+                        unset($service);
+                    }
+                    unset($storage);
+                    return ['file' => $file];
+                }
+            }
+        }
+    }
+
+    /**
+     * delete file(s)
+     *
+     * @param string|array $params
+     * @return array
+     */
+    protected function deleteFile($params): array
+    {
+        if (is_array($params)) {
+            for($i=0; $i < count($params); $i++) {
+                if (strlen($params[$i])>6) {
+                    list($storageId, $identifier) = explode(":", $params['path'], 2);
+                    if ($storageId && !empty($identifier)) {
+                        /** @var ResourceStorage $storage */
+                        $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
+                        $storage->setEvaluatePermissions(true);
+                        /** @var FileSystemInterface $service */
+                        $service = new FileSystemService($storage);
+                        if ($service) {
+                            $service->delete($identifier);
+                            unset($service);
+                        }
+                        unset($storage);
+                    }
+                }
+            }
+        } elseif (strlen($params)>6) {
+            list($storageId, $identifier) = explode(":", $params, 2);
+            if ($storageId && !empty($identifier)) {
+                /** @var ResourceStorage $storage */
+                $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
+                $storage->setEvaluatePermissions(true);
+                /** @var FileSystemInterface $service */
+                $service = new FileSystemService($storage);
+                if ($service) {
+                    $service->delete($identifier);
+                    unset($service);
+                }
+                unset($storage);
+            }
+        }
+        $this->result['action'] = 'getContent';
+        return $this->getContentAction('');
+    }
+
+    /**
      * FAL reindexing actual storage
+     * $params['path']/$params = $storageId.':'.$identifier
      *
      * @param string|array $params
      * @return array
      */
     protected function reindexStorageAction($params = "")
     {
-        if (is_array($params)) {
-            $path = reset($params);
-        } else {
-            $path = $params;
-        }
+        $path = (is_array($params) ? reset($params) : $params);
         if (strlen($path)>1) {
-            list($storageId, $path) = explode(":", $path, 2);
+            list($storageId, $identifier) = explode(":", $path, 2);
             if ($storageId) {
-                /** @var ResourceStorage $fileStorage  */
-                $fileStorage = ResourceFactory::getInstance()->getStorageObject($storageId);
-                $fileStorage->setEvaluatePermissions(false);
+                /** @var ResourceStorage $storage  */
+                $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
+                $storage->setEvaluatePermissions(false);
                 /** @var Indexer $indexer */
-                $indexer = GeneralUtility::makeInstance(Indexer::class, $fileStorage);
+                $indexer = GeneralUtility::makeInstance(Indexer::class, $storage);
+                // @todo: don't take whole storage, use $identifier
                 $indexer->processChangesInStorages();
-                $fileStorage->setEvaluatePermissions(true);
+                $storage->setEvaluatePermissions(true);
                 unset($indexer);
-                unset($fileStorage);
+                unset($storage);
             }
         }
         $this->result['action'] = 'getContent';

@@ -22,68 +22,95 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class FileSystemService implements FileSystemInterface
 {
     /**
-     * @param string $path
+     * @var ResourceStorage $storage
+     */
+    protected $storage = null;
+
+    /**
+     * read file content
+     *
+     * @param string $identifier
      * @return string
      */
-    public function read($path): string
+    public function read($identifier): string
     {
         $result = '';
         if ($this->storage) {
-            $storage = $this->storage;
             // $file returns a TYPO3\CMS\Core\Resource\File object
-            $file = $storage->getFile($path);
-            $result = $file->getContents();
+            $file = $this->storage->getFile($identifier);
+            $result = $file->getContents(); // @todo: check method
         }
         return $result;
     }
 
     /**
-     * @param string $path
+     * write file content
+     *
+     * @param string $identifier
      * @param string $content
      * @return bool success
      */
-    public function write($path, $content): bool
+    public function write($identifier, $content): bool
     {
         $result = false;
         if ($this->storage) {
-            $storage = $this->storage;
             // $file returns a TYPO3\CMS\Core\Resource\File object
-            $file = $storage->getFile($path);
-            $file = $file->setContents($content);
+            $file = $this->storage->getFile($identifier);
+            $file = $file->setContents($content); // @todo: check method
             $result = ($file) ? true : false;
         }
         return $result;
     }
 
     /**
-     * @param string $path
+     * checks if file exists
+     *
+     * @param string $identifier
      * @return bool success
      */
-    public function exists($path): bool
+    public function exists($identifier): bool
     {
         $result = false;
         if ($this->storage) {
-            $storage = $this->storage;
             // $file returns a TYPO3\CMS\Core\Resource\File object
-            $file = $storage->getFile($path);
-            $result = $file->isIndexed(); // @todo: FileInterface should export method "exists"
+            $file = $this->storage->getFile($identifier);
+            $result = $file->isIndexed(); // @todo: check method
         }
         return $result;
     }
 
     /**
-     * @param string $path
+     * delete a single file
+     *
+     * @param string $identifier
      * @return bool success
      */
-    public function delete($path): bool
+    public function delete($identifier): bool
+    {
+        $result = false;
+        if ($this->storage) {
+            // $file returns a TYPO3\CMS\Core\Resource\File object
+            $file = $this->storage->getFile($identifier);
+            $result = $file->delete(); // @todo: check method
+        }
+        return $result;
+    }
+
+    /**
+     * rename a single file
+     *
+     * @param string $identifier
+     * @param string $newName
+     * @return bool success
+     */
+    public function rename($identifier, $newName): bool
     {
         if ($this->storage) {
-            $storage = $this->storage;
             // $file returns a TYPO3\CMS\Core\Resource\File object
-            $file = $storage->getFile($path);
-            $file->delete();
+            $file = $this->storage->getFile($identifier);
+            $file = $file->rename($newName); // @todo: check method
         }
-        return !$this->exists($path);
+        return $this->exists($newName);
     }
 
     /**
@@ -155,16 +182,15 @@ class FileSystemService implements FileSystemInterface
     /**
      * get file info
      *
-     * @param string $path
+     * @param string $identifier
      * @return array
      */
-    public function info($path): array
+    public function info($identifier): array
     {
         $result = [];
         if ($this->storage) {
-            $storage = $this->storage;
             // $file returns a TYPO3\CMS\Core\Resource\File object
-            $file = $storage->getFile($path);
+            $file = $this->storage->getFile($identifier);
             $result = $file->toArray();
             $result['meta'] = $this->getMetadata($file->getIdentifier());
             $result['references'] = $this->getReferences($file->getIdentifier());
@@ -333,28 +359,21 @@ class FileSystemService implements FileSystemInterface
     {
         $fileArray = [];
         if ($this->storage) {
-            $storage = $this->storage;
-            if( $path === '/') {
-                // respect file mounts
-                $startingFolder = $storage->getRootLevelFolder();
-            } else {
-                $startingFolder = $storage->getFolder($path);
-            }
             /** @var File[] $files */
-            $files = $storage->getFilesInFolder($startingFolder, $start, $maxNumberOfItems, true, false, $sort, $sortRev);
+            $files = $this->storage->getFilesInFolder($path, $start, $maxNumberOfItems, true, false, $sort, $sortRev);
             foreach ($files as $file){
                 $fileArr = $file->toArray();
                 $newFile = [];
                 foreach ($fileArr as $key => $value) {
                     if ($withMetadata || in_array($key, ['uid', 'name', 'identifier', 'storage', 'url', 'mimetype', 'size', 'permissions', 'modification_date'] )) {
                         if ($key === 'identifier') {
-                            $newFile[$key] = $storage->getUid() . ':' . $value;
+                            $newFile[$key] = $this->storage->getUid() . ':' . $value;
                         } else {
                             $newFile[$key] = $value;
                         }
                     }
                 }
-                $newFile['storage_name'] = $storage->getName();
+                $newFile['storage_name'] = $this->storage->getName();
                 $newFile['type'] = 'file';
                 if ($withMetadata) {
                     $newFile['meta'] = $this->getMetadata($file->getIdentifier());
@@ -372,8 +391,6 @@ class FileSystemService implements FileSystemInterface
      * returns an array of folders in a defined path
      *
      * @param string $path
-     * @param int $start
-     * @param int $maxNumberOfItems
      * @param string $sort Property name used to sort the items.
      *                     Among them may be: '' (empty, no sorting), name,
      *                     fileext, size, tstamp and rw.
@@ -384,18 +401,12 @@ class FileSystemService implements FileSystemInterface
      * @throws \RuntimeException
      * @return array
      */
-    public function listFolder($path, $start = 0, $maxNumberOfItems = 0, $sort = '', $sortRev = false): array
+    public function listFolder($path,  $sort = '', $sortRev = false): array
     {
         $folderArray = [];
         if ($this->storage) {
-            $storage = $this->storage;
-            if( $path === '/') {
-                $startingFolder = $storage->getRootLevelFolder();
-            } else {
-                $startingFolder = $storage->getFolder($path);
-            }
             /** @var Folder[] $folders */
-            $folders = $storage->getFoldersInFolder($startingFolder, $start, $maxNumberOfItems, true,  false, $sort, $sortRev);
+            $folders = $this->storage->getFoldersInFolder($path, 0, 0, true,  false, $sort, $sortRev);
             foreach ($folders as $folder){
                 $folder = (array)$folder;
                 $newFolder = [];
@@ -403,13 +414,13 @@ class FileSystemService implements FileSystemInterface
                     // replace protected /u0000 in key
                     $newKey = substr($key, 3);
                     if ($newKey === 'identifier') {
-                        $newFolder[$newKey] = $storage->getUid() . ':' . $value;
+                        $newFolder[$newKey] = $this->storage->getUid() . ':' . $value;
                     } elseif ($newKey === 'name') {
                         $newFolder[$newKey] = $value;
                     }
                 }
-                $newFolder['storage_name'] = $storage->getName();
-                $newFolder['storage'] = $storage->getUid();
+                $newFolder['storage_name'] = $this->storage->getName();
+                $newFolder['storage'] = $this->storage->getUid();
                 $newFolder['type'] = 'folder';
                 $folderArray[] = $newFolder;
             }
@@ -420,22 +431,11 @@ class FileSystemService implements FileSystemInterface
     }
 
     /**
-     * @var ResourceStorage $storage
-     */
-    protected $storage = null;
-
-    /**
-     * @var array
-     */
-    protected $storageInfo = null;
-
-    /**
      * AbstractFileSystemService constructor.
      * @param ResourceStorage $storage
      */
     public function __construct($storage)
     {
         $this->storage = $storage;
-        $this->storageInfo = $this->storage->getStorageRecord();
     }
 }
