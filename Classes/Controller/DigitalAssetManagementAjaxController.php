@@ -248,7 +248,7 @@ class DigitalAssetManagementAjaxController
     protected function getThumbnailAction($params = ""): array
     {
         $path = (is_array($params) ? reset($params) : $params);
-        if (strlen($path)>6) {
+        if (strlen($path) > 6) {
             list($storageId, $identifier) = explode(":", $path, 2);
             if ($storageId && !empty($identifier)) {
                 /** @var ResourceStorage $storage */
@@ -279,7 +279,7 @@ class DigitalAssetManagementAjaxController
     protected function getMetadataAction($params): array
     {
         $path = (is_array($params) ? reset($params) : $params);
-        if (strlen($path)>6) {
+        if (strlen($path) > 6) {
             list($storageId, $identifier) = explode(":", $path, 2);
             if ($storageId && !empty($identifier)) {
                 /** @var ResourceStorage $storage */
@@ -298,15 +298,47 @@ class DigitalAssetManagementAjaxController
     }
 
     /**
+     * delete file(s)
+     *
+     * @param string|array $params
+     * @return array
+     */
+    protected function deleteFileAction($params): array
+    {
+        if (is_array($params)) {
+            $identifier = [];
+            for ($i = 0; $i < count($params); $i++) {
+                list($storageId, $identifier[$i]) = explode(":", $params[$i], 2);
+            }
+        } else {
+            list($storageId, $identifier) = explode(":", $params, 2);
+        }
+        if ($storageId && !empty($identifier)) {
+            /** @var ResourceStorage $storage */
+            $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
+            $storage->setEvaluatePermissions(true);
+            /** @var FileSystemInterface $service */
+            $service = new FileSystemService($storage);
+            if ($service) {
+                $this->result['deleteFile'] = $service->delete($identifier);
+                unset($service);
+            }
+            unset($storage);
+        }
+        $this->result['action'] = 'getContent';
+        return $this->getContentAction('');
+    }
+
+    /**
      * rename file
      *
      * @param array $params
      * @return array
      */
-    protected function renameFile($params): array
+    protected function renameFileAction($params): array
     {
         if (is_array($params)) {
-            if (strlen($params['path'])>6) {
+            if (strlen($params['path']) > 6) {
                 list($storageId, $identifier) = explode(":", $params['path'], 2);
                 if ($storageId && !empty($identifier) && !empty($params['newName'])) {
                     /** @var ResourceStorage $storage */
@@ -315,55 +347,48 @@ class DigitalAssetManagementAjaxController
                     /** @var FileSystemInterface $service */
                     $service = new FileSystemService($storage);
                     if ($service) {
-                        $file = $service->rename($identifier, $params['newName']);
+                        $this->result['renameFile'] = $service->rename($identifier, $params['newName']);
                         unset($service);
                     }
                     unset($storage);
-                    return ['file' => $file];
                 }
             }
         }
+        $this->result['action'] = 'getContent';
+        return $this->getContentAction('');
     }
 
     /**
-     * delete file(s)
+     * move file(s)
      *
      * @param string|array $params
      * @return array
      */
-    protected function deleteFile($params): array
+    protected function moveFileAction($params): array
     {
         if (is_array($params)) {
-            for($i=0; $i < count($params); $i++) {
-                if (strlen($params[$i])>6) {
-                    list($storageId, $identifier) = explode(":", $params['path'], 2);
-                    if ($storageId && !empty($identifier)) {
-                        /** @var ResourceStorage $storage */
-                        $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
-                        $storage->setEvaluatePermissions(true);
-                        /** @var FileSystemInterface $service */
-                        $service = new FileSystemService($storage);
-                        if ($service) {
-                            $service->delete($identifier);
-                            unset($service);
+            if ((strlen($params['path']) > 6) && !is_null($params['file']))  {
+                list($storageId, $newFolderIdentifier) = explode(":", $params['path'], 2);
+                if ($storageId && !empty($params['file'])) {
+                    if (is_array($params['file'])) {
+                        $identifier = [];
+                        for ($i = 0; $i < count($params['file']); $i++) {
+                            list($storageId, $identifier[$i]) = explode(":", $params['file'][$i], 2);
                         }
-                        unset($storage);
+                    } else {
+                        list($storageId, $identifier) = explode(":", $params['file'], 2);
                     }
+                    /** @var ResourceStorage $storage */
+                    $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
+                    $storage->setEvaluatePermissions(true);
+                    /** @var FileSystemInterface $service */
+                    $service = new FileSystemService($storage);
+                    if ($service) {
+                        $this->result['moveFile'] = $service->move($identifier, $newFolderIdentifier);
+                        unset($service);
+                    }
+                    unset($storage);
                 }
-            }
-        } elseif (strlen($params)>6) {
-            list($storageId, $identifier) = explode(":", $params, 2);
-            if ($storageId && !empty($identifier)) {
-                /** @var ResourceStorage $storage */
-                $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
-                $storage->setEvaluatePermissions(true);
-                /** @var FileSystemInterface $service */
-                $service = new FileSystemService($storage);
-                if ($service) {
-                    $service->delete($identifier);
-                    unset($service);
-                }
-                unset($storage);
             }
         }
         $this->result['action'] = 'getContent';

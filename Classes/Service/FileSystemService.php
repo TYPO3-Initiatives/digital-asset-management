@@ -36,7 +36,7 @@ class FileSystemService implements FileSystemInterface
     {
         $result = '';
         if ($this->storage) {
-            // $file returns a TYPO3\CMS\Core\Resource\File object
+            /** @var File $file */
             $file = $this->storage->getFile($identifier);
             $result = $file->getContents(); // @todo: check method
         }
@@ -54,7 +54,7 @@ class FileSystemService implements FileSystemInterface
     {
         $result = false;
         if ($this->storage) {
-            // $file returns a TYPO3\CMS\Core\Resource\File object
+            /** @var File $file */
             $file = $this->storage->getFile($identifier);
             $file = $file->setContents($content); // @todo: check method
             $result = ($file) ? true : false;
@@ -72,7 +72,7 @@ class FileSystemService implements FileSystemInterface
     {
         $result = false;
         if ($this->storage) {
-            // $file returns a TYPO3\CMS\Core\Resource\File object
+            /** @var File $file */
             $file = $this->storage->getFile($identifier);
             $result = $file->isIndexed(); // @todo: check method
         }
@@ -80,18 +80,32 @@ class FileSystemService implements FileSystemInterface
     }
 
     /**
-     * delete a single file
+     * delete file(s) within the same storage
      *
-     * @param string $identifier
-     * @return bool success
+     * @param string|array $identifier
+     * @return array
      */
-    public function delete($identifier): bool
+    public function delete($identifier): array
     {
-        $result = false;
+        $result = [];
         if ($this->storage) {
-            // $file returns a TYPO3\CMS\Core\Resource\File object
-            $file = $this->storage->getFile($identifier);
-            $result = $file->delete(); // @todo: check method
+            if (is_array($identifier)) {
+                for ($i = 0; $i < count($identifier); $i++) {
+                    /** @var File $file */
+                    $file = $this->storage->getFile($identifier[$i]);
+                    $result[] = [
+                        'identifier' => $identifier[$i],
+                        'status' => ($file->delete() ? 'success' : 'failure')
+                    ];
+                }
+            } else {
+                /** @var File $file */
+                $file = $this->storage->getFile($identifier);
+                $result[] = [
+                    'identifier' => $identifier,
+                    'status' => ($file->delete() ? 'success' : 'failure')
+                ];
+            }
         }
         return $result;
     }
@@ -101,16 +115,54 @@ class FileSystemService implements FileSystemInterface
      *
      * @param string $identifier
      * @param string $newName
-     * @return bool success
+     * @return array
      */
-    public function rename($identifier, $newName): bool
+    public function rename($identifier, $newName): array
     {
+        $result = [];
         if ($this->storage) {
-            // $file returns a TYPO3\CMS\Core\Resource\File object
+            /** @var File $file */
             $file = $this->storage->getFile($identifier);
             $file = $file->rename($newName); // @todo: check method
+            $result[] = [
+                'identifier' => $identifier,
+                'status' => ($file->getName() == $newName ? 'success' : 'failure')
+            ];
         }
-        return $this->exists($newName);
+        return $result;
+    }
+
+    /**
+     * move file(s) within the same storage
+     *
+     * @param string|array $identifier
+     * @param string $newFolderIdentifier
+     * @return array
+     */
+    public function move($identifier, $newFolderIdentifier): array
+    {
+        $result = [];
+        if ($this->storage) {
+            if (is_array($identifier)) {
+                for ($i = 0; $i < count($identifier); $i++) {
+                    /** @var File $file */
+                    $file = $this->storage->moveFile($identifier[$i], $newFolderIdentifier);
+                    $result[] = [
+                        'identifier' => $identifier[$i],
+                        'status' => ($file->getParentFolder() == $newFolderIdentifier ? 'success' : 'failure')
+                    ];
+                }
+                $result = true;
+            } else {
+                /** @var File $file */
+                $file = $this->storage->moveFile($identifier, $newFolderIdentifier);
+                $result[] = [
+                    'identifier' => $identifier,
+                    'status' => ($file->getParentFolder() == $newFolderIdentifier ? 'success' : 'failure')
+                ];
+            }
+        }
+        return $result;
     }
 
     /**
@@ -189,7 +241,7 @@ class FileSystemService implements FileSystemInterface
     {
         $result = [];
         if ($this->storage) {
-            // $file returns a TYPO3\CMS\Core\Resource\File object
+            /** @var File $file */
             $file = $this->storage->getFile($identifier);
             $result = $file->toArray();
             $result['meta'] = $this->getMetadata($file->getIdentifier());

@@ -43,21 +43,30 @@ interface FileSystemInterface
     public function exists($identifier): bool;
 
     /**
-     * delete a single file
+     * delete file(s) within the same storage
      *
      * @param string $identifier
-     * @return bool success
+     * @return array
      */
-    public function delete($identifier): bool;
+    public function delete($identifier): array;
 
     /**
      * rename a single file
      *
      * @param string $identifier
      * @param string $newName
-     * @return bool success
+     * @return array
      */
-    public function rename($identifier, $newName): bool;
+    public function rename($identifier, $newName): array;
+
+    /**
+     * move file(s) within the same storage
+     *
+     * @param string|array $identifier
+     * @param string $newFolderIdentifier
+     * @return array
+     */
+    public function move($identifier, $newFolderIdentifier): array;
 
     /**
      * @param string $identifier
