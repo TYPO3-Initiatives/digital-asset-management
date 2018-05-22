@@ -298,7 +298,8 @@ class DigitalAssetManagementAjaxController
     }
 
     /**
-     * delete file(s)
+     * delete file(s) within the same storage
+     * $params[]/$params = $storageId.':'.$identifier
      *
      * @param string|array $params
      * @return array
@@ -331,6 +332,8 @@ class DigitalAssetManagementAjaxController
 
     /**
      * rename file
+     * $params['path'] = $storageId.':'.$identifier
+     * $params['newName'] = new filename string
      *
      * @param array $params
      * @return array
@@ -359,7 +362,9 @@ class DigitalAssetManagementAjaxController
     }
 
     /**
-     * move file(s)
+     * move file(s) within the same storage
+     * $params['path']/$params['path'][] = $storageId.':'.$identifier
+     * $params['newpath'] = $storageId.':'.$identifier of destination path string
      *
      * @param string|array $params
      * @return array
@@ -367,16 +372,16 @@ class DigitalAssetManagementAjaxController
     protected function moveFileAction($params): array
     {
         if (is_array($params)) {
-            if ((strlen($params['path']) > 6) && !is_null($params['file']))  {
-                list($storageId, $newFolderIdentifier) = explode(":", $params['path'], 2);
-                if ($storageId && !empty($params['file'])) {
-                    if (is_array($params['file'])) {
+            if ((strlen($params['newPath']) > 6) && !is_null($params['path']))  {
+                list($storageId, $newFolderIdentifier) = explode(":", $params['newPath'], 2);
+                if ($storageId && !empty($params['path'])) {
+                    if (is_array($params['path'])) {
                         $identifier = [];
-                        for ($i = 0; $i < count($params['file']); $i++) {
-                            list($storageId, $identifier[$i]) = explode(":", $params['file'][$i], 2);
+                        for ($i = 0; $i < count($params['path']); $i++) {
+                            list($storageId, $identifier[$i]) = explode(":", $params['path'][$i], 2);
                         }
                     } else {
-                        list($storageId, $identifier) = explode(":", $params['file'], 2);
+                        list($storageId, $identifier) = explode(":", $params['path'], 2);
                     }
                     /** @var ResourceStorage $storage */
                     $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
