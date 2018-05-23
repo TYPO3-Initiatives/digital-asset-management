@@ -268,9 +268,30 @@ div.digital-asset-management .view-symbols .icon.small {
 	height: 30px;
 }
 
+/* view-symbols selectbox */
+div.digital-asset-management .view-symbols .selectbox {
+	position: absolute;
+}
+
+div.digital-asset-management .selectbox {
+	top: 10px;
+	left: auto;
+	right: 10px;
+	width: 20px;
+	height: 20px;
+	border: 1px solid lightgrey;
+	border-radius: 4px;
+	background-color: white;
+	z-index: 10;
+}
+
+div.digital-asset-management .selected .selectbox {
+	background:url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-check.svg") left top no-repeat;
+	background-color: #97bf0d;
+}
 
 
-/* view-photo */
+	/* view-photo */
 
 div.digital-asset-management .view-photo .preview img {
 	position: relative;
@@ -417,6 +438,20 @@ div.digital-asset-management .folder .icon {
 .icon-actions-edit-download {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-edit-download.svg");
 }
+.icon-actions-delete {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-delete.svg");
+}
+.icon-actions-edit-copy {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-edit-copy.svg");
+}
+.icon-actions-move {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-move.svg");
+}
+.icon-actions-close {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-close.svg");
+}
+
+
 .icon-actions-view {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-view.svg");
 }

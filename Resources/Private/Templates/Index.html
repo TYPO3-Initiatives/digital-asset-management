@@ -60,21 +60,47 @@
 
 <f:section name="navbar-left">
 	<ul class="navbar-nav mr-auto">
-		<li class="nav-item">
+		<li class="nav-item newaction">
 			<div class="nav-link view-action active" data-action="newFile" data-parameter="">
 				<span class="icon icon-size-small icon-actions-document-new"></span>
 				<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.actions.new"/>
 			</div>
 		</li>
-		<li class="nav-item">
+		<li class="nav-item newaction">
 			<div class="nav-link view-action active" data-action="upload" data-parameter="">
 				<span class="icon icon-size-small icon-actions-edit-upload"></span>
 				<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.actions.upload"/>
 			</div>
 		</li>
-		<li class="nav-item">
-			<a class="nav-link" href="#">Link</a>
+
+		<li class="nav-item fileaction">
+			<div class="nav-link view-action active" data-action="delete" data-parameter="">
+				<span class="icon icon-size-small icon-actions-delete"></span>
+				<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.actions.delete"/>
+			</div>
 		</li>
+		<li class="nav-item fileaction">
+			<div class="nav-link view-action active" data-action="move" data-parameter="">
+				<span class="icon icon-size-small icon-actions-move"></span>
+				<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.actions.move"/>
+			</div>
+		</li>
+		<li class="nav-item fileaction">
+			<div class="nav-link view-action active" data-action="copy" data-parameter="">
+				<span class="icon icon-size-small icon-actions-edit-copy"></span>
+				<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.actions.copy"/>
+			</div>
+		</li>
+		<li class="nav-item fileaction">
+			<div class="nav-link select-action active" data-action="deselectAll" data-parameter="">
+				<span class="icon icon-size-small icon-actions-close"></span>
+				<f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.nav.deselectall"/>
+			</div>
+		</li>
+		<li class="nav-item fileaction">
+			<div class="nav-link filesselected"></div>
+		</li>
+
 	</ul>
 </f:section>
 
@@ -132,7 +158,8 @@
 </f:section>
 
 <f:section name="fileactions">
-
+	<ul class="navbar-nav mr-auto fileactions">
+	</ul>
 </f:section>
 
 <f:section name="folderactions">

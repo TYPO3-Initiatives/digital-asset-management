@@ -62,6 +62,18 @@
       <trans-unit id="dam.labels.nav.actions.move">
         <source>Move</source>
       </trans-unit>
+      <trans-unit id="dam.labels.nav.actions.copy">
+        <source>Copy</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.filesselected">
+        <source>files selected</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.fileselected">
+        <source>One file selected</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.nav.deselectall">
+        <source>Deselect all</source>
+      </trans-unit>
 
       <trans-unit id="dam.labels.files">
         <source>Files</source>

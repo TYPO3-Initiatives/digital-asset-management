@@ -50,7 +50,7 @@ interface Settings {
  */
 class DigitalAssetManagementActions {
 
-	static folderPartial: string = '    <div class="grid ajax-action {mimetype}" data-action="getContent" ' +
+	static folderPartial: string = '    <div class="grid selectable ajax-action {mimetype}" data-action="getContent" ' +
 		'data-parameter="{identifier}">\n' +
 		'   <div class="grid-cell" >\n' +
 		'      <div class="icon folder-icon {type}"></div>' +
@@ -60,10 +60,13 @@ class DigitalAssetManagementActions {
 		'   </div>\n' +
 		'  </div>\n';
 
-	static filePartial: string = '<div class="grid file {mimetype} ajax-action" data-action="getMetadata" data-parameter="{identifier}">\n' +
+	static filePartial: string = '<div class="grid file {mimetype} selectable ajax-action" data-action="getMetadata"' +
+		' data-parameter="{identifier}">\n' +
 		// '    <img class="card-img-top" src="PlaceholderImage" data-src="{uid}" width="180" height="120"/>\n' +
 		'    <div class="preview" >' +
 		'<img src="/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png" data-src="{identifier}"></div>\n' +
+		'    <div class="grid-cell selectbox" >\n' +
+		'    </div>\n' +
 		'    <div class="grid-cell" >\n' +
 		'        <div class="icon icon-mimetypes-{mimetype}" /></div>\n' +
 		'    <div class="info">\n' +
@@ -94,6 +97,14 @@ class DigitalAssetManagementActions {
 			console.log ('ajax-action: ' + action + ', par: ' + JSON.stringify(parameter));
 			my.request(action, parameter, my.genericRequestCallback);
 		});
+		$('.digital-asset-management').on('click', '.selectbox', function(e: any): boolean {
+			e.preventDefault();
+			// if it is a selectable-inputbox do nothing than selecting the file/folder
+			$(this).parent('.selectable').toggleClass('selected');
+			// todo: check if one file is selected and show/hide edit button panel
+			my.selectFiles('selectionChanged');
+			return false;
+		});
 		$('.digital-asset-management').on('click', '.view-action', function(): void {
 			let action = this.dataset.action;
 			let parameter = this.dataset.parameter;
@@ -108,6 +119,12 @@ class DigitalAssetManagementActions {
 			let parameter = {path: my.settings.path};
 			console.log('sort-action');
 			my.sortAction(action, parameter);
+		});
+		$('.digital-asset-management').on('click', '.select-action', function(): void {
+			let action = this.dataset.action;
+			let parameter = {path: my.settings.path};
+			console.log('local-action');
+			my.selectFiles(action);
 		});
 		$('body').on('click', function(): void {
 			$('.sidebar').addClass('hidden');
@@ -311,6 +328,7 @@ class DigitalAssetManagementActions {
 			default:
 				top.TYPO3.Notification.warning('Request failed', 'Unknown action: ' + action);
 		}
+		my.selectFiles('selectionChanged');
 	}
 
 	protected static sortAction(action: string, parameter: object): void {
@@ -343,6 +361,24 @@ class DigitalAssetManagementActions {
 			return (className.match (/(^|\s)sort-order-\S+/g) || []).join(' ');
 		}).addClass(action).attr('data-reverse', parameter.reverse );
 		my.request('getContent', parameter, my.genericRequestCallback);
+	}
+
+	protected static selectFiles(action: string): void {
+		if (action === 'deselectAll') {
+			$('.selectable').removeClass('selected');
+		}
+		if ($('.selectable.selected').length) {
+			if ($('.selected').length === 1) {
+				$('.filesselected').text(TYPO3.lang['dam.labels.nav.fileselected']);
+			} else {
+				$('.filesselected').text($('.selected').length + ' ' + TYPO3.lang['dam.labels.nav.filesselected']);
+			}
+			$('.newaction').hide();
+			$('.fileaction').show();
+		} else {
+			$('.newaction').show();
+			$('.fileaction').hide();
+		}
 	}
 
 	/**
