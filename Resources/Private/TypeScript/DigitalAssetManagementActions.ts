@@ -94,6 +94,13 @@ class DigitalAssetManagementActions {
 		$('.digital-asset-management').on('click', '.ajax-action', function(): void {
 			let action = this.dataset.action;
 			let parameter = {path: this.dataset.parameter, sort: my.settings.sort, reverse: my.settings.reverse};
+			if (this.dataset.parameter === 'selected') {
+				parameter.path = [];
+				$('.selected').each(function(index: number): void {
+					console.log(this);
+					parameter.path.push(this.dataset.parameter);
+				});
+			}
 			console.log ('ajax-action: ' + action + ', par: ' + JSON.stringify(parameter));
 			my.request(action, parameter, my.genericRequestCallback);
 		});
@@ -296,7 +303,7 @@ class DigitalAssetManagementActions {
 	protected static genericRequestCallback(data: ResponseObject): void {
 		let my = DigitalAssetManagementActions;
 		let action = data.action;
-		if (data.result.settings) {
+		if (data.result && data.result.settings) {
 			my.settings = data.result.settings;
 		}
 		switch (action) {
