@@ -100,6 +100,10 @@ div.digital-asset-management .file {
 
 /* view-list */
 
+div.digital-asset-management .view-list .hide-view-list {
+	display: none !important;
+}
+
 div.digital-asset-management .view-list .grid .folder {
 	width: 24px;
 	display: inline-block;
@@ -195,6 +199,10 @@ div.digital-asset-management .view-list .icon {
 
 
 /* Symbol view */
+
+div.digital-asset-management .view-symbols .hide-view-symbols {
+	display: none !important;
+}
 
 div.digital-asset-management .view-symbols .preview img {
 	position: relative;
