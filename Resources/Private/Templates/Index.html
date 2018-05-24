@@ -2,11 +2,11 @@
 	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
 	  data-namespace-typo3-fluid="true">
 
-<div class="page-header bg-dark text-white">
+<div class="page-header">
 	<h1><f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.dam" />&nbsp;
 		<small><f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.hereareyourfiles" />.</small></h1>
 </div>
-<div class="container-fluid digital-asset-management">
+<div class="digital-asset-management">
 	<div class="row">
 		<div class="col-xs-12 col-md-2">
 			<div class="navbar">
@@ -21,8 +21,8 @@
 			</div>
 		</div>
 		<div class="col-xs-12 col-md-10">
-			<nav class="navbar navbar-expand-lg navbar-light bg-light">
-				<a class="navbar-brand" href="#">Navbar</a>
+			<nav class="navbar bg-navbar navbar-expand-lg">
+				<a class="navbar-brand" href="#">&nbsp;</a>
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
@@ -39,9 +39,24 @@
 			<div class="header">
 				<div class="breadcrumb"></div>
 			</div>
-			<div class="row">
+			<div class="body">
 				<div class="maincontent col-12 view-symbols">
 					<div class="row folders">
+					</div>
+					<div class="row fileheader">
+						<div class="grid file">
+							<div class="preview"></div>
+							<div class="grid-cell selectbox select-action" data-action="unselectAll">
+
+							</div>
+							<div class="grid-cell">
+								<div class="icon apps-pagetree-page-default"></div>
+							</div>
+							<div class="info">
+								<div class="grid-cell filename"><p>Filename trans</p></div>
+								<div class="grid-cell filesize"><p>Size trans</p></div>
+								<div class="grid-cell moddate"><p>Modification date trans</p></div>
+							</div>  </div>
 					</div>
 					<div class="row files">
 					</div>
@@ -98,7 +113,7 @@
 			</div>
 		</li>
 		<li class="nav-item fileaction">
-			<div class="nav-link filesselected"></div>
+			<div class="filesselected"></div>
 		</li>
 
 	</ul>

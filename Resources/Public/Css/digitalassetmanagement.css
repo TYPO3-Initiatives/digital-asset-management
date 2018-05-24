@@ -4,16 +4,14 @@ div {
 	/*border: 1px solid red;*/
 }
 
+.digital-asset-management .navbar {
+	font-size: 14px;
+}
+
 /* reset TYPO3 default styles */
 .digital-asset-management .module-body {
 	padding: 0;
 }
-
-/*.page-header {*/
-	/*background-color: black;*/
-	/*padding-left: 20px;*/
-	/*line-height: 30%;*/
-/*}*/
 .digital-asset-management .page-header {
 	margin: 0;
 }
@@ -43,7 +41,7 @@ div.digital-asset-management .dropdown-item {
 	cursor: pointer;
 }
 
-div.digital-asset-management .grid:hover,
+div.digital-asset-management .selectable.grid:hover, /* hier weiter*/
 div.digital-asset-management .dropdown-item:hover,
 div.digital-asset-management .nav-item:hover {
 	background-color: #dddddd;
@@ -54,13 +52,17 @@ div.digital-asset-management .nav-item:hover {
 	/*background-color: rgba(200, 200, 200, 0.8);*/
 /*}*/
 
-div.digital-asset-management .grid.image:hover {
-	border: 1px solid #dddddd;
-}
+/*div.digital-asset-management .grid.image:hover {*/
+	/*border: 1px solid #dddddd;*/
+/*}*/
 
 /*div.digital-asset-management .grid:hover .info {*/
 	/*background: rgba(255, 255, 255, 0.7);*/
 /*}*/
+
+div.digital-asset-management .fileheader {
+	border-bottom: 1px solid black;
+}
 
 div.digital-asset-management .ajax-action {
 	cursor: pointer;
@@ -80,7 +82,10 @@ div.digital-asset-management .file {
 	text-decoration: underline;
 }
 
-
+.digital-asset-management .breadcrumb {
+	font-size: 14px;
+	background-color: transparent;
+}
 
 
 
@@ -157,6 +162,12 @@ div.digital-asset-management .view-list .info {
 	display: inline-block;
 	vertical-align: baseline;
 }
+
+div.digital-asset-management .view-list .grid-label {
+	display: none;
+}
+
+
 
 /* view-list icon */
 div.digital-asset-management .view-list .icon {
@@ -285,11 +296,18 @@ div.digital-asset-management .selectbox {
 	z-index: 10;
 }
 
+div.digital-asset-management .selected {
+	background-color: #dddddd;
+}
+
 div.digital-asset-management .selected .selectbox {
 	background:url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-check.svg") left top no-repeat;
 	background-color: #97bf0d;
 }
 
+.bg-navbar {
+	background-color: lightgrey;
+}
 
 	/* view-photo */
 
@@ -451,6 +469,10 @@ div.digital-asset-management .folder .icon {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-close.svg");
 }
 
+
+.apps-pagetree-page-default {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-pagetree-page-default.svg");
+}
 
 .icon-actions-view {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/actions/actions-view.svg");
