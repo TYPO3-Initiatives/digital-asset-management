@@ -158,9 +158,14 @@ class DigitalAssetManagementAjaxController
                     } else {
                         // only one mountpoint
                         $service = new FileSystemService($storage);
+                        if( $path === '/') {
+                            $folder = $storage->getRootLevelFolder();
+                        } else {
+                            $folder = $storage->getFolder($path);
+                        }
                         if ($service) {
-                            $files = $service->listFiles($path);
-                            $folders = $service->listFolder($path);
+                            $files = $service->listFiles($folder);
+                            $folders = $service->listFolder($folder);
                             unset($service);
                         }
                     }
