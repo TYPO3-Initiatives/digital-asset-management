@@ -15,6 +15,8 @@ namespace TYPO3\CMS\DigitalAssetManagement\Service;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Resource\Folder;
+
 interface FileSystemInterface
 {
     /**
@@ -77,7 +79,7 @@ interface FileSystemInterface
     /**
      * returns an array of folders in a defined path
      *
-     * @param string $path
+     * @param Folder $folder
      * @param string $sort Property name used to sort the items.
      *                     Among them may be: '' (empty, no sorting), name,
      *                     fileext, size, tstamp and rw.
@@ -88,12 +90,12 @@ interface FileSystemInterface
      * @throws \RuntimeException
      * @return array
      */
-    public function listFolder($path, $sort = '', $sortRev = false): array;
+    public function listFolder(Folder $folder, $sort = '', $sortRev = false): array;
 
     /**
      * returns an array of files in a defined path
      *
-     * @param string $path
+     * @param Folder $folder
      * @param bool $withMetadata
      * @param int $start
      * @param int $maxNumberOfItems
@@ -106,5 +108,5 @@ interface FileSystemInterface
      * @throws \RuntimeException
      * @return array
      */
-    public function listFiles($path, $withMetadata = false, $start = 0, $maxNumberOfItems = 0, $sort = '', $sortRev = false): array;
+    public function listFiles(Folder $folder, $withMetadata = false, $start = 0, $maxNumberOfItems = 0, $sort = '', $sortRev = false): array;
 }

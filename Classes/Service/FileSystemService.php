@@ -15,6 +15,7 @@ namespace TYPO3\CMS\DigitalAssetManagement\Service;
 * The TYPO3 project - inspiring people to share!
 */
 use TYPO3\CMS\Core\Resource\File;
+use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -394,7 +395,7 @@ class FileSystemService implements FileSystemInterface
     /**
      * returns an array of files in a defined path
      *
-     * @param string $path
+     * @param Folder $folder
      * @param bool $withMetadata
      * @param int $start
      * @param int $maxNumberOfItems
@@ -407,12 +408,12 @@ class FileSystemService implements FileSystemInterface
      * @throws \RuntimeException
      * @return array
      */
-    public function listFiles($path, $withMetadata = false, $start = 0, $maxNumberOfItems = 0, $sort = '', $sortRev = false): array
+    public function listFiles(Folder $folder, $withMetadata = false, $start = 0, $maxNumberOfItems = 0, $sort = '', $sortRev = false): array
     {
         $fileArray = [];
         if ($this->storage) {
             /** @var File[] $files */
-            $files = $this->storage->getFilesInFolder($path, $start, $maxNumberOfItems, true, false, $sort, $sortRev);
+            $files = $this->storage->getFilesInFolder($folder, $start, $maxNumberOfItems, true, false, $sort, $sortRev);
             foreach ($files as $file){
                 $fileArr = $file->toArray();
                 $newFile = [];
@@ -442,7 +443,7 @@ class FileSystemService implements FileSystemInterface
     /**
      * returns an array of folders in a defined path
      *
-     * @param string $path
+     * @param Folder $folder
      * @param string $sort Property name used to sort the items.
      *                     Among them may be: '' (empty, no sorting), name,
      *                     fileext, size, tstamp and rw.
@@ -453,16 +454,16 @@ class FileSystemService implements FileSystemInterface
      * @throws \RuntimeException
      * @return array
      */
-    public function listFolder($path,  $sort = '', $sortRev = false): array
+    public function listFolder(Folder $folder,  $sort = '', $sortRev = false): array
     {
         $folderArray = [];
         if ($this->storage) {
             /** @var Folder[] $folders */
-            $folders = $this->storage->getFoldersInFolder($path, 0, 0, true,  false, $sort, $sortRev);
-            foreach ($folders as $folder){
-                $folder = (array)$folder;
+            $folders = $this->storage->getFoldersInFolder($folder, 0, 0, true,  false, $sort, $sortRev);
+            foreach ($folders as $item){
+                $item = (array)$item;
                 $newFolder = [];
-                foreach ($folder as $key => $value) {
+                foreach ($item as $key => $value) {
                     // replace protected /u0000 in key
                     $newKey = substr($key, 3);
                     if ($newKey === 'identifier') {
