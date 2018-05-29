@@ -318,7 +318,7 @@ class DigitalAssetManagementActions {
 					$('.sort-action[data-action="sort-order-asc"]').addClass('active');
 				}
 				$('.sort-field').removeClass('active');
-				if (my.settings.sort === 'date') {
+				if (my.settings.sort === 'modified') {
 					$('.sort-action[data-action="sort-by-date"]').addClass('active');
 				} else if (my.settings.sort === 'name') {
 					$('.sort-action[data-action="sort-by-name"]').addClass('active');
@@ -355,7 +355,7 @@ class DigitalAssetManagementActions {
 				my.settings.sort = 'size';
 				break;
 			case 'sort-by-date':
-				my.settings.sort = 'date';
+				my.settings.sort = 'modified';
 				break;
 			default:
 				// do nothing
