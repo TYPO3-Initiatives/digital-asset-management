@@ -304,12 +304,14 @@ class DigitalAssetManagementAjaxController
      * @param string|array $params
      * @return array
      */
-    protected function deleteFileAction($params): array
+    protected function deleteAction($params): array
     {
         if (is_array($params)) {
             $identifier = [];
-            for ($i = 0; $i < count($params); $i++) {
-                list($storageId, $identifier[$i]) = explode(":", $params[$i], 2);
+            $i = 0;
+            foreach ($params['path'] as $param) {
+                list($storageId, $identifier[$i]) = explode(":", $param, 2);
+                $i++;
             }
         } else {
             list($storageId, $identifier) = explode(":", $params, 2);
@@ -317,7 +319,7 @@ class DigitalAssetManagementAjaxController
         if ($storageId && !empty($identifier)) {
             /** @var ResourceStorage $storage */
             $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
-            $storage->setEvaluatePermissions(true);
+            //$storage->setEvaluatePermissions(true);
             /** @var FileSystemInterface $service */
             $service = new FileSystemService($storage);
             if ($service) {
@@ -338,7 +340,7 @@ class DigitalAssetManagementAjaxController
      * @param array $params
      * @return array
      */
-    protected function renameFileAction($params): array
+    protected function renameAction($params): array
     {
         if (is_array($params)) {
             if (strlen($params['path']) > 6) {
@@ -369,7 +371,7 @@ class DigitalAssetManagementAjaxController
      * @param string|array $params
      * @return array
      */
-    protected function moveFileAction($params): array
+    protected function moveAction($params): array
     {
         if (is_array($params)) {
             if ((strlen($params['newPath']) > 6) && !is_null($params['path']))  {
@@ -377,8 +379,10 @@ class DigitalAssetManagementAjaxController
                 if ($storageId && !empty($params['path'])) {
                     if (is_array($params['path'])) {
                         $identifier = [];
-                        for ($i = 0; $i < count($params['path']); $i++) {
-                            list($storageId, $identifier[$i]) = explode(":", $params['path'][$i], 2);
+                        $i = 0;
+                        foreach ($params['path'] as $param) {
+                            list($storageId, $identifier[$i]) = explode(":", $param, 2);
+                            $i++;
                         }
                     } else {
                         list($storageId, $identifier) = explode(":", $params['path'], 2);
