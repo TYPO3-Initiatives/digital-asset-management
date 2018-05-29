@@ -158,11 +158,8 @@ class DigitalAssetManagementAjaxController
                     } else {
                         // only one mountpoint
                         $service = new FileSystemService($storage);
-                        if( $path === '/') {
-                            $folder = $storage->getRootLevelFolder();
-                        } else {
-                            $folder = $storage->getFolder($path);
-                        }
+                        $fileMount = array_shift($fileMounts);
+                        $folder = $storage->getFolder($fileMount['path']);
                         if ($service) {
                             $files = $service->listFiles($folder);
                             $folders = $service->listFolder($folder);
