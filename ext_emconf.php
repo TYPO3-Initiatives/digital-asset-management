@@ -8,6 +8,11 @@ $EM_CONF[$_EXTKEY] = [
     'author_email' => 'info@schaffrath-digital.de',
     'author_company' => '',
     'version' => '0.0.1',
+    'autoload' => [
+        'psr-4' => [
+            'TYPO3\\CMS\\DigitalAssetManagement\\' => 'Classes'
+        ],
+    ],
     'constraints' => [
         'depends' => [
             'typo3' => '8.7.0-9.9.99',
