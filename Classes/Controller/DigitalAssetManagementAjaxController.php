@@ -18,12 +18,15 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\JsonResponse;
+use TYPO3\CMS\Core\Resource\FileRepository;
+use TYPO3\CMS\Core\Resource\FolderInterface;
 use TYPO3\CMS\Core\Resource\Index\Indexer;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemInterface;
 use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemService;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Backend controller: The "Digital Asset Management" JSON response controller
@@ -32,7 +35,9 @@ use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemService;
  */
 class DigitalAssetManagementAjaxController
 {
-    /** @var array $result */
+    /**
+     * @var array
+     */
     private $result = [];
 
     /**
@@ -43,199 +48,60 @@ class DigitalAssetManagementAjaxController
      */
     public function handleAjaxRequestAction(ServerRequestInterface $request): ResponseInterface
     {
-        $response = new JsonResponse();
-        $this->result['action'] = '';
-        $this->result['params'] = [];
-        $params = $request->getQueryParams();
-        // Execute all query params starting with get using its values as parameter
-        foreach ($params as $key => $param) {
-            if ($key === 'action') {
-                $this->result['action'] = $param;
-                $func = $param . 'Action';
-            } elseif ($key === 'params') {
-                $this->result['params'] = $param;
-            }
+        $requestParameters = $request->getQueryParams();
+        $this->result['action'] = $requestParameters['action'] ?? null;
+        $this->result['params'] = $requestParameters['params'] ?? null;
+
+        $method = $this->result['action'] . 'Action';
+        if (is_callable([$this, $method])) {
+            $this->result['result'] = $this->$method($this->result['params']);
         }
-        if ($func && is_callable([$this, $func])) {
-            $this->result['result'] = call_user_func(array(DigitalAssetManagementAjaxController::class, $func), $this->result['params']);
-        }
-        $response->setPayload($this->result);
-        return $response;
+        return new JsonResponse($this->result);
     }
 
     /**
-     * get file and folder content for a path
-     * empty string means get all storages or mounts of the be-user or the root level of a single available storage
-     * $params['path']/$params = $storageId.':'.$identifier
+     * Get file and folder content for a path
+     * empty string means get all storages or mounts of the backend user or the root level of a single available storage
      *
-     * @param string|array $params
+     * $params['path'] = $storageId.':'.$identifier
+     *
+     * @param array $params
      * @return array
      */
-    protected function getContentAction($params = ""): array
+    protected function getContentAction(array $params = null): array
     {
-        // load user settings array updated by query values
         $userSettings = $this->getSettings($params);
-        // get requested path from params
-        $path =  (is_array($params) ? $params['path'] : $params);
-        // get backend user
-        $backendUser = $this->getBackendUser();
-        // get all storage objects
-        /** @var ResourceStorage[] $storages */
-        $storages = $backendUser->getFileStorages();
-        if (is_array($storages)){
-            $storageId = null;
-            if ($path === "" || is_null($path)) {
-                $path = $userSettings['path'];
-            } elseif ($path === "*" ) {
-                $userSettings['path'] = '';
-                $path = "";
-            }
-            if (($path !== "") && (strlen($path) > 1)) {
-                list($storageId, $path) = explode(":", $path, 2);
-            }
-            if ($path === "") {
-                $path = "/";
-            }
-            // init return values
-            $files = [];
-            $folders = [];
-            $breadcrumbs = [];
+        $path = $userSettings['path'] ?? '';
+        if (!empty($params['path'])) {
+            $path = $params['path'];
+        }
+        if ($path === '*') {
+            // Root-Level
+            $result = $this->getStorages();
+            $result['userSettings'] = $userSettings;
+            return $result;
+        }
+
+        if ($path !== '') {
+            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+            $folderObject = $resourceFactory->getObjectFromCombinedIdentifier($path);
+            $userSettings['path'] = $path;
+            $this->setSettings($userSettings);
+
+            $fileSystemService = new FileSystemService($folderObject->getStorage());
+            $breadcrumbs = $this->buildBreadCrumb($folderObject);
             $breadcrumbs[] = [
                 'identifier' => '*',
                 'name' => 'home',
                 'type' => 'home'
             ];
-            $relPath = $path;
-            /** @var ResourceStorage $storage  */
-            if ($storageId === null) {
-                // no storage, mountpoint and folder selected
-                if (count($storages) > 1) {
-                    // more than one storage
-                    foreach ($storages as $storage) {
-                        $storageInfo = $storage->getStorageRecord();
-                        $fileMounts = $storage->getFileMounts();
-                        if (!empty($fileMounts)) {
-                            // mount points exists in the storage
-                            foreach ($fileMounts as $fileMount) {
-                                $folders[] = [
-                                    'identifier' => $storageInfo['uid'] . ':' . $fileMount['path'],
-                                    'name' => $fileMount['title'],
-                                    'storage_name' => $storageInfo['name'],
-                                    'storage' => $storageInfo['uid'],
-                                    'type' => 'mount'
-                                ];
-                            }
-                            unset($fileMounts);
-                        } else {
-                            // no mountpoint exists in the storage
-                            $folders[] = [
-                                'identifier' => $storageInfo['uid'] . ':',
-                                'name' => $storageInfo['name'],
-                                'storage_name' => $storageInfo['name'],
-                                'storage' => $storageInfo['uid'],
-                                'type' => 'storage'
-                            ];
-                        }
-                        unset($storageInfo);
-                    }
-                } else {
-                    // only one storage
-                    $storage = reset($storages);
-                    $storageInfo = $storage->getStorageRecord();
-                    $fileMounts = $storage->getFileMounts();
-                    if (count($fileMounts) > 1) {
-                        // more than one mountpoint
-                        foreach ($fileMounts as $fileMount) {
-                            $folders[] = [
-                                'identifier' => $storageInfo['uid'] . ':' . $fileMount['path'],
-                                'name' => $fileMount['title'],
-                                'storage_name' => $storageInfo['name'],
-                                'storage' => $storageInfo['uid'],
-                                'type' => 'mount'
-                            ];
-                        }
-                        unset($fileMounts);
-                    } else {
-                        // only one mountpoint
-                        $service = new FileSystemService($storage);
-                        $fileMount = array_shift($fileMounts);
-                        $folder = $storage->getFolder($fileMount['path']);
-                        if ($service) {
-                            $files = $service->listFiles($folder);
-                            $folders = $service->listFolder($folder);
-                            unset($service);
-                        }
-                    }
-                    unset($storageInfo);
-                }
-            } else {
-                // storage or mountpoint selected
-                foreach ($storages as $storage) {
-                    $storageInfo = $storage->getStorageRecord();
-                    if ((count($storages) === 1) || ($storageId && ($storageInfo['uid'] == $storageId))) {
-                        // selected storage
-                        $identifier = $storageInfo['uid'] . ':';
-                        $fileMounts = $storage->getFileMounts();
-                        if (!empty($fileMounts)) {
-                            // mountpoint exists
-                            foreach ($fileMounts as $fileMount) {
-                                if (strpos($path, $fileMount['path']) === 0) {
-                                    $identifier .= $fileMount['path'];
-                                    $breadcrumbs[] = [
-                                        'identifier' => $identifier,
-                                        'name' => $fileMount['title'],
-                                        'type' => 'mount'
-                                    ];
-                                    $relPath = str_replace($fileMount['path'], '', $relPath);
-                                }
-                            }
-                            unset($fileMounts);
-                        } else {
-                            // no mountpoint exists but more than one storage
-                            $identifier .= '/';
-                            if (count($storages) > 1) {
-                                $breadcrumbs[] = [
-                                    'identifier' => $identifier,
-                                    'name' => $storageInfo['name'],
-                                    'type' => 'storage'
-                                ];
-                            }
-                        }
-                        $aPath = explode('/', $relPath);
-                        for ($i = 0; $i < count($aPath); $i++) {
-                            if ($aPath[$i] !== '') {
-                                $identifier .= $aPath[$i] . '/';
-                                $breadcrumbs[] = [
-                                    'identifier' => $identifier,
-                                    'name' => $aPath[$i],
-                                    'type' => 'folder'
-                                ];
-                            }
-                        }
-                        /** @var FileSystemInterface $service */
-                        $service = new FileSystemService($storage);
-                        if ($service) {
-                            if( $path === '/') {
-                                $folder = $storage->getRootLevelFolder();
-                            } else {
-                                $folder = $storage->getFolder($path);
-                            }
-                            if ($userSettings['start'] == 0) {
-                                $folders = $service->listFolder($folder, 0, 0, $userSettings['sort'], $userSettings['reverse']);
-                            }
-                            $files = $service->listFiles($folder, $userSettings['meta'], $userSettings['start'], $userSettings['count'], $userSettings['sort'], $userSettings['reverse']);
-                            unset($service);
-                        }
-                        // store path to user settings
-                        $userSettings['path'] = $identifier;
-                        break;
-                    }
-                    unset($storageInfo);
-                }
-            }
-            // save user settings array
-            $this->setSettings($userSettings);
-            return ['files' => $files, 'folders' => $folders, 'breadcrumbs' => $breadcrumbs, 'settings' => $userSettings];
+            $breadcrumbs = array_reverse($breadcrumbs);
+            return [
+                'files' => $fileSystemService->listFiles($folderObject),
+                'folders' => $fileSystemService->listFolder($folderObject),
+                'breadcrumbs' => $breadcrumbs,
+                'settings' => $userSettings
+            ];
         }
     }
 
@@ -443,7 +309,7 @@ class DigitalAssetManagementAjaxController
      */
     protected function getSettings($params): array
     {
-        $backendUser = $this->getBackendUser();
+        $backendUser = $this->getBackendUserAuthentication();
         // default settings
         $userSettings = [
             'path' => '',
@@ -487,13 +353,77 @@ class DigitalAssetManagementAjaxController
     }
 
     /**
+     * @return array
+     */
+    protected function getStorages(): array
+    {
+        $folders = [];
+        foreach ($this->getBackendUserAuthentication()->getFileStorages() as $storage) {
+            $storageInfo = $storage->getStorageRecord();
+            $fileMounts = $storage->getFileMounts();
+            if (!empty($fileMounts)) {
+                foreach ($fileMounts as $fileMount) {
+                    $folders[] = [
+                        'identifier' => $storageInfo['uid'] . ':' . $fileMount['path'],
+                        'name' => $fileMount['title'],
+                        'storage_name' => $storageInfo['name'],
+                        'storage' => $storageInfo['uid'],
+                        'type' => 'mount'
+                    ];
+                }
+            } else {
+                // No mountpoint exists in the storage
+                $folders[] = [
+                    'identifier' => $storageInfo['uid'] . ':',
+                    'name' => $storageInfo['name'],
+                    'storage_name' => $storageInfo['name'],
+                    'storage' => $storageInfo['uid'],
+                    'type' => 'storage'
+                ];
+            }
+        }
+        return [
+            'files' => [],
+            'folders' => $folders,
+            'breadcrumbs' => []
+        ];
+    }
+
+    /**
+     * @param FolderInterface $folder
+     * @return array
+     */
+    protected function buildBreadCrumb(FolderInterface $folder): array
+    {
+        $breadcrumbs = [];
+        $breadcrumbs[] = [
+            'identifier' => $folder->getStorage()->getUid() . ':' . $folder->getIdentifier(),
+            'name' => $folder->getName(),
+            'type' => 'folder'
+        ];
+
+        $parentFolder = $folder->getParentFolder();
+        if ($parentFolder->getIdentifier() === '/') {
+            $breadcrumbs[] = [
+                'identifier' => $folder->getStorage()->getUid() . ':/',
+                'name' => $folder->getStorage()->getName(),
+                'type' => 'storage'
+            ];
+        } else {
+            $breadcrumbs = array_merge($breadcrumbs, $this->buildBreadCrumb($parentFolder));
+        }
+
+        return $breadcrumbs;
+    }
+
+    /**
      * Set the DAM user settings
      *
      * @param array $settings
      */
     protected function setSettings($settings)
     {
-        $backendUser = $this->getBackendUser();
+        $backendUser = $this->getBackendUserAuthentication();
         $backendUser->uc['dam'] = $settings;
         $backendUser->writeUC();
     }
@@ -513,7 +443,7 @@ class DigitalAssetManagementAjaxController
      *
      * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
      */
-    protected function getBackendUser()
+    protected function getBackendUserAuthentication()
     {
         return $GLOBALS['BE_USER'];
     }
