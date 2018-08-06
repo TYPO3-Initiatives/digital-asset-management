@@ -1,0 +1,15 @@
+# PHPStorm
+.idea
+
+# OSX
+.DS_Store
+
+# Composer
+vendor/
+bin/
+
+# TYPO3 test
+typo3/
+var/
+logs/
+index.php

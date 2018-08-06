@@ -2,6 +2,7 @@
 	"name": "lns/digital-asset-management",
 	"type": "typo3-cms-extension",
 	"description": "Fancy filelist",
+	"minimum-stability": "dev",
 	"license": ["GPL-2.0+"],
 	"authors": [
 		{
@@ -16,10 +17,30 @@
 		}
 	],
 	"require": {
-		"typo3/cms-core": ">=8.7.0 <=9.9.99"
+		"psr/http-message": "^1.0.0",
+		"typo3/cms-backend": "9.4.*@dev",
+		"typo3/cms-core": "9.4.*@dev",
+		"typo3/cms-fluid": "9.4.*@dev",
+		"typo3fluid/fluid": "^2.3"
+	},
+	"require-dev": {
+		"roave/security-advisories": "dev-master",
+		"typo3/testing-framework": "dev-master"
+	},
+	"config": {
+		"bin-dir": "bin",
+		"sort-packages": true
 	},
 	"replace": {
 		"digital_asset_management": "*"
+	},
+	"scripts": {
+		"t3g:test:php:unit": [
+			"phpunit -c Build/UnitTests.xml --log-junit logs/phpunit.xml"
+		],
+		"t3g:test": [
+			"@t3g:test:php:unit"
+		]
 	},
 	"extra": {
 		"typo3/cms": {

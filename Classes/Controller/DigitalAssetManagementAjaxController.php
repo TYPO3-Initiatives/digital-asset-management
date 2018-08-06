@@ -18,7 +18,6 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\JsonResponse;
-use TYPO3\CMS\Core\Resource\FileRepository;
 use TYPO3\CMS\Core\Resource\FolderInterface;
 use TYPO3\CMS\Core\Resource\Index\Indexer;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -26,7 +25,6 @@ use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemInterface;
 use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemService;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Backend controller: The "Digital Asset Management" JSON response controller
