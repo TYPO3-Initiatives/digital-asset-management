@@ -1,5 +1,13 @@
 <?php
 declare(strict_types = 1);
+
+/*
+ * This file is part of the package lns/digital-asset-management.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 
 /*
@@ -111,11 +119,11 @@ class DigitalAssetManagementAjaxController
      * @param string|array $params
      * @return array
      */
-    protected function getThumbnailAction($params = ""): array
+    protected function getThumbnailAction($params = ''): array
     {
         $path = (is_array($params) ? reset($params) : $params);
         if (strlen($path) > 6) {
-            list($storageId, $identifier) = explode(":", $path, 2);
+            list($storageId, $identifier) = explode(':', $path, 2);
             if ($storageId && !empty($identifier)) {
                 /** @var ResourceStorage $storage */
                 $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
@@ -125,7 +133,7 @@ class DigitalAssetManagementAjaxController
                     $service = new FileSystemService($storage);
                     if ($service) {
                         $file = $storage->getFile($identifier);
-                        $thumb = $service->thumbnail(rtrim($_SERVER["DOCUMENT_ROOT"], "/") . '/' . urldecode($file->getPublicUrl()), true);
+                        $thumb = $service->thumbnail(rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/' . urldecode($file->getPublicUrl()), true);
                         unset($service);
                     }
                 }
@@ -146,7 +154,7 @@ class DigitalAssetManagementAjaxController
     {
         $path = (is_array($params) ? reset($params) : $params);
         if (strlen($path) > 6) {
-            list($storageId, $identifier) = explode(":", $path, 2);
+            list($storageId, $identifier) = explode(':', $path, 2);
             if ($storageId && !empty($identifier)) {
                 /** @var ResourceStorage $storage */
                 $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
@@ -176,11 +184,11 @@ class DigitalAssetManagementAjaxController
             $identifier = [];
             $i = 0;
             foreach ($params['path'] as $param) {
-                list($storageId, $identifier[$i]) = explode(":", $param, 2);
+                list($storageId, $identifier[$i]) = explode(':', $param, 2);
                 $i++;
             }
         } else {
-            list($storageId, $identifier) = explode(":", $params, 2);
+            list($storageId, $identifier) = explode(':', $params, 2);
         }
         if ($storageId && !empty($identifier)) {
             /** @var ResourceStorage $storage */
@@ -210,7 +218,7 @@ class DigitalAssetManagementAjaxController
     {
         if (is_array($params)) {
             if (strlen($params['path']) > 6) {
-                list($storageId, $identifier) = explode(":", $params['path'], 2);
+                list($storageId, $identifier) = explode(':', $params['path'], 2);
                 if ($storageId && !empty($identifier) && !empty($params['newName'])) {
                     /** @var ResourceStorage $storage */
                     $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
@@ -240,18 +248,18 @@ class DigitalAssetManagementAjaxController
     protected function moveAction($params): array
     {
         if (is_array($params)) {
-            if ((strlen($params['newPath']) > 6) && !is_null($params['path']))  {
-                list($storageId, $newFolderIdentifier) = explode(":", $params['newPath'], 2);
+            if ((strlen($params['newPath']) > 6) && !is_null($params['path'])) {
+                list($storageId, $newFolderIdentifier) = explode(':', $params['newPath'], 2);
                 if ($storageId && !empty($params['path'])) {
                     if (is_array($params['path'])) {
                         $identifier = [];
                         $i = 0;
                         foreach ($params['path'] as $param) {
-                            list($storageId, $identifier[$i]) = explode(":", $param, 2);
+                            list($storageId, $identifier[$i]) = explode(':', $param, 2);
                             $i++;
                         }
                     } else {
-                        list($storageId, $identifier) = explode(":", $params['path'], 2);
+                        list($storageId, $identifier) = explode(':', $params['path'], 2);
                     }
                     /** @var ResourceStorage $storage */
                     $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
@@ -277,11 +285,11 @@ class DigitalAssetManagementAjaxController
      * @param string|array $params
      * @return array
      */
-    protected function reindexStorageAction($params = "")
+    protected function reindexStorageAction($params = '')
     {
         $path = (is_array($params) ? reset($params) : $params);
         if (strlen($path)>1) {
-            list($storageId, $identifier) = explode(":", $path, 2);
+            list($storageId, $identifier) = explode(':', $path, 2);
             if ($storageId) {
                 /** @var ResourceStorage $storage  */
                 $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
@@ -344,7 +352,7 @@ class DigitalAssetManagementAjaxController
                 $userSettings['reverse'] = filter_var($params['reverse'], FILTER_VALIDATE_BOOLEAN);
             }
             if (isset($params['meta'])) {
-                $userSettings['meta'] = filter_var($params['meta'], FILTER_VALIDATE_BOOLEAN);;
+                $userSettings['meta'] = filter_var($params['meta'], FILTER_VALIDATE_BOOLEAN);
             }
         }
         return $userSettings;

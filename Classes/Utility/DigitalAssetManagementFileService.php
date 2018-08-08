@@ -1,5 +1,13 @@
 <?php
 declare(strict_types = 1);
+
+/*
+ * This file is part of the package lns/digital-asset-management.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 namespace TYPO3\CMS\DigitalAssetManagement\Utility;
 
 /*
@@ -23,7 +31,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  *
  *
- * @package TYPO3\CMS\DigitalAssetManagement\Utility
  */
 class DigitalAssetManagementFileService
 {
@@ -32,8 +39,9 @@ class DigitalAssetManagementFileService
      * @param $file
      * @return FileReference|string
      */
-    public static function countFileReference($resource) {
-        if($resource instanceof File ) {
+    public static function countFileReference($resource)
+    {
+        if ($resource instanceof File) {
             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_file');
             $statement = $queryBuilder
                 ->count('*')
@@ -42,10 +50,10 @@ class DigitalAssetManagementFileService
                     'sys_file',
                     'sys_file_reference',
                     'ref',
-                    $queryBuilder->expr()->eq('sys_file.uid','ref.uid_local')
+                    $queryBuilder->expr()->eq('sys_file.uid', 'ref.uid_local')
                 )
                 ->where(
-                    $queryBuilder->expr()->eq('sys_file.identifier', $queryBuilder->createNamedParameter($resource->getIdentifier()) )
+                    $queryBuilder->expr()->eq('sys_file.identifier', $queryBuilder->createNamedParameter($resource->getIdentifier()))
                 )
                 ->execute()
                 ->fetchColumn();
@@ -54,14 +62,14 @@ class DigitalAssetManagementFileService
         } else {
             return '-';
         }
-   }
+    }
 
     /**
      * @param File $file
      * @return bool
      */
-   public static function isImage(File $file): bool
-   {
-       return strpos($file->getMimeType(), 'image') === 0;
-   }
+    public static function isImage(File $file): bool
+    {
+        return strpos($file->getMimeType(), 'image') === 0;
+    }
 }
