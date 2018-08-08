@@ -1,0 +1,21 @@
+checks:
+  php: true
+
+filter:
+  excluded_paths:
+  - Tests/*
+  - Resources/Privat/Scripts/*
+  - vendor/*
+
+build:
+  project_setup:
+    before:
+    - composer install
+
+  tests:
+    override:
+    -
+      command: './bin/phpunit -c Build/UnitTests.xml --coverage-clover=some-file'
+      coverage:
+        file: 'some-file'
+        format: 'clover'
