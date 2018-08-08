@@ -55,4 +55,13 @@ class DigitalAssetManagementFileService
             return '-';
         }
    }
+
+    /**
+     * @param File $file
+     * @return bool
+     */
+   public static function isImage(File $file): bool
+   {
+       return strpos($file->getMimeType(), 'image') === 0;
+   }
 }
