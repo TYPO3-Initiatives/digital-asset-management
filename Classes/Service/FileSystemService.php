@@ -1,5 +1,13 @@
 <?php
 declare(strict_types = 1);
+
+/*
+ * This file is part of the package lns/digital-asset-management.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 namespace TYPO3\CMS\DigitalAssetManagement\Service;
 
 /*
@@ -14,10 +22,10 @@ namespace TYPO3\CMS\DigitalAssetManagement\Service;
 *
 * The TYPO3 project - inspiring people to share!
 */
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
-use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FileSystemService implements FileSystemInterface
@@ -177,7 +185,7 @@ class FileSystemService implements FileSystemInterface
         $colums = $GLOBALS['TCA']['sys_file_metadata']['columns'];
         $fields = [];
         foreach ($colums as $col => $value) {
-            if (!in_array($col, ['fileinfo', 'l10n_diffsource', 'l10n_parent', 'sys_language_uid', 't3ver_label'] )) {
+            if (!in_array($col, ['fileinfo', 'l10n_diffsource', 'l10n_parent', 'sys_language_uid', 't3ver_label'])) {
                 $fields[] = 'sys_file_metadata.' . $col;
             }
         }
@@ -185,8 +193,11 @@ class FileSystemService implements FileSystemInterface
         $statement = $queryBuilder
             ->select(...$fields)
             ->from('sys_file_metadata')
-            ->join('sys_file_metadata', 'sys_file', 'file',
-                $queryBuilder->expr()->eq('file.uid','sys_file_metadata.file')
+            ->join(
+                'sys_file_metadata',
+                'sys_file',
+                'file',
+                $queryBuilder->expr()->eq('file.uid', 'sys_file_metadata.file')
             )
             ->where(
                 $queryBuilder->expr()->eq('file.identifier', $queryBuilder->createNamedParameter($identifier))
@@ -210,7 +221,7 @@ class FileSystemService implements FileSystemInterface
         $colums = $GLOBALS['TCA']['sys_file_reference']['columns'];
         $fields = [];
         foreach ($colums as $col => $value) {
-            if (!in_array($col, ['l10n_diffsource', 'l10n_parent', 'sys_language_uid', 't3ver_label'] )) {
+            if (!in_array($col, ['l10n_diffsource', 'l10n_parent', 'sys_language_uid', 't3ver_label'])) {
                 $fields[] = 'sys_file_reference.' . $col;
             }
         }
@@ -218,8 +229,11 @@ class FileSystemService implements FileSystemInterface
         $statement = $queryBuilder
             ->select(...$fields)
             ->from('sys_file_reference')
-            ->join('sys_file_reference', 'sys_file', 'file',
-                $queryBuilder->expr()->eq('file.uid','sys_file_reference.uid_local')
+            ->join(
+                'sys_file_reference',
+                'sys_file',
+                'file',
+                $queryBuilder->expr()->eq('file.uid', 'sys_file_reference.uid_local')
             )
             ->where(
                 $queryBuilder->expr()->eq('file.identifier', $queryBuilder->createNamedParameter($identifier))
@@ -265,14 +279,18 @@ class FileSystemService implements FileSystemInterface
      */
     public function thumbnail($path, $base64 = false, $width = null, $height = 200, $method = 'fit', $quality = 75, $sharpen = false): string
     {
-        if (!file_exists($path)) return '';
+        if (!file_exists($path)) {
+            return '';
+        }
         $result = '';
         // Check the image dimensions
         $dimensions = getimagesize($path);
         $source_width = $dimensions[0];
         $source_height = $dimensions[1];
         $mime = $dimensions['mime'];
-        if (!in_array($mime, ['image/png', 'image/gif', 'image/jpeg', 'image/jpg'] )) return '';
+        if (!in_array($mime, ['image/png', 'image/gif', 'image/jpeg', 'image/jpg'])) {
+            return '';
+        }
         $source_ratio = $source_width / $source_height;
         $dst_width = $width;
         $dst_height = $height;
@@ -307,7 +325,7 @@ class FileSystemService implements FileSystemInterface
                 $new_height = $dst_height;
             } else {
                 $dst_height = $dst_width / $source_ratio;
-                $new_height = $dst_height;#
+                $new_height = $dst_height;//
                 $new_width = $dst_width;
             }
         } elseif ($method == 'adapt') {
@@ -327,29 +345,29 @@ class FileSystemService implements FileSystemInterface
         $new_height = (int) ceil($new_height);
         $dst_width = (int) ceil($dst_width);
         $dst_height = (int) ceil($dst_height);
-        $dst = ImageCreateTrueColor($dst_width, $dst_height);
+        $dst = imagecreatetruecolor($dst_width, $dst_height);
         $whiteBackground = imagecolorallocate($dst, 255, 255, 255);
-        imagefill($dst,0,0,$whiteBackground); // fill the background with white
+        imagefill($dst, 0, 0, $whiteBackground); // fill the background with white
         switch ($mime) {
             case 'image/png':
-                $src = ImageCreateFromPng($path); // original image
+                $src = imagecreatefrompng($path); // original image
                 imagealphablending($dst, false);
                 imagesavealpha($dst, true);
                 $transparent = imagecolorallocatealpha($dst, 255, 255, 255, 127);
                 imagefilledrectangle($dst, 0, 0, $new_width, $new_height, $transparent);
                 break;
             case 'image/gif':
-                $src = ImageCreateFromGif($path); // original image
+                $src = imagecreatefromgif($path); // original image
                 break;
             case 'image/jpg':
             case 'image/jpeg':
             case 'image/djpeg':
-                $src = ImageCreateFromJpeg($path); // original image
-                ImageInterlace($dst, 1); // Enable interlancing (progressive JPG, smaller size file)
+                $src = imagecreatefromjpeg($path); // original image
+                imageinterlace($dst, 1); // Enable interlancing (progressive JPG, smaller size file)
                 break;
         }
-        ImageCopyResampled($dst, $src, 0, 0, $offset_x, $offset_y, $new_width, $new_height, $source_width, $source_height); // do the resize in memory
-        ImageDestroy($src);
+        imagecopyresampled($dst, $src, 0, 0, $offset_x, $offset_y, $new_width, $new_height, $source_width, $source_height); // do the resize in memory
+        imagedestroy($src);
         // sharpen the image?
         // NOTE: requires PHP compiled with the bundled version of GD (see http://php.net/manual/en/function.imageconvolution.php)
         if ($sharpen == true && function_exists('imageconvolution')) {
@@ -359,24 +377,24 @@ class FileSystemService implements FileSystemInterface
             $intC = .00047337278106508946;
             $intRes = $intA + $intB * $intFinal + $intC * $intFinal * $intFinal;
             $intSharpness =  max(round($intRes), 0);
-            $arrMatrix = array(
-                array(-1, -2, -1),
-                array(-2, $intSharpness + 12, -2),
-                array(-1, -2, -1)
-            );
+            $arrMatrix = [
+                [-1, -2, -1],
+                [-2, $intSharpness + 12, -2],
+                [-1, -2, -1]
+            ];
             imageconvolution($dst, $arrMatrix, $intSharpness, 0);
         }
         // Enable output buffering
         ob_start();
         switch ($mime) {
             case 'image/png':
-                $ok = ImagePng($dst, null, 9);
+                $ok = imagepng($dst, null, 9);
                 break;
             case 'image/gif':
-                $ok = ImageGif($dst);
+                $ok = imagegif($dst);
                 break;
             default:
-                $ok = ImageJpeg($dst, null, $quality);
+                $ok = imagejpeg($dst, null, $quality);
                 break;
         }
         if ($ok) {
@@ -388,7 +406,7 @@ class FileSystemService implements FileSystemInterface
         }
         // Clear the output buffer
         ob_end_clean();
-        ImageDestroy($dst);
+        imagedestroy($dst);
         return $result;
     }
 
@@ -414,11 +432,11 @@ class FileSystemService implements FileSystemInterface
         if ($this->storage) {
             /** @var File[] $files */
             $files = $this->storage->getFilesInFolder($folder, $start, $maxNumberOfItems, true, false, $sort, $sortRev);
-            foreach ($files as $file){
+            foreach ($files as $file) {
                 $fileArr = $file->toArray();
                 $newFile = [];
                 foreach ($fileArr as $key => $value) {
-                    if ($withMetadata || in_array($key, ['uid', 'name', 'identifier', 'storage', 'url', 'mimetype', 'size', 'permissions', 'modification_date'] )) {
+                    if ($withMetadata || in_array($key, ['uid', 'name', 'identifier', 'storage', 'url', 'mimetype', 'size', 'permissions', 'modification_date'])) {
                         if ($key === 'identifier') {
                             $newFile[$key] = $this->storage->getUid() . ':' . $value;
                         } else {
@@ -454,13 +472,13 @@ class FileSystemService implements FileSystemInterface
      * @throws \RuntimeException
      * @return array
      */
-    public function listFolder(Folder $folder,  $sort = '', $sortRev = false): array
+    public function listFolder(Folder $folder, $sort = '', $sortRev = false): array
     {
         $folderArray = [];
         if ($this->storage) {
             /** @var Folder[] $folders */
-            $folders = $this->storage->getFoldersInFolder($folder, 0, 0, true,  false, $sort, $sortRev);
-            foreach ($folders as $item){
+            $folders = $this->storage->getFoldersInFolder($folder, 0, 0, true, false, $sort, $sortRev);
+            foreach ($folders as $item) {
                 $item = (array)$item;
                 $newFolder = [];
                 foreach ($item as $key => $value) {

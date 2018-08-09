@@ -1,5 +1,13 @@
 <?php
 declare(strict_types = 1);
+
+/*
+ * This file is part of the package lns/digital-asset-management.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 
 /*
@@ -15,13 +23,13 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
  * The TYPO3 project - inspiring people to share!
  */
 
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Backend\Template\ModuleTemplate;
-use TYPO3Fluid\Fluid\View\ViewInterface;
 use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3Fluid\Fluid\View\ViewInterface;
 
 /**
  * Backend controller: The "Digital Asset Management" module
