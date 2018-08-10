@@ -89,9 +89,11 @@ class DigitalAssetManagementActions {
 	 */
 	public static init(): void {
 		let my = DigitalAssetManagementActions;
+		let $dam = $('.digital-asset-management');
+		let $body = $('body');
 		console.log('DigitalAssetManagement.init');
 		my.request('getContent', {path: ''}, my.genericRequestCallback);
-		$('.digital-asset-management').on('click', '.ajax-action', function(): void {
+		$dam.on('click', '.ajax-action', function(): void {
 			let action = this.dataset.action;
 			let parameter = {path: this.dataset.parameter, sort: my.settings.sort, reverse: my.settings.reverse};
 			if (this.dataset.parameter === 'selected') {
@@ -104,7 +106,7 @@ class DigitalAssetManagementActions {
 			console.log ('ajax-action: ' + action + ', par: ' + JSON.stringify(parameter));
 			my.request(action, parameter, my.genericRequestCallback);
 		});
-		$('.digital-asset-management').on('click', '.selectbox', function(e: any): boolean {
+		$dam.on('click', '.selectbox', function(e: any): boolean {
 			e.preventDefault();
 			// if it is a selectable-inputbox do nothing than selecting the file/folder
 			$(this).parent('.selectable').toggleClass('selected');
@@ -112,28 +114,25 @@ class DigitalAssetManagementActions {
 			my.selectFiles('selectionChanged');
 			return false;
 		});
-		$('.digital-asset-management').on('click', '.view-action', function(): void {
+		$dam.on('click', '.view-action', function(): void {
 			let action = this.dataset.action;
 			let parameter = this.dataset.parameter;
 			console.log ( 'view-action: ' + action + ', par: ' + parameter);
-			// Remove all other view-* classes and add the clicked class
-			$('.maincontent').removeClass(function (index: number, className: string): string {
-				return (className.match (/(^|\s)view-\S+/g) || []).join(' ');
-			}).addClass(action);
+			my.viewAction(action);
 		});
-		$('.digital-asset-management').on('click', '.sort-action', function(): void {
+		$dam.on('click', '.sort-action', function(): void {
 			let action = this.dataset.action;
 			let parameter = {path: my.settings.path};
 			console.log('sort-action');
 			my.sortAction(action, parameter);
 		});
-		$('.digital-asset-management').on('click', '.select-action', function(): void {
+		$dam.on('click', '.select-action', function(): void {
 			let action = this.dataset.action;
 			let parameter = {path: my.settings.path};
-			console.log('local-action');
+			console.log('select-action');
 			my.selectFiles(action);
 		});
-		$('body').on('click', function(): void {
+		$body.on('click', function(): void {
 			$('.sidebar').addClass('hidden');
 		});
 	}
@@ -336,6 +335,25 @@ class DigitalAssetManagementActions {
 				top.TYPO3.Notification.warning('Request failed', 'Unknown action: ' + action);
 		}
 		my.selectFiles('selectionChanged');
+	}
+
+	protected static viewAction(action: string): void {
+		let my = DigitalAssetManagementActions;
+		switch (action) {
+			case 'upload':
+				// show uploadloader dropzone
+				uploader.showDropzone();
+				// $('.dropzone').removeClass('hidden');
+				break;
+			case 'showUploadProgress':
+				$('.upload-progress').removeClass('hidden');
+				break;
+			default:
+				// Switch the view by removing all other view-* classes and adding the clicked class
+				$('.maincontent').removeClass(function (index: number, className: string): string {
+					return (className.match (/(^|\s)view-\S+/g) || []).join(' ');
+				}).addClass(action);
+		}
 	}
 
 	protected static sortAction(action: string, parameter: object): void {
