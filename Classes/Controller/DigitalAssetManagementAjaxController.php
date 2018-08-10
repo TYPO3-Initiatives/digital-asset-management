@@ -113,7 +113,6 @@ class DigitalAssetManagementAjaxController
         }
         if ($path === '*' || $path === '') {
             // Root-Level, get storages and/or mounts
-            // $result = $this->getStorages();
             $result = $this->getMountsAndStorages();
             $result['breadcrumbs'] = [[
                 'identifier' => '*',
@@ -381,8 +380,6 @@ class DigitalAssetManagementAjaxController
             'reverse' => false,
             'meta' => false
         ];
-        // remove existing setting
-        return $userSettings;
         // get settings from user cache
         if ($backendUserAuthentication->uc['dam']) {
             $userSettings = $backendUserAuthentication->uc['dam'];
@@ -418,43 +415,6 @@ class DigitalAssetManagementAjaxController
     /**
      * @return array
      */
-    protected function getStorages(): array
-    {
-        $folders = [];
-        foreach ($this->getBackendUserAuthentication()->getFileStorages() as $storage) {
-            $storageInfo = $storage->getStorageRecord();
-            $fileMounts = $storage->getFileMounts();
-            if (!empty($fileMounts)) {
-                foreach ($fileMounts as $fileMount) {
-                    $folders[] = [
-                        'identifier' => $storageInfo['uid'] . ':' . $fileMount['path'],
-                        'name' => $fileMount['title'],
-                        'storage_name' => $storageInfo['name'],
-                        'storage' => $storageInfo['uid'],
-                        'type' => 'mount'
-                    ];
-                }
-            } else {
-                // No mountpoint exists in the storage
-                $folders[] = [
-                    'identifier' => $storageInfo['uid'] . ':',
-                    'name' => $storageInfo['name'],
-                    'storage_name' => $storageInfo['name'],
-                    'storage' => $storageInfo['uid'],
-                    'type' => 'storage'
-                ];
-            }
-        }
-        return [
-            'files' => [],
-            'folders' => $folders,
-            'breadcrumbs' => []
-        ];
-    }
-
-    /**
-     * @return array
-     */
     protected function getMountsAndStorages(): array
     {
         /**
@@ -464,7 +424,6 @@ class DigitalAssetManagementAjaxController
         $files = [];
         $folders = [];
         if (\is_array($storages)) {
-            $storageId = null;
             if (\count($storages) > 1) {
                 // more than one storage
                 foreach ($storages as $storage) {
