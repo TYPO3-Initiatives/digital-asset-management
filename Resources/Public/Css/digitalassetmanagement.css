@@ -99,7 +99,59 @@ div.digital-asset-management .file {
 	content: "⬇︎ ";
 }
 
+.module-body {
+	padding: 0;
+}
 
+.digital-asset-management .module-header {
+	position: fixed;
+	width: 100%;
+	top: 0;
+	left: 0;
+	min-height: 65px;
+	/*z-index: 300;*/
+	background-color: #eee;
+	border-bottom: 1px solid #c3c3c3;
+	padding: 0 24px;
+	-webkit-transition: margin-top .3s ease-in-out;
+	transition: margin-top .3s ease-in-out;
+}
+
+.module-docheader {
+	display: none;
+}
+
+.digital-asset-management .dropzone {
+	display: flex;
+	position: fixed;
+	align-items: center; /* Vertikale Zentrierung */
+	justify-content: center;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	background-color: rgba(255,255,255,0.7);
+	border: 8px solid #97bf0d;
+	z-index: 20;
+}
+
+.digital-asset-management .dropzone-hint {
+	font-size: 22px;
+}
+
+.digital-asset-management .upload-in-progress,
+.digital-asset-management .upload-progress {
+	position: fixed;
+	top: auto;
+	left: auto;
+	bottom: 10px;
+	right: 20px;
+}
+
+.digital-asset-management .upload-progress {
+	bottom: 55px;
+}
 
 
 .clear {
@@ -465,6 +517,10 @@ div.digital-asset-management .folder .icon {
 }
 .icon-apps-filetree-mount {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-mount.svg");
+}
+
+.icon-spinner-circle {
+	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/spinner/spinner-circle.svg");
 }
 
 .icon-actions-edit-upload {

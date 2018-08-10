@@ -2,43 +2,28 @@
 	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
 	  data-namespace-typo3-fluid="true">
 
-<div class="page-header">
-	<h1><f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.dam" />&nbsp;
-		<small><f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.hereareyourfiles" />.</small></h1>
-</div>
-<div class="digital-asset-management">
-	<div class="row">
-		<div class="col-xs-12 col-md-2">
-			<div class="navbar">
-				Suche
-			</div>
-			<div>
-				<ul>
-					<li>Dateien</li>
-					<li>Favoriten</li>
-					<li>Zuletzt verwendet</li>
-				</ul>
-			</div>
-		</div>
-		<div class="col-xs-12 col-md-10">
-			<nav class="navbar bg-navbar navbar-expand-lg">
-				<a class="navbar-brand" href="#">&nbsp;</a>
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
+<!--<div class="page-header">-->
+	<!--<h1><f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.dam" />&nbsp;-->
+		<!--<small><f:translate key="LLL:EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf:dam.labels.hereareyourfiles" />.</small></h1>-->
+<!--</div>-->
 
-				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<f:render section="navbar-left" />
-					<f:render section="navbar-right" />
-					<!--<form class="form-inline my-2 my-lg-0">-->
-						<!--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">-->
-						<!--<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
-					<!--</form>-->
-				</div>
-			</nav>
-			<div class="header">
-				<div class="breadcrumb"></div>
-			</div>
+<div class="digital-asset-management" >
+	<div class="body t3js-drag-uploader" data-target-folder="1:/" data-progress-container=".upload-progress"
+		 data-dropzone-trigger=".t3js-drag-uploader-trigger" data-dropzone-target=".dropzone"
+		 data-file-deny-pattern="" data-max-file-size="123456789">
+		<!--<div class="col-xs-12 col-md-2">-->
+			<!--<div class="navbar">-->
+				<!--Suche-->
+			<!--</div>-->
+			<!--<div>-->
+				<!--<ul>-->
+					<!--<li>Dateien</li>-->
+					<!--<li>Favoriten</li>-->
+					<!--<li>Zuletzt verwendet</li>-->
+				<!--</ul>-->
+			<!--</div>-->
+		<!--</div>-->
+		<div class="col-12">
 			<div class="body">
 				<div class="maincontent col-12 view-symbols">
 					<div class="row folders">
@@ -67,14 +52,47 @@
 		<div class="sidebar hidden col-sm-12 col-md-6 col-lg-4">
 			<div class="well metadata"></div>
 		</div>
-
 		<div class="errorlog col-12"></div>
+	</div>
+	<div class="module-header col-12">
+		<nav class="navbar bg-navbar navbar-expand-lg">
+			<a class="navbar-brand" href="#">&nbsp;</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<f:render section="buttonbar-left" />
+				<f:render section="buttonbar-right" />
+				<!--<form class="form-inline my-2 my-lg-0">-->
+				<!--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">-->
+				<!--<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
+				<!--</form>-->
+			</div>
+		</nav>
+		<div class="row">
+			<div class="col-8 breadcrumb"></div>
+			<div class="col-4 search"><input id="search" type="search"/></div>
+		</div>
+	</div>
+	<div class="dropzone hidden" >
+		<div class="dropzone-hint localize" data-l10nkey="dam.labels.dropyourfileshere"></div>
+	</div>
+	<div class="well upload-in-progress">
+		<div class="view-action" data-action="showUploadProgress" data-parameter="">
+			<span class="icon icons-size-medium icon-spinner-circle" ></span><span class="localize" data-l10nkey="dam.labels.uploadinprogress">Upload in progress!</span>
+		</div>
+	</div>
+	<div class="well upload-progress">
+		<ul>
+			<li>FILEFAKENAME</li>
+		</ul>
 	</div>
 </div>
 </html>
 
 
-<f:section name="navbar-left">
+<f:section name="buttonbar-left">
 	<ul class="navbar-nav mr-auto">
 		<li class="nav-item newaction">
 			<div class="nav-link view-action active" data-action="newFile" data-parameter="">
@@ -121,7 +139,7 @@
 </f:section>
 
 
-<f:section name="navbar-right">
+<f:section name="buttonbar-right">
 	<ul class="navbar-nav my-2">
 		<li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" href="#" id="navbarSortingDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
