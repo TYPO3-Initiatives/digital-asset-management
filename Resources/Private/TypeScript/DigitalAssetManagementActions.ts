@@ -311,7 +311,7 @@ class DigitalAssetManagementActions {
 				console.log('DigitalAssetManagement request promise fail ' + JSON.stringify(err));
 				if (!failedbefore) {
 					Notification.warning('Request failed', 'Content can not be displayed. ' + err.readyState);
-					// top.TYPO3.Notification.warning('Request failed', 'Content can not be displayed. ' + err.readyState);
+					// Notification.warning('Request failed', 'Content can not be displayed. ' + err.readyState);
 					failedbefore = true;
 				}
 				my.renderError(err);
@@ -356,7 +356,7 @@ class DigitalAssetManagementActions {
 				my.showMetadata(data);
 				break;
 			default:
-				top.TYPO3.Notification.warning('Request failed', 'Unknown action: ' + action);
+				Notification.warning('Request failed', 'Unknown action: ' + action);
 		}
 		my.selectFiles('selectionChanged');
 	}
@@ -543,7 +543,7 @@ class DigitalAssetManagementActions {
 					console.dir(data);
 				}).fail((err: any): void => {
 					console.log('DigitalAssetManagement upload files ajax call fails ' + JSON.stringify(err));
-					top.TYPO3.Notification.warning('Request failed', 'Error uploading files. ' + err.readyState);
+					Notification.warning('Request failed', 'Error uploading files. ' + err.readyState);
 					my.renderError(err);
 				});
 			}
