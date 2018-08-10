@@ -9,7 +9,7 @@
 
 defined('TYPO3_MODE') || die();
 
-(function() {
+(function () {
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModule(
         'file',
         'DigitalAssetManagement',

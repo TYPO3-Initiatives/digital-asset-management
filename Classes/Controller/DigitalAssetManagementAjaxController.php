@@ -26,6 +26,7 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException;
 use TYPO3\CMS\Core\Resource\Exception\ResourceDoesNotExistException;
@@ -36,7 +37,6 @@ use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemInterface;
 use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemService;
-use TYPO3\CMS\Backend\Routing\UriBuilder;
 
 /**
  * Backend controller: The "Digital Asset Management" JSON response controller
@@ -98,7 +98,8 @@ class DigitalAssetManagementAjaxController
                     'name' => 'home',
                     'type' => 'home'
                 ];
-                $current = end($breadcrumbs); reset($breadcrumbs);
+                $current = end($breadcrumbs);
+                reset($breadcrumbs);
                 $breadcrumbs = array_reverse($breadcrumbs);
                 return [
                     'current' => $current,
@@ -107,7 +108,7 @@ class DigitalAssetManagementAjaxController
                     'breadcrumbs' => $breadcrumbs,
                     'settings' => $userSettings
                 ];
-            } catch (ResourceDoesNotExistException $exception){
+            } catch (ResourceDoesNotExistException $exception) {
                 $path = '*';
             }
         }
@@ -481,9 +482,7 @@ class DigitalAssetManagementAjaxController
                             $folders = $fileSystemService->listFolder($folder);
                         }
                     } catch (InsufficientFolderAccessPermissionsException $exception) {
-
                     } catch (\Exception $exception) {
-
                     }
                 }
             }
@@ -510,14 +509,14 @@ class DigitalAssetManagementAjaxController
 
         try {
             $parentFolder = $folder->getParentFolder();
-        } catch (InsufficientFolderAccessPermissionsException $exception){
+        } catch (InsufficientFolderAccessPermissionsException $exception) {
             return $breadcrumbs;
         }
         if ($parentFolder->getIdentifier() === '/') {
-            if( count($this->getBackendUserAuthentication()->getFileStorages()) > 1) {
+            if (count($this->getBackendUserAuthentication()->getFileStorages()) > 1) {
                 $breadcrumbs[] = [
                     'identifier' => $folder->getStorage()->getUid() . ':/',
-                    'name' => "test " . $folder->getStorage()->getName(),
+                    'name' => 'test ' . $folder->getStorage()->getName(),
                     'type' => 'storage'
                 ];
             }
