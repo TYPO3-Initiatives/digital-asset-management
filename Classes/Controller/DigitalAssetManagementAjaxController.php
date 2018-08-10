@@ -25,7 +25,9 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Core\Http\JsonResponse;
+use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException;
 use TYPO3\CMS\Core\Resource\FolderInterface;
 use TYPO3\CMS\Core\Resource\Index\Indexer;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -33,6 +35,7 @@ use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemInterface;
 use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemService;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 
 /**
  * Backend controller: The "Digital Asset Management" JSON response controller
@@ -81,9 +84,15 @@ class DigitalAssetManagementAjaxController
         if (!empty($params['path'])) {
             $path = $params['path'];
         }
-        if ($path === '') {
-            // Root-Level
-            $result = $this->getStorages();
+        if ($path === '*' || $path === '') {
+            // Root-Level, get storages and/or mounts
+            // $result = $this->getStorages();
+            $result = $this->getMountsAndStorages();
+            $result['breadcrumbs'] = [[
+                'identifier' => '*',
+                'name' => 'home',
+                'type' => 'home'
+            ]];
             $result['userSettings'] = $userSettings;
             return $result;
         }
@@ -92,7 +101,6 @@ class DigitalAssetManagementAjaxController
             $folderObject = $resourceFactory->getObjectFromCombinedIdentifier($path);
             $userSettings['path'] = $path;
             $this->setSettings($userSettings);
-
             $fileSystemService = new FileSystemService($folderObject->getStorage());
             $breadcrumbs = $this->buildBreadCrumb($folderObject);
             $breadcrumbs[] = [
@@ -121,7 +129,7 @@ class DigitalAssetManagementAjaxController
     }
 
     /**
-     * get thumbnail from image file
+     * get thumbnail from image file using core thumbnail controller
      * only local storages are supported until now
      * $params['path']/$params = $storageId.':'.$identifier
      *
@@ -129,6 +137,37 @@ class DigitalAssetManagementAjaxController
      * @return array
      */
     protected function getThumbnailAction($params = []): array
+    {
+        $combinedIdentifier = (is_array($params) ? reset($params) : $params);
+        if (strlen($combinedIdentifier) > 6) {
+            try {
+                $imageUri = (string)GeneralUtility::makeInstance(UriBuilder::class)
+                ->buildUriFromRoute('thumbnails', [
+                    'fileIdentifier' => $combinedIdentifier,
+                    'processingInstructions' => [
+                        'width' => 0,
+                        'height' => 0,
+                        'maxHeight' => 198
+                    ]
+                ]);
+            } catch (RouteNotFoundException $e) {
+                // todo: remove when this patch https://review.typo3.org/c/57646/ was merged
+                $imageUri = $this->getThumbnail($params);
+            }
+            return ['thumbnail' => $imageUri];
+        }
+    }
+
+    /**
+     * get thumbnail from image file
+     * only local storages are supported until now
+     * $params['path']/$params = $storageId.':'.$identifier
+     *
+     * @param array $params
+     * @deprecated use core route thumbnails instead
+     * @return array
+     */
+    protected function getThumbnail($params = []): array
     {
         $path = (is_array($params) ? reset($params) : $params);
         if (strlen($path) > 6) {
@@ -324,7 +363,7 @@ class DigitalAssetManagementAjaxController
      */
     protected function getSettings($params): array
     {
-        $backendUser = $this->getBackendUserAuthentication();
+        $backendUserAuthentication = $this->getBackendUserAuthentication();
         // default settings
         $userSettings = [
             'path' => '',
@@ -335,9 +374,11 @@ class DigitalAssetManagementAjaxController
             'reverse' => false,
             'meta' => false
         ];
+        // remove existing setting
+        return $userSettings;
         // get settings from user cache
-        if ($backendUser->uc['dam']) {
-            $userSettings = $backendUser->uc['dam'];
+        if ($backendUserAuthentication->uc['dam']) {
+            $userSettings = $backendUserAuthentication->uc['dam'];
         }
         // overwrite settings by query params
         if (is_array($params)) {
@@ -405,6 +446,90 @@ class DigitalAssetManagementAjaxController
     }
 
     /**
+     * @return array
+     */
+    protected function getMountsAndStorages(): array
+    {
+        /**
+         * @var ResourceStorage[] $storages
+         */
+        $storages = $this->getBackendUserAuthentication()->getFileStorages();
+        $files = [];
+        $folders = [];
+        if (\is_array($storages)) {
+            $storageId = null;
+            if (\count($storages) > 1) {
+                // more than one storage
+                foreach ($storages as $storage) {
+                    $storageInfo = $storage->getStorageRecord();
+                    $fileMounts = $storage->getFileMounts();
+                    if (!empty($fileMounts)) {
+                        // mount points exists in the storage
+                        foreach ($fileMounts as $fileMount) {
+                            $folders[] = [
+                                'identifier' => $storageInfo['uid'] . ':' . $fileMount['path'],
+                                'name' => $fileMount['title'],
+                                'storage_name' => $storageInfo['name'],
+                                'storage' => $storageInfo['uid'],
+                                'type' => 'mount'
+                            ];
+                        }
+                        unset($fileMounts);
+                    } else {
+                        // no mountpoint exists in the storage
+                        $folders[] = [
+                            'identifier' => $storageInfo['uid'] . ':',
+                            'name' => $storageInfo['name'],
+                            'storage_name' => $storageInfo['name'],
+                            'storage' => $storageInfo['uid'],
+                            'type' => 'storage'
+                        ];
+                    }
+                    unset($storageInfo);
+                }
+            } else {
+                // only one storage
+                $storage = reset($storages);
+                $storageInfo = $storage->getStorageRecord();
+                $fileMounts = $storage->getFileMounts();
+                if (count($fileMounts) > 1) {
+                    // more than one mountpoint
+                    foreach ($fileMounts as $fileMount) {
+                        $folders[] = [
+                            'identifier' => $storageInfo['uid'] . ':' . $fileMount['path'],
+                            'name' => $fileMount['title'],
+                            'storage_name' => $storageInfo['name'],
+                            'storage' => $storageInfo['uid'],
+                            'type' => 'mount'
+                        ];
+                    }
+                    unset($fileMounts);
+                } else {
+                    // only one mountpoint, get the content immediately
+                    $fileSystemService = new FileSystemService($storage);
+                    $fileMount = array_shift($fileMounts);
+                    try {
+                        $folder = $storage->getFolder($fileMount['path']);
+                        if ($fileSystemService) {
+                            $files = $fileSystemService->listFiles($folder);
+                            $folders = $fileSystemService->listFolder($folder);
+                        }
+                    } catch (InsufficientFolderAccessPermissionsException $exception) {
+
+                    } catch (\Exception $exception) {
+
+                    }
+                }
+            }
+        }
+        return [
+            'files' => $files,
+            'folders' => $folders,
+            'breadcrumbs' => []
+        ];
+    }
+
+    /**
      * @param FolderInterface $folder
      * @return array
      */
@@ -417,13 +542,19 @@ class DigitalAssetManagementAjaxController
             'type' => 'folder'
         ];
 
-        $parentFolder = $folder->getParentFolder();
+        try {
+            $parentFolder = $folder->getParentFolder();
+        } catch (InsufficientFolderAccessPermissionsException $exception){
+            return $breadcrumbs;
+        }
         if ($parentFolder->getIdentifier() === '/') {
-            $breadcrumbs[] = [
-                'identifier' => $folder->getStorage()->getUid() . ':/',
-                'name' => $folder->getStorage()->getName(),
-                'type' => 'storage'
-            ];
+            if( count($this->getBackendUserAuthentication()->getFileStorages()) > 1) {
+                $breadcrumbs[] = [
+                    'identifier' => $folder->getStorage()->getUid() . ':/',
+                    'name' => "test " . $folder->getStorage()->getName(),
+                    'type' => 'storage'
+                ];
+            }
         } else {
             $breadcrumbs = array_merge($breadcrumbs, $this->buildBreadCrumb($parentFolder));
         }
