@@ -386,28 +386,30 @@ class DigitalAssetManagementAjaxController
             $userSettings = $backendUserAuthentication->uc['dam'];
         }
         // overwrite settings by query params
-        if (is_array($params)) {
-            if (isset($params['start'])) {
-                $userSettings['start'] = (integer)$params['start'];
-            }
-            if (isset($params['count'])) {
-                $userSettings['count'] = (integer)$params['count'];
-            }
-            if (isset($params['sort'])) {
-                if (in_array($params['sort'], ['name', 'modified', 'size'])) {
-                    $userSettings['sort'] = (string)$params['sort'];
+        if (\is_array($params)) {
+            foreach ($params as $key => $val) {
+                if (isset($userSettings[$key])) {
+                    switch ($key) {
+                        case 'start':
+                        case 'count':
+                            $userSettings[$key] = (integer)$val;
+                            break;
+                        case 'sort':
+                            if (\in_array($val, ['name', 'modified', 'size'])) {
+                                $userSettings[$key] = (string)$val;
+                            }
+                            break;
+                        case 'view':
+                            if (\in_array($val, ['list', 'symbols', 'photos'])) {
+                                $userSettings[$key] = (string)$val;
+                            }
+                            break;
+                        case 'reverse':
+                        case 'meta':
+                            $userSettings[$key] = filter_var($val, FILTER_VALIDATE_BOOLEAN);
+                            break;
+                    }
                 }
-            }
-            if (isset($params['view'])) {
-                if (in_array($params['view'], ['list', 'symbols', 'photos'])) {
-                    $userSettings['view'] = (string)$params['view'];
-                }
-            }
-            if (isset($params['reverse'])) {
-                $userSettings['reverse'] = filter_var($params['reverse'], FILTER_VALIDATE_BOOLEAN);
-            }
-            if (isset($params['meta'])) {
-                $userSettings['meta'] = filter_var($params['meta'], FILTER_VALIDATE_BOOLEAN);
             }
         }
         return $userSettings;
