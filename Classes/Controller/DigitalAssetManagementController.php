@@ -28,7 +28,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3Fluid\Fluid\View\ViewInterface;
 
 /**
@@ -77,17 +76,22 @@ class DigitalAssetManagementController
      */
     public function handleRequest(ServerRequestInterface $request): ResponseInterface
     {
+        //        $this->moduleTemplate->getPageRenderer()->loadRequireJsModule('TYPO3/CMS/Backend/ContextMenu');
+        //include JavaScript and CSS
+        /**
+         * @var PageRenderer $pageRenderer
+         */
         $pageRenderer = $this->moduleTemplate->getPageRenderer();
-        // Include JavaScript and CSS
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/DigitalAssetManagement/DigitalAssetManagementActions');
+        //        $this->moduleTemplate->loadJavascriptLib('EXT:digital_asset_management/Resources/Public/JavaScript/DigitalAssetManagementActions.js');
+        //$this->moduleTemplate->loadJavascriptLib('https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js');
         $pageRenderer->addCssFile('EXT:digital_asset_management/Resources/Public/Css/digitalassetmanagement.css');
         $pageRenderer->addInlineLanguageLabelFile('EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf');
-
-        // Include bootstrap css
-        // @TODO: include bootstrap css from TYPO3 not from CDN, how to?
-        $this->moduleTemplate->getPageRenderer()->addCssFile('https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css');
+        $pageRenderer->addInlineLanguageLabelFile('EXT:core/Resources/Private/Language/locallang_core.xlf', 'file_upload');
+        //Include bootstrap css
+        //@todo: include bootstrap css from TYPO3 not from CDN, how to?
+        $pageRenderer->addCssFile('https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css');
         $this->initializeView('index');
-
         // Add shortcut button
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
         $myButton = $buttonBar->makeShortcutButton()->setModuleName('dam');
