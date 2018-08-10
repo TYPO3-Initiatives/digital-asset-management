@@ -101,8 +101,10 @@ class DigitalAssetManagementAjaxController
                 'name' => 'home',
                 'type' => 'home'
             ];
+            $current = end($breadcrumbs); reset($breadcrumbs);
             $breadcrumbs = array_reverse($breadcrumbs);
             return [
+                'current' => $current,
                 'files' => $fileSystemService->listFiles($folderObject),
                 'folders' => $fileSystemService->listFolder($folderObject),
                 'breadcrumbs' => $breadcrumbs,
