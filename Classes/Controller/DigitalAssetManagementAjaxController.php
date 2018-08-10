@@ -81,13 +81,12 @@ class DigitalAssetManagementAjaxController
         if (!empty($params['path'])) {
             $path = $params['path'];
         }
-        if ($path === '*') {
+        if ($path === '') {
             // Root-Level
             $result = $this->getStorages();
             $result['userSettings'] = $userSettings;
             return $result;
         }
-
         if ($path !== '') {
             $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
             $folderObject = $resourceFactory->getObjectFromCombinedIdentifier($path);
@@ -110,6 +109,14 @@ class DigitalAssetManagementAjaxController
                 'breadcrumbs' => $breadcrumbs,
                 'settings' => $userSettings
             ];
+        } else {
+            return [
+                [
+                    'identifier' => '*',
+                    'name' => 'home',
+                    'type' => 'home'
+                ]
+            ];
         }
     }
 
@@ -118,10 +125,10 @@ class DigitalAssetManagementAjaxController
      * only local storages are supported until now
      * $params['path']/$params = $storageId.':'.$identifier
      *
-     * @param string|array $params
+     * @param array $params
      * @return array
      */
-    protected function getThumbnailAction($params = ''): array
+    protected function getThumbnailAction($params = []): array
     {
         $path = (is_array($params) ? reset($params) : $params);
         if (strlen($path) > 6) {
@@ -312,7 +319,7 @@ class DigitalAssetManagementAjaxController
     /**
      * Returns the DAM user settings
      *
-     * @param string|array $params
+     * @param array $params
      * @return array
      */
     protected function getSettings($params): array
