@@ -28,6 +28,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException;
+use TYPO3\CMS\Core\Resource\Exception\ResourceDoesNotExistException;
 use TYPO3\CMS\Core\Resource\FolderInterface;
 use TYPO3\CMS\Core\Resource\Index\Indexer;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -77,12 +78,38 @@ class DigitalAssetManagementAjaxController
      * @param array $params
      * @return array
      */
-    protected function getContentAction(array $params = null): array
+    protected function getContentAction(array $params = []): array
     {
         $userSettings = $this->getSettings($params);
         $path = $userSettings['path'] ?? '';
         if (!empty($params['path'])) {
             $path = $params['path'];
+        }
+        if ($path !== '' && $path !== '*') {
+            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+            try {
+                $folderObject = $resourceFactory->getObjectFromCombinedIdentifier($path);
+                $userSettings['path'] = $path;
+                $this->setSettings($userSettings);
+                $fileSystemService = new FileSystemService($folderObject->getStorage());
+                $breadcrumbs = $this->buildBreadCrumb($folderObject);
+                $breadcrumbs[] = [
+                    'identifier' => '*',
+                    'name' => 'home',
+                    'type' => 'home'
+                ];
+                $current = end($breadcrumbs); reset($breadcrumbs);
+                $breadcrumbs = array_reverse($breadcrumbs);
+                return [
+                    'current' => $current,
+                    'files' =>  $fileSystemService->listFiles($folderObject),
+                    'folders' => $fileSystemService->listFolder($folderObject),
+                    'breadcrumbs' => $breadcrumbs,
+                    'settings' => $userSettings
+                ];
+            } catch (ResourceDoesNotExistException $exception){
+                $path = '*';
+            }
         }
         if ($path === '*' || $path === '') {
             // Root-Level, get storages and/or mounts
@@ -96,36 +123,14 @@ class DigitalAssetManagementAjaxController
             $result['userSettings'] = $userSettings;
             return $result;
         }
-        if ($path !== '') {
-            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
-            $folderObject = $resourceFactory->getObjectFromCombinedIdentifier($path);
-            $userSettings['path'] = $path;
-            $this->setSettings($userSettings);
-            $fileSystemService = new FileSystemService($folderObject->getStorage());
-            $breadcrumbs = $this->buildBreadCrumb($folderObject);
-            $breadcrumbs[] = [
+
+        return [
+            [
                 'identifier' => '*',
                 'name' => 'home',
                 'type' => 'home'
-            ];
-            $current = end($breadcrumbs); reset($breadcrumbs);
-            $breadcrumbs = array_reverse($breadcrumbs);
-            return [
-                'current' => $current,
-                'files' => $fileSystemService->listFiles($folderObject),
-                'folders' => $fileSystemService->listFolder($folderObject),
-                'breadcrumbs' => $breadcrumbs,
-                'settings' => $userSettings
-            ];
-        } else {
-            return [
-                [
-                    'identifier' => '*',
-                    'name' => 'home',
-                    'type' => 'home'
-                ]
-            ];
-        }
+            ]
+        ];
     }
 
     /**
@@ -203,6 +208,7 @@ class DigitalAssetManagementAjaxController
         $path = (is_array($params) ? reset($params) : $params);
         if (strlen($path) > 6) {
             list($storageId, $identifier) = explode(':', $path, 2);
+            $file = [];
             if ($storageId && !empty($identifier)) {
                 /** @var ResourceStorage $storage */
                 $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
@@ -230,6 +236,7 @@ class DigitalAssetManagementAjaxController
     {
         if (is_array($params)) {
             $identifier = [];
+            $storageId = null;
             $i = 0;
             foreach ($params['path'] as $param) {
                 list($storageId, $identifier[$i]) = explode(':', $param, 2);
