@@ -87,8 +87,17 @@ div.digital-asset-management .file {
 	background-color: transparent;
 }
 
+.digital-asset-management .sort-action.active {
+	text-decoration: underline;
+}
 
+.digital-asset-management .sort-action.sort-order-dsc:before {
+	content: "⬆︎ ";
+}
 
+.digital-asset-management .sort-action.sort-order-asc:before {
+	content: "⬇︎ ";
+}
 
 
 

@@ -316,7 +316,8 @@ class DigitalAssetManagementActions {
 				} else {
 					$('.sort-action[data-action="sort-order-asc"]').addClass('active');
 				}
-				$('.sort-field').removeClass('active');
+				// $('.sort-field').removeClass('active');
+				$('.sort-action').removeClass('active');
 				if (my.settings.sort === 'modified') {
 					$('.sort-action[data-action="sort-by-date"]').addClass('active');
 				} else if (my.settings.sort === 'name') {
@@ -368,12 +369,15 @@ class DigitalAssetManagementActions {
 				break;
 			case 'sort-by-name':
 				my.settings.sort = 'name';
+				my.settings.reverse = !my.settings.reverse;
 				break;
 			case 'sort-by-size':
 				my.settings.sort = 'size';
+				my.settings.reverse = !my.settings.reverse;
 				break;
 			case 'sort-by-date':
 				my.settings.sort = 'modified';
+				my.settings.reverse = !my.settings.reverse;
 				break;
 			default:
 				// do nothing
@@ -385,6 +389,10 @@ class DigitalAssetManagementActions {
 		$('.maincontent').removeClass(function (index: number, className: string): string {
 			return (className.match (/(^|\s)sort-order-\S+/g) || []).join(' ');
 		}).addClass(action).attr('data-reverse', parameter.reverse );
+		$('.sort-action').removeClass('sort-order-asc sort-order-dsc');
+		$('.sort-action[data-action="' + action + '"]').addClass(
+			parameter.reverse ? 'sort-order-dsc' : 'sort-order-asc'
+		);
 		my.request('getContent', parameter, my.genericRequestCallback);
 	}
 
