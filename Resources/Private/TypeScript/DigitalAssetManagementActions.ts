@@ -52,14 +52,15 @@ interface Settings {
  * @exports TYPO3/CMS/Backend/InfoWindow
  */
 class DigitalAssetManagementActions {
-
+	// todo: Get templates by fluid. Add fields to insert as data-attributes and insert content by jQuery.text()
+	// todo: Use jQuery.html() if data-escape="false" is set, otherwise jQuery.text()
 	static folderPartial: string = '    <div class="grid selectable ajax-action {mimetype}" data-action="getContent" ' +
 		'data-parameter="{identifier}">\n' +
 		'   <div class="grid-cell" >\n' +
 		'      <div class="icon folder-icon {type}"></div>' +
 		'   </div>\n' +
 		'   <div class="info">\n' +
-		'      <div class="grid-cell filename"><h5 class="card-title">{name}</h5></div>\n' +
+		'      <div class="grid-cell filename"><h5 class="card-title" data-field="name" data-escape="false">{name}</h5></div>\n' +
 		'   </div>\n' +
 		'  </div>\n';
 
@@ -210,16 +211,17 @@ class DigitalAssetManagementActions {
 		let lastidentifier = '';
 		if (data.result && data.result.breadcrumbs) {
 			for (let i = 0; i < data.result.breadcrumbs.length; i++) {
+				// todo: security XSS !!! escape! Use jQuery.text() and DOM-functions to insert data instead of string concatination
 				const part = data.result.breadcrumbs[i];
 				if (part.type === 'home') {
 					part.label = TYPO3.lang['dam.labels.files'];
 				} else {
-					part.label = part.name;
+					part.label = part.name; // part.name escapen !!
 					lastidentifier = part.identifier;
 					html += '&nbsp;&gt;&nbsp;';
 				}
 				// Render single breadcrumb item
-				html += my.replaceTemplateVars(my.breadcrumbPartial, part);
+				html += my.replaceTemplateVars(my.breadcrumbPartial, part); // security hier könnte das injectet werden
 			}
 			// Set actual identifier to reindex-action parameter
 			$('.ajax-action[data-action="reindexStorage"]').attr('data-parameter', lastidentifier).removeClass('disabled');
@@ -261,6 +263,8 @@ class DigitalAssetManagementActions {
 	protected static renderThumb(data: ResponseObject): void {
 		let my = DigitalAssetManagementActions;
 		if (data.result && data.result.thumbnail) {
+			console.log('got thumbs');
+			console.log(data);
 			$('.grid.image').each(function(): void {
 				let $el = $(this).find('img');
 				if (data.params.path === $el.attr('data-src')) {
@@ -326,6 +330,7 @@ class DigitalAssetManagementActions {
 		}
 		switch (action) {
 			case 'getContent':
+				console.log(data);
 				my.renderBreadcrumb(data);
 				my.renderContent(data);
 				my.loadThumbs();
@@ -380,7 +385,7 @@ class DigitalAssetManagementActions {
 		}
 	}
 
-	protected static sortAction(action: string, parameter: object): void {
+	protected static sortAction(action: string, parameter: Settings): void {
 		let my = DigitalAssetManagementActions;
 		console.log ( 'sort-action: ' + action + ', par: ' + JSON.stringify(parameter));
 		switch (action) {
@@ -405,8 +410,8 @@ class DigitalAssetManagementActions {
 			default:
 				// do nothing
 		}
-		parameter.reverse = my.settings.reverse || false;
-		parameter.sort = my.settings.sort || 'name';
+		parameter.reverse = my.settings.reverse;
+		parameter.sort = my.settings.sort;
 		console.log ( 'sort-action: ' + action + ', par: ' + JSON.stringify(parameter));
 		// Remove all other view-* classes and add the clicked class
 		$('.maincontent').removeClass(function (index: number, className: string): string {
@@ -553,6 +558,7 @@ class DigitalAssetManagementActions {
 	/**
 	 * Replace template variables surrounded by {|}.
 	 * Replace language keys surrounded by {lll:|}.
+	 * todo: XSS possible: Use jQuery text for inserting text properties
 	 *
 	 * @param {string} template
 	 * @param {object} data
