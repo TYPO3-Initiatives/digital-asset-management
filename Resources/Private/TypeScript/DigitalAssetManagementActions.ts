@@ -14,7 +14,7 @@
 import * as $ from 'jquery';
 import 'bootstrap';
 import moment = require('moment');
-import Notification = require('Notification');
+import Notification = require('TYPO3/CMS/Backend/Notification');
 import uploader = require('TYPO3/CMS/Backend/DragUploader');
 
 // import Icons = require('TYPO3/CMS/Backend/Icons');
