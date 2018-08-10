@@ -14,6 +14,9 @@
 import * as $ from 'jquery';
 import 'bootstrap';
 import moment = require('moment');
+import Notification = require('Notification');
+import uploader = require('TYPO3/CMS/Backend/DragUploader');
+
 // import Icons = require('TYPO3/CMS/Backend/Icons');
 
 
@@ -134,6 +137,21 @@ class DigitalAssetManagementActions {
 		});
 		$body.on('click', function(): void {
 			$('.sidebar').addClass('hidden');
+		});
+		$('.dropzone-close').on('click', function(e: Event): void {
+			console.dir(uploader);
+			uploader.hideDropzone(e);
+			// $('.dropzone').addClass('hidden');
+		});
+		uploader.initialize('.dropzone');
+		// my.initDropzone();
+		$('.localize').each(function (index: number): void {
+			let key = $(this).attr('data-l10nkey');
+			if (TYPO3.lang[key]) {
+				$(this).text(TYPO3.lang[key]);
+			} else {
+				$(this).text('## localization missing: ' + key);
+			}
 		});
 	}
 
@@ -292,7 +310,8 @@ class DigitalAssetManagementActions {
 			.fail((err: any): void => {
 				console.log('DigitalAssetManagement request promise fail ' + JSON.stringify(err));
 				if (!failedbefore) {
-					top.TYPO3.Notification.warning('Request failed', 'Content can not be displayed. ' + err.readyState);
+					Notification.warning('Request failed', 'Content can not be displayed. ' + err.readyState);
+					// top.TYPO3.Notification.warning('Request failed', 'Content can not be displayed. ' + err.readyState);
 					failedbefore = true;
 				}
 				my.renderError(err);
@@ -310,6 +329,10 @@ class DigitalAssetManagementActions {
 				my.renderBreadcrumb(data);
 				my.renderContent(data);
 				my.loadThumbs();
+				if (data.result.current && data.result.current.identifier) {
+					$('.breadcrumb').attr('data-identifier', data.result.current.identifier);
+					$('.t3js-drag-uploader').attr('data-target-folder', data.result.current.identifier);
+				}
 				$('.sort-order').removeClass('active');
 				if (my.settings.reverse) {
 					$('.sort-action[data-action="sort-order-dsc"]').addClass('active');
@@ -411,6 +434,119 @@ class DigitalAssetManagementActions {
 		} else {
 			$('.newaction').show();
 			$('.fileaction').hide();
+		}
+	}
+
+	/**
+	 * Handle drop zone
+	 */
+	protected static initDropzone(): void {
+		let my = DigitalAssetManagementActions;
+		let $dropzone = $('.dropzone');
+		$('body').on('dragenter', function(e: Event): void {
+			e.preventDefault();
+			e.stopPropagation();
+			$dropzone.removeClass('hidden');
+		});
+		$dropzone.on('dragenter', function(e: Event): void {
+			e.preventDefault();
+			e.stopPropagation();
+		});
+		$dropzone.on('dragleave', function(e: Event): void {
+			e.preventDefault();
+			e.stopPropagation();
+			$dropzone.addClass('hidden');
+		});
+		$dropzone.on('dragover', function(e: Event): void {
+			e.preventDefault();
+			e.stopPropagation();
+			e.originalEvent.dataTransfer.dropEffect = 'copy';
+		});
+		$dropzone.on('drop', function(e: Event): void {
+			console.dir(e);
+			if (e.originalEvent.dataTransfer) {
+				if (e.originalEvent.dataTransfer.files.length) {
+					e.preventDefault();
+					e.stopPropagation();
+					// upload files to server
+					console.dir(e.originalEvent.dataTransfer.files);
+					my.showFilesToUpload('.sidebar', e.originalEvent.dataTransfer.files);
+					$dropzone.addClass('hidden');
+					my.uploadFiles(e.originalEvent.dataTransfer.files);
+				}
+			}
+		});
+		$dropzone.on('click', function(): void {
+			$(this).addClass('hidden');
+		});
+		$('input[type=file]').on('change', function(e: Event): void {
+			console.log('upload files from file dialog to server');
+			console.dir(e);
+			console.log($(this).val());
+			console.dir(e.originalEvent.target.files);
+
+			// my.showFilesToUpload('.sidebar', e.originalEvent.dataTransfer.files);
+			// $dropzone.addClass('hidden');
+			// my.uploadFiles(e.originalEvent.dataTransfer.files);
+		});
+	}
+
+	/**
+	 * Render view of file names with
+	 *
+	 * @param {string} targetSelector
+	 * @param {{}} files
+	 */
+	protected static showFilesToUpload(targetSelector: string, files: {}): void {
+		// let my = DigitalAssetManagementActions;
+		let $target = $(targetSelector);
+		$target.removeClass('hidden');
+		if (files) {
+			let items = [];
+			items.push('<h4>Files</h4>\n<dl class="row">\n');
+			for (let i = 0, f; f = files[i]; i++) {
+				items.push('<dt id="file' + i + '" class="col-sm-4">' + f.name + '</dt>' +
+					'<dd class="col-sm-8">(' + f.type || 'n/a'  + ') - ' + f.size + ' bytes</dd>');
+			}
+			items.push('</dl>');
+			$('.metadata').html(items.join(''));
+			$target.removeClass('hidden');
+		}
+	}
+
+	/**
+	 * Send files to server
+	 * Show upload progress in frontend
+	 */
+	protected static uploadFiles(files: Array): void {
+		let my = DigitalAssetManagementActions;
+		if (files) {
+			console.log('to upload:');
+			$('.upload-in-progress-info').removeClass('hidden');
+			let target = $('.breadcrumb').attr('data-identifier');
+			for (let i = 0, f; f = files[i]; i++) {
+				let formData = new FormData();
+				formData.append('file', f, f.name);
+				formData.append('overwriteExistingFiles', 'cancel');
+				console.log(files);
+				$.ajax({
+					url: TYPO3.settings.ajaxUrls.file_process,
+					datatype: 'json',
+					cache: false,
+					contentType: false,
+					processData: false,
+					data: formData,
+					type: 'post'
+				}).done((data: ResponseObject): void => {
+					console.log('uploaded!!!!');
+					$('.upload-in-progress-info').addClass('hidden');
+					console.dir(data);
+				}).fail((err: any): void => {
+					console.log('DigitalAssetManagement upload files ajax call fails ' + JSON.stringify(err));
+					top.TYPO3.Notification.warning('Request failed', 'Error uploading files. ' + err.readyState);
+					my.renderError(err);
+				});
+			}
 		}
 	}
 

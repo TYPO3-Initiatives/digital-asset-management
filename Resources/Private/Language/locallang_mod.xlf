@@ -84,6 +84,12 @@
       <trans-unit id="dam.labels.filesize">
         <source>Size</source>
       </trans-unit>
+      <trans-unit id="dam.labels.dropyourfileshere">
+        <source>Drop your files here.</source>
+      </trans-unit>
+      <trans-unit id="dam.labels.uploadinprogress">
+        <source>Upload in progress...</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>
