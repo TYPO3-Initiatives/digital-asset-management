@@ -81,8 +81,8 @@ class DigitalAssetManagementActions {
 		'    </div>' +
 		'  </div>\n';
 
-	static breadcrumbPartial: string = '<span class="ajax-action" data-action="getContent" ' +
-		'data-parameter="{identifier}">{label}</span>';
+	static breadcrumbPartial: string = '<li class="breadcrumb-item ajax-action" data-action="getContent" ' +
+		'data-parameter="{identifier}">{label}</li>';
 
 	static metadataPartial: string = '';
 
@@ -218,10 +218,9 @@ class DigitalAssetManagementActions {
 				} else {
 					part.label = part.name; // part.name escapen !!
 					lastidentifier = part.identifier;
-					html += '&nbsp;&gt;&nbsp;';
 				}
 				// Render single breadcrumb item
-				html += my.replaceTemplateVars(my.breadcrumbPartial, part); // security hier könnte das injectet werden
+				html += my.replaceTemplateVars(my.breadcrumbPartial, part); // security xss posible
 			}
 			// Set actual identifier to reindex-action parameter
 			$('.ajax-action[data-action="reindexStorage"]').attr('data-parameter', lastidentifier).removeClass('disabled');
@@ -534,8 +533,7 @@ class DigitalAssetManagementActions {
 				formData.append('file', f, f.name);
 				formData.append('overwriteExistingFiles', 'cancel');
 				console.log(files);
-				$.ajax({
-					url: TYPO3.settings.ajaxUrls.file_process,
+				$.ajax(TYPO3.settings.ajaxUrls.file_process, {
 					datatype: 'json',
 					cache: false,
 					contentType: false,
@@ -582,5 +580,7 @@ class DigitalAssetManagementActions {
 $(DigitalAssetManagementActions.init);
 
 // expose as global object
-TYPO3.DigitalAssetManagementActions = DigitalAssetManagementActions;
+if (typeof TYPO3 !== 'undefined') {
+	TYPO3.DigitalAssetManagementActions = DigitalAssetManagementActions;
+}
 export = DigitalAssetManagementActions;
