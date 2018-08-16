@@ -91,7 +91,8 @@ class DigitalAssetManagementController
         $pageRenderer->addInlineLanguageLabelFile('EXT:core/Resources/Private/Language/locallang_core.xlf', 'file_upload');
         //Include bootstrap css
         //@todo: include bootstrap css from TYPO3 not from CDN, how to?
-        $pageRenderer->addCssFile('https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css');
+        $pageRenderer->addCssFile('EXT:digital_asset_management/Resources/Public/Vendor/bootstrap.min.css');
+        // $pageRenderer->addCssFile('EXT:backend/Resources/Public/Css/backend.css');
         $this->initializeView('index');
         // Add shortcut button
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
