@@ -19,7 +19,6 @@ import uploader = require('TYPO3/CMS/Backend/DragUploader');
 
 // import Icons = require('TYPO3/CMS/Backend/Icons');
 
-
 interface ResponseObject {
 	action: string;
 	params: any;
@@ -97,20 +96,21 @@ class DigitalAssetManagementActions {
 		let $body = $('body');
 		console.log('DigitalAssetManagement.init');
 		my.request('getContent', {path: ''}, my.genericRequestCallback);
-		$dam.on('click', '.ajax-action', function(): void {
+		$dam.on('click', '.ajax-action', function (): void {
 			let action = this.dataset.action;
+			console.log(my.settings);
 			let parameter = {path: this.dataset.parameter, sort: my.settings.sort, reverse: my.settings.reverse};
 			if (this.dataset.parameter === 'selected') {
 				parameter.path = [];
-				$('.selected').each(function(index: number): void {
+				$('.selected').each(function (index: number): void {
 					console.log(this);
 					parameter.path.push(this.dataset.parameter);
 				});
 			}
-			console.log ('ajax-action: ' + action + ', par: ' + JSON.stringify(parameter));
+			console.log('ajax-action: ' + action + ', par: ' + JSON.stringify(parameter));
 			my.request(action, parameter, my.genericRequestCallback);
 		});
-		$dam.on('click', '.selectbox', function(e: any): boolean {
+		$dam.on('click', '.selectbox', function (e: any): boolean {
 			e.preventDefault();
 			// if it is a selectable-inputbox do nothing than selecting the file/folder
 			$(this).parent('.selectable').toggleClass('selected');
@@ -118,28 +118,28 @@ class DigitalAssetManagementActions {
 			my.selectFiles('selectionChanged');
 			return false;
 		});
-		$dam.on('click', '.view-action', function(): void {
+		$dam.on('click', '.view-action', function (): void {
 			let action = this.dataset.action;
 			let parameter = this.dataset.parameter;
-			console.log ( 'view-action: ' + action + ', par: ' + parameter);
+			console.log('view-action: ' + action + ', par: ' + parameter);
 			my.viewAction(action);
 		});
-		$dam.on('click', '.sort-action', function(): void {
+		$dam.on('click', '.sort-action', function (): void {
 			let action = this.dataset.action;
 			let parameter = {path: my.settings.path};
 			console.log('sort-action');
 			my.sortAction(action, parameter);
 		});
-		$dam.on('click', '.select-action', function(): void {
+		$dam.on('click', '.select-action', function (): void {
 			let action = this.dataset.action;
 			let parameter = {path: my.settings.path};
 			console.log('select-action');
 			my.selectFiles(action);
 		});
-		$body.on('click', function(): void {
+		$body.on('click', function (): void {
 			$('.sidebar').addClass('hidden');
 		});
-		$('.dropzone-close').on('click', function(e: Event): void {
+		$('.dropzone-close').on('click', function (e: Event): void {
 			console.dir(uploader);
 			uploader.hideDropzone(e);
 			// $('.dropzone').addClass('hidden');
@@ -250,7 +250,7 @@ class DigitalAssetManagementActions {
 	 */
 	protected static loadThumbs(): void {
 		let my = DigitalAssetManagementActions;
-		$('.grid.image').each(function(): void {
+		$('.grid.image').each(function (): void {
 			let $el = $(this).find('img');
 			let src = $el.attr('data-src');
 			if (src) {
@@ -264,7 +264,7 @@ class DigitalAssetManagementActions {
 		if (data.result && data.result.thumbnail) {
 			console.log('got thumbs');
 			console.log(data);
-			$('.grid.image').each(function(): void {
+			$('.grid.image').each(function (): void {
 				let $el = $(this).find('img');
 				if (data.params.path === $el.attr('data-src')) {
 					$el.attr('src', data.result.thumbnail);
@@ -379,14 +379,14 @@ class DigitalAssetManagementActions {
 			default:
 				// Switch the view by removing all other view-* classes and adding the clicked class
 				$('.maincontent').removeClass(function (index: number, className: string): string {
-					return (className.match (/(^|\s)view-\S+/g) || []).join(' ');
+					return (className.match(/(^|\s)view-\S+/g) || []).join(' ');
 				}).addClass(action);
 		}
 	}
 
 	protected static sortAction(action: string, parameter: Settings): void {
 		let my = DigitalAssetManagementActions;
-		console.log ( 'sort-action: ' + action + ', par: ' + JSON.stringify(parameter));
+		console.log('sort-action: ' + action + ', par: ' + JSON.stringify(parameter));
 		switch (action) {
 			case 'sort-order-asc':
 				my.settings.reverse = false;
@@ -407,15 +407,15 @@ class DigitalAssetManagementActions {
 				my.settings.reverse = !my.settings.reverse;
 				break;
 			default:
-				// do nothing
+			// do nothing
 		}
 		parameter.reverse = my.settings.reverse;
 		parameter.sort = my.settings.sort;
-		console.log ( 'sort-action: ' + action + ', par: ' + JSON.stringify(parameter));
+		console.log('sort-action: ' + action + ', par: ' + JSON.stringify(parameter));
 		// Remove all other view-* classes and add the clicked class
 		$('.maincontent').removeClass(function (index: number, className: string): string {
-			return (className.match (/(^|\s)sort-order-\S+/g) || []).join(' ');
-		}).addClass(action).attr('data-reverse', parameter.reverse );
+			return (className.match(/(^|\s)sort-order-\S+/g) || []).join(' ');
+		}).addClass(action).attr('data-reverse', parameter.reverse);
 		$('.sort-action').removeClass('sort-order-asc sort-order-dsc');
 		$('.sort-action[data-action="' + action + '"]').addClass(
 			parameter.reverse ? 'sort-order-dsc' : 'sort-order-asc'
@@ -447,26 +447,26 @@ class DigitalAssetManagementActions {
 	protected static initDropzone(): void {
 		let my = DigitalAssetManagementActions;
 		let $dropzone = $('.dropzone');
-		$('body').on('dragenter', function(e: Event): void {
+		$('body').on('dragenter', function (e: Event): void {
 			e.preventDefault();
 			e.stopPropagation();
 			$dropzone.removeClass('hidden');
 		});
-		$dropzone.on('dragenter', function(e: Event): void {
+		$dropzone.on('dragenter', function (e: Event): void {
 			e.preventDefault();
 			e.stopPropagation();
 		});
-		$dropzone.on('dragleave', function(e: Event): void {
+		$dropzone.on('dragleave', function (e: Event): void {
 			e.preventDefault();
 			e.stopPropagation();
 			$dropzone.addClass('hidden');
 		});
-		$dropzone.on('dragover', function(e: Event): void {
+		$dropzone.on('dragover', function (e: Event): void {
 			e.preventDefault();
 			e.stopPropagation();
 			e.originalEvent.dataTransfer.dropEffect = 'copy';
 		});
-		$dropzone.on('drop', function(e: Event): void {
+		$dropzone.on('drop', function (e: Event): void {
 			console.dir(e);
 			if (e.originalEvent.dataTransfer) {
 				if (e.originalEvent.dataTransfer.files.length) {
@@ -480,10 +480,10 @@ class DigitalAssetManagementActions {
 				}
 			}
 		});
-		$dropzone.on('click', function(): void {
+		$dropzone.on('click', function (): void {
 			$(this).addClass('hidden');
 		});
-		$('input[type=file]').on('change', function(e: Event): void {
+		$('input[type=file]').on('change', function (e: Event): void {
 			console.log('upload files from file dialog to server');
 			console.dir(e);
 			console.log($(this).val());
@@ -510,7 +510,7 @@ class DigitalAssetManagementActions {
 			items.push('<h4>Files</h4>\n<dl class="row">\n');
 			for (let i = 0, f; f = files[i]; i++) {
 				items.push('<dt id="file' + i + '" class="col-sm-4">' + f.name + '</dt>' +
-					'<dd class="col-sm-8">(' + f.type || 'n/a'  + ') - ' + f.size + ' bytes</dd>');
+					'<dd class="col-sm-8">(' + f.type || 'n/a' + ') - ' + f.size + ' bytes</dd>');
 			}
 			items.push('</dl>');
 			$('.metadata').html(items.join(''));
@@ -564,16 +564,16 @@ class DigitalAssetManagementActions {
 	 */
 	protected static replaceTemplateVars(template: string, data: object): string {
 		return template.replace(
-				/{([:a-zA-Z_\.-]*)}/g,
-				function(m: string, key: string): string {
-					// console.log('translate key: '+ key + ', ' + data[key] );
-					if (key.indexOf('lll:') === 0) {
-						return TYPO3.lang[key.replace(/lll:/, '')] || key;
-					} else {
-						return data.hasOwnProperty(key) ? data[key] : '###missing prop:' + key + '#';
-					}
+			/{([:a-zA-Z_\.-]*)}/g,
+			function (m: string, key: string): string {
+				// console.log('translate key: '+ key + ', ' + data[key] );
+				if (key.indexOf('lll:') === 0) {
+					return TYPO3.lang[key.replace(/lll:/, '')] || key;
+				} else {
+					return data.hasOwnProperty(key) ? data[key] : '###missing prop:' + key + '#';
 				}
-			);
+			}
+		);
 	}
 }
 
