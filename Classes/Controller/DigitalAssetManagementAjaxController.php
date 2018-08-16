@@ -120,7 +120,7 @@ class DigitalAssetManagementAjaxController
                 'name' => 'home',
                 'type' => 'home'
             ]];
-            $result['userSettings'] = $userSettings;
+            $result['settings'] = $userSettings;
             return $result;
         }
 
