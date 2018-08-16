@@ -215,7 +215,7 @@ class DigitalAssetManagementActions {
 	}
 
 	protected static renderBreadcrumb(data: ResponseObject): void {
-		let breadCrumbItems = $();
+		let breadCrumbItems = [];
 		let my = DigitalAssetManagementActions;
 		let lastidentifier = '';
 		if (data.result && data.result.breadcrumbs) {
@@ -232,7 +232,8 @@ class DigitalAssetManagementActions {
 				let active = data.result.breadcrumbs.length - 1 === i ? 'active' : '';
 				let breadCrumbItem = $(my.breadcrumbPartial);
 				breadCrumbItem.text(part.label).attr('data-parameter', part.identifier).addClass(active);
-				breadCrumbItems.append(breadCrumbItem);
+				console.log(breadCrumbItem);
+				breadCrumbItems.push(breadCrumbItem);
 				// html += my.replaceTemplateVars(my.breadcrumbPartial, part); // security xss posible
 			}
 			// Set actual identifier to reindex-action parameter
