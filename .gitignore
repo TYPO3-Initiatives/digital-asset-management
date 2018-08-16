@@ -10,7 +10,7 @@ bin/
 
 # TYPO3 test
 .php_cs.cache
-public/
+/public/
 typo3/
 var/
 logs/
