@@ -81,7 +81,7 @@ class DigitalAssetManagementActions {
 		'  </div>\n';
 
 	static breadcrumbPartial: string = '<li class="breadcrumb-item ajax-action" data-action="getContent" ' +
-		'data-parameter="{identifier}">{label}</li>';
+		'data-parameter=""></li>';
 
 	static metadataPartial: string = '';
 
@@ -108,6 +108,15 @@ class DigitalAssetManagementActions {
 				});
 			}
 			console.log('ajax-action: ' + action + ', par: ' + JSON.stringify(parameter));
+			my.request(action, parameter, my.genericRequestCallback);
+		});
+		$dam.on('click', '.search-action', function (): void {
+			let action = this.dataset.action;
+			console.log(my.settings);
+			let query = $('#search').val();
+			let parameter = {path: my.settings.path, query: query, sort: my.settings.sort, reverse: my.settings.reverse};
+
+			console.log('search-action: ' + action + ', par: ' + JSON.stringify(parameter));
 			my.request(action, parameter, my.genericRequestCallback);
 		});
 		$dam.on('click', '.selectbox', function (e: any): boolean {
@@ -206,7 +215,7 @@ class DigitalAssetManagementActions {
 	}
 
 	protected static renderBreadcrumb(data: ResponseObject): void {
-		let html = '';
+		let breadCrumbItems = $();
 		let my = DigitalAssetManagementActions;
 		let lastidentifier = '';
 		if (data.result && data.result.breadcrumbs) {
@@ -220,13 +229,18 @@ class DigitalAssetManagementActions {
 					lastidentifier = part.identifier;
 				}
 				// Render single breadcrumb item
-				html += my.replaceTemplateVars(my.breadcrumbPartial, part); // security xss posible
+				let active = data.result.breadcrumbs.length - 1 === i ? 'active' : '';
+				let breadCrumbItem = $(my.breadcrumbPartial);
+				breadCrumbItem.text(part.label).attr('data-parameter', part.identifier).addClass(active);
+				breadCrumbItems.append(breadCrumbItem);
+				// html += my.replaceTemplateVars(my.breadcrumbPartial, part); // security xss posible
 			}
 			// Set actual identifier to reindex-action parameter
 			$('.ajax-action[data-action="reindexStorage"]').attr('data-parameter', lastidentifier).removeClass('disabled');
 			// Add some classes
-			if (html) {
-				$('.breadcrumb').html(html).removeClass('empty');
+			console.log(breadCrumbItems);
+			if (breadCrumbItems) {
+				$('.breadcrumb').html(breadCrumbItems).removeClass('empty');
 			} else {
 				$('.breadcrumb').html('').addClass('empty');
 			}
@@ -328,6 +342,7 @@ class DigitalAssetManagementActions {
 			my.settings = data.result.settings;
 		}
 		switch (action) {
+			case 'search':
 			case 'getContent':
 				console.log(data);
 				my.renderBreadcrumb(data);
@@ -421,6 +436,12 @@ class DigitalAssetManagementActions {
 			parameter.reverse ? 'sort-order-dsc' : 'sort-order-asc'
 		);
 		my.request('getContent', parameter, my.genericRequestCallback);
+	}
+
+	protected static searchAction(action: string, parameter: Settings): void {
+		let my = DigitalAssetManagementActions;
+		let query = $('[data-parameter-for="search"]').value();
+		console.log('searchAction: ' + action + ', par: ' + JSON.stringify(parameter) + ', query: ' + query);
 	}
 
 	protected static selectFiles(action: string): void {
