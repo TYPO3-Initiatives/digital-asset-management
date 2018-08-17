@@ -156,43 +156,9 @@ class DigitalAssetManagementAjaxController
                     ]
                 ]);
             } catch (RouteNotFoundException $e) {
-                // todo: remove when this patch https://review.typo3.org/c/57646/ was merged
-                $imageUri = $this->getThumbnail($params);
+                // todo: handle error
             }
             return ['thumbnail' => $imageUri];
-        }
-    }
-
-    /**
-     * get thumbnail from image file
-     * only local storages are supported until now
-     * $params['path']/$params = $storageId.':'.$identifier
-     *
-     * @param array $params
-     * @deprecated use core route thumbnails instead
-     * @return array
-     */
-    protected function getThumbnail($params = []): array
-    {
-        $path = (is_array($params) ? reset($params) : $params);
-        if (strlen($path) > 6) {
-            list($storageId, $identifier) = explode(':', $path, 2);
-            if ($storageId && !empty($identifier)) {
-                /** @var ResourceStorage $storage */
-                $storage = ResourceFactory::getInstance()->getStorageObject($storageId);
-                $storage->setEvaluatePermissions(true);
-                if (($storage->getUid() == $storageId) && ($storage->getDriverType() === 'Local')) {
-                    /** @var FileSystemInterface $service */
-                    $service = new FileSystemService($storage);
-                    if ($service) {
-                        $file = $storage->getFile($identifier);
-                        $thumb = $service->thumbnail(rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/' . urldecode($file->getPublicUrl()), true);
-                        unset($service);
-                    }
-                }
-                unset($storage);
-                return ['thumbnail' => $thumb];
-            }
         }
     }
 

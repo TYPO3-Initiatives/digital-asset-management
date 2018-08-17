@@ -115,7 +115,6 @@ class DigitalAssetManagementActions {
 			console.log(my.settings);
 			let query = $('#search').val();
 			let parameter = {path: my.settings.path, query: query, sort: my.settings.sort, reverse: my.settings.reverse};
-
 			console.log('search-action: ' + action + ', par: ' + JSON.stringify(parameter));
 			my.request(action, parameter, my.genericRequestCallback);
 		});
@@ -154,7 +153,7 @@ class DigitalAssetManagementActions {
 			// $('.dropzone').addClass('hidden');
 		});
 		uploader.initialize('.dropzone');
-		// my.initDropzone();
+		my.initDropzone();
 		$('.localize').each(function (index: number): void {
 			let key = $(this).attr('data-l10nkey');
 			if (TYPO3.lang[key]) {
@@ -277,8 +276,6 @@ class DigitalAssetManagementActions {
 	protected static renderThumb(data: ResponseObject): void {
 		let my = DigitalAssetManagementActions;
 		if (data.result && data.result.thumbnail) {
-			console.log('got thumbs');
-			console.log(data);
 			$('.grid.image').each(function (): void {
 				let $el = $(this).find('img');
 				if (data.params.path === $el.attr('data-src')) {
@@ -386,8 +383,8 @@ class DigitalAssetManagementActions {
 		switch (action) {
 			case 'upload':
 				// show uploadloader dropzone
-				uploader.showDropzone();
-				// $('.dropzone').removeClass('hidden');
+				// uploader.showDropzone();
+				$('.dropzone').removeClass('hidden');
 				break;
 			case 'showUploadProgress':
 				$('.upload-progress').removeClass('hidden');

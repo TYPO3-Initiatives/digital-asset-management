@@ -112,13 +112,20 @@ div.digital-asset-management .file {
 	/*z-index: 300;*/
 	background-color: #eee;
 	border-bottom: 1px solid #c3c3c3;
-	padding: 0 24px;
+	padding: 0; /* 24px; */
 	-webkit-transition: margin-top .3s ease-in-out;
 	transition: margin-top .3s ease-in-out;
 }
 
-.module-docheader {
+/*.module-docheader*/
+.t3js-module-docheader {
 	display: none;
+}
+
+.btn-default {
+	color: #333;
+	background-color: #eee;
+	border-color: #bbb;
 }
 
 .digital-asset-management .dropzone {
@@ -500,7 +507,7 @@ div.digital-asset-management .folder .icon {
 
 
 /* ICONS */
-.icon {
+.iconxxxx {
 	background-image: url("/typo3/sysext/core/Resources/Public/Icons/T3Icons/mimetypes/mimetypes-other-other.svg");
 }
 
