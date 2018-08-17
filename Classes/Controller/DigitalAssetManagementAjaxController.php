@@ -37,6 +37,7 @@ use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemInterface;
 use TYPO3\CMS\DigitalAssetManagement\Service\FileSystemService;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 
 /**
  * Backend controller: The "Digital Asset Management" JSON response controller
@@ -80,7 +81,7 @@ class DigitalAssetManagementAjaxController
      */
     protected function getContentAction(array $params = []): array
     {
-        $userSettings = $this->getSettings($params);
+       $userSettings = $this->getSettings($params);
         $path = $userSettings['path'] ?? '';
         if (!empty($params['path'])) {
             $path = $params['path'];
@@ -102,7 +103,7 @@ class DigitalAssetManagementAjaxController
                 reset($breadcrumbs);
                 $breadcrumbs = array_reverse($breadcrumbs);
                 return [
-                    'current' => $current,
+                'current' => $current,
                     'files' =>  $fileSystemService->listFiles($folderObject),
                     'folders' => $fileSystemService->listFolder($folderObject),
                     'breadcrumbs' => $breadcrumbs,
@@ -525,5 +526,34 @@ class DigitalAssetManagementAjaxController
     protected function getBackendUserAuthentication()
     {
         return $GLOBALS['BE_USER'];
+    }
+
+    /**
+     * @param string $searchWord
+     */
+    protected function searchAction($params) :array
+    {
+        if(is_array($params)) {
+            list($storageUid, $identifier) = explode(':', $params['path'], 2);
+
+            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+            $storage = $resourceFactory->getStorageObject($storageUid);
+
+            $fileSystemService = new FileSystemService($storage);
+            $searchFiles = $fileSystemService->searchFiles($params['query']);
+
+            return [
+                'current' => 'SearchResult',
+                'files' =>  $searchFiles,
+                'folders' => '',
+                'breadcrumbs'=> []
+            ];
+        }
+        return [
+            'files' => '',
+            'folders' => [],
+            'breadcrumbs' => 'Search result',
+            'settings' => ''
+        ];
     }
 }

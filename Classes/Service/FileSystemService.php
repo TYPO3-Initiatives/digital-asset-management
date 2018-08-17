@@ -346,6 +346,39 @@ class FileSystemService implements FileSystemInterface
     }
 
     /**
+     * returns an array of files in a current path
+     *
+     * @param string $searchWord
+     */
+    public function searchFiles($searchWord = '') : array
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_file');
+        $statement = $queryBuilder->select('*')
+            ->from('sys_file')
+            ->join(
+                'sys_file',
+                'sys_file_metadata',
+                'file_metadata',
+                $queryBuilder->expr()->eq('sys_file.uid', 'file_metadata.file')
+            )
+            ->where($queryBuilder->expr()->like('sys_file.name', $queryBuilder->createNamedParameter('%'. $queryBuilder->escapeLikeWildcards($searchWord).'%') ))
+            ->execute();
+
+        $files = array();
+        while ($row = $statement->fetch()) {
+            $file['identifier'] = $this->storage->getUid().':'.$row[identifier];
+            $file['mimetype'] = $row['mime_type'];
+            $file['size'] = $row['size'];
+            $file['name'] = $row['name'];
+            $file['modification_date'] = $row['modification_date'];
+            $files[] = $file;
+        }
+
+        return $files;
+    }
+    
+
+    /**
      * AbstractFileSystemService constructor.
      * @param ResourceStorage $storage
      */
