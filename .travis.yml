@@ -4,7 +4,7 @@ matrix:
   fast_finish: true
   include:
   - php: 7.2
-    env: UNIT_TESTS=yes PHP_LINT=yes PHP_CS_FIXER=yes
+    env: UNIT_TESTS=yes FUNCTIONAL_TESTS=yes PHP_LINT=yes PHP_CS_FIXER=yes
 sudo: false
 
 addons:
@@ -27,6 +27,12 @@ script:
     echo;
     echo "Running unit tests";
     composer t3g:test:php:unit
+  fi
+- |
+  if [[ "FUNCTIONAL_TESTS" == "yes" ]]; then
+    echo;
+    echo "Running functional tests";
+    composer t3g:test:php:functional
   fi
 - |
   if [[ "$PHP_CS_FIXER" == "yes" ]]; then

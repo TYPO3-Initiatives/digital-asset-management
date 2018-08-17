@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <sys_file>
+        <uid>1</uid>
+        <pid>0</pid>
+        <tstamp>1487563944</tstamp>
+        <storage>1</storage>
+        <type>2</type>
+        <identifier>/introduction/images/typo3.jpg</identifier>
+    </sys_file>
+    <sys_file>
+        <uid>2</uid>
+        <pid>0</pid>
+        <tstamp>1487563945</tstamp>
+        <storage>1</storage>
+        <type>2</type>
+        <identifier>/introduction/images/content/content-image.png</identifier>
+    </sys_file>
+</dataset>
