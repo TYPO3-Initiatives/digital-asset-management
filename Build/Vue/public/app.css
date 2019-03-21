@@ -1,0 +1,37 @@
+/* I should be built with scss */
+.module-docheader {
+    position: inherit;
+}
+
+.typo3-filelist-treepanel {
+    width: 300px;
+    height: 100%;
+    float: left;
+}
+
+.typo3-filelist-treepanel .module-docheader {
+    width: 300px;
+}
+
+.typo3-filelist-contentpanel {
+    float: left;
+}
+
+.typo3-filelist-contentpanel .module-docheader {
+    padding-right: 310px;
+}
+
+.tile {
+    float: left;
+    width: 200px;
+    height: 200px;
+}
+
+.tile img {
+    max-height:50px;
+    max-width:50px;
+}
+
+.tile.selected {
+    background-color: aliceblue;
+}

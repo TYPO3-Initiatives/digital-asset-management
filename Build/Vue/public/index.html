@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" href="<%= BASE_URL %>backend.css" />
+    <link rel="stylesheet" href="<%= BASE_URL %>app.css" />
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title>vue-testing2</title>
+    <script type="text/javascript">
+      /*<![CDATA[*/
+      var require = {
+        "urlArgs": "bust=d8c1f251877d0558dec0c9003199fb083741c18e", "paths": {
+          "jquery": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript\/Contrib\/\/jquery\/jquery",
+          "jquery-ui": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript\/Contrib\/jquery-ui",
+          "datatables": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript\/Contrib\/jquery.dataTables",
+          "nprogress": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript\/Contrib\/nprogress",
+          "moment": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript\/Contrib\/moment",
+          "cropper": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript\/Contrib\/cropper.min",
+          "imagesloaded": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript\/Contrib\/imagesloaded.pkgd.min",
+          "bootstrap": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript\/Contrib\/bootstrap\/bootstrap",
+          "twbs\/bootstrap-datetimepicker": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript\/Contrib\/bootstrap-datetimepicker",
+          "autosize": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript\/Contrib\/autosize",
+          "taboverride": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript\/Contrib\/taboverride.min",
+          "twbs\/bootstrap-slider": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript\/Contrib\/bootstrap-slider.min",
+          "jquery\/autocomplete": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript\/Contrib\/jquery.autocomplete",
+          "d3": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript\/Contrib\/d3\/d3",
+          "TYPO3\/CMS\/Core": "\/typo3\/sysext\/core\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Backend": "\/typo3\/sysext\/backend\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Scheduler": "\/typo3\/sysext\/scheduler\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Install": "\/typo3\/sysext\/install\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Recordlist": "\/typo3\/sysext\/recordlist\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Recycler": "\/typo3\/sysext\/recycler\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/RteCkeditor": "\/typo3\/sysext\/rte_ckeditor\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Adminpanel": "\/typo3\/sysext\/adminpanel\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Beuser": "\/typo3\/sysext\/beuser\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Extensionmanager": "\/typo3\/sysext\/extensionmanager\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Filelist": "\/typo3\/sysext\/filelist\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Form": "\/typo3\/sysext\/form\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Impexp": "\/typo3\/sysext\/impexp\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Lowlevel": "\/typo3\/sysext\/lowlevel\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Tstemplate": "\/typo3\/sysext\/tstemplate\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Viewpage": "\/typo3\/sysext\/viewpage\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Workspaces": "\/typo3\/sysext\/workspaces\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/BootstrapPackage": "\/typo3conf\/ext\/bootstrap_package\/Resources\/Public\/JavaScript",
+          "TYPO3\/CMS\/Styleguide": "\/typo3conf\/ext\/styleguide\/Resources\/Public\/JavaScript",
+          "ckeditor": "\/typo3\/sysext\/rte_ckeditor\/Resources\/Public\/JavaScript\/Contrib\/ckeditor",
+          "Vue": "\/typo3conf\/ext\/digital_asset_management\/Resources\/Public\/JavaScript\/Vue",
+          "filelist.umd.about": "\/typo3conf\/ext\/digital_asset_management\/Resources\/Public\/JavaScript\/filelist.umd.about"
+        }, "waitSeconds": 30, "typo3BaseUrl": false, "shim": {"ckeditor": {"exports": "CKEDITOR"}}
+      }
+      /*]]>*/
+    </script>
+    <script src="/typo3/sysext/core/Resources/Public/JavaScript/Contrib/require.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      /*<![CDATA[*/
+      var TYPO3 = TYPO3 || {};
+      TYPO3.lang = {
+        "mlang_labels_tablabel": "Digital Asset Management",
+        "mlang_labels_tabdescr": "This module shows a fancy filelist.",
+        "mlang_tabs_tab": "Digital Asset Management",
+        "dam.labels.dam": "Digital Asset Management",
+        "dam.labels.hereareyourfiles": "Here are your files",
+        "dam.labels.nav.view": "View",
+        "dam.labels.nav.view.list": "List",
+        "dam.labels.nav.view.symbols": "Symbols",
+        "dam.labels.nav.view.photos": "Photos",
+        "dam.labels.nav.sorting": "Sorting",
+        "dam.labels.nav.sorting.name": "Name",
+        "dam.labels.nav.sorting.date": "Modified",
+        "dam.labels.nav.sorting.size": "Size",
+        "dam.labels.nav.sorting.asc": "Ascending",
+        "dam.labels.nav.sorting.dsc": "Descending",
+        "dam.labels.nav.actions.new": "New file",
+        "dam.labels.nav.actions.upload": "Upload",
+        "dam.labels.nav.actions.delete": "Delete",
+        "dam.labels.nav.actions.move": "Move",
+        "dam.labels.nav.actions.copy": "Copy",
+        "dam.labels.nav.filesselected": "files selected",
+        "dam.labels.nav.fileselected": "One file selected",
+        "dam.labels.nav.deselectall": "Deselect all",
+        "dam.labels.files": "Files",
+        "dam.labels.modified": "Modified",
+        "dam.labels.filesize": "Size",
+        "dam.labels.dropyourfileshere": "Drop your files here.",
+        "dam.labels.uploadinprogress": "Upload in progress...",
+        "file_upload.php.pagetitle": "Upload files",
+        "file_upload.php.submit": "Upload files",
+        "file_upload.dropzonehint.title": "Drag & drop to upload files",
+        "file_upload.dropzonehint.message": "Drop your files here, or <u>click, browse & choose files<\/u>",
+        "file_upload.select-and-submit": "Select & upload files",
+        "file_upload.maxFileSizeExceeded": "File \"{0}\" exceeds maximum file size of {1}!",
+        "file_upload.fileNotAllowed": "Filename \"{0}\" is not allowed!",
+        "file_upload.fileExtensionExpected": "Upload failed! A file with \"{0}\" extension is expected!",
+        "file_upload.uploadFailed": "Upload of file \"{0}\" failed!",
+        "file_upload.upload-in-progress": "File upload in progress...",
+        "file_upload.upload-progress-info": "Uploading file {0} out of {1} files.",
+        "file_upload.upload-finished": "Upload complete! Filelist reloading...",
+        "file_upload.overwriteExistingFiles": "Shall existing files be overwritten?",
+        "file_upload.header.originalFile": "Original file",
+        "file_upload.header.uploadedFile": "Uploaded file",
+        "file_upload.header.action": "Action",
+        "file_upload.existingfiles.title": "Some files exist already",
+        "file_upload.existingfiles.description": "Some files you wanted to upload exist already on the system. Please select what you want to do with each file.",
+        "file_upload.actions.skip": "Skip the file",
+        "file_upload.actions.rename": "Rename",
+        "file_upload.actions.override": "Overwrite",
+        "file_upload.actions.use_existing": "Use existing file",
+        "file_upload.actions.all.label": "Alternatively, choose a mass action",
+        "file_upload.actions.all.empty": "Please choose",
+        "file_upload.actions.all.skip": "Skip all files",
+        "file_upload.actions.all.rename": "Rename all files",
+        "file_upload.actions.all.override": "Overwrite all files",
+        "file_upload.actions.all.use_existing": "Use existing files",
+        "file_upload.button.cancel": "Cancel",
+        "file_upload.button.continue": "Continue with selected actions"
+      };
+      TYPO3.settings = {
+        "ajaxUrls": {
+          "core_requirejs": "\/typo3\/index.php?route=%2Fajax%2Fcore%2Frequirejs",
+          "sc_alt_file_navframe_expandtoggle": "\/typo3\/index.php?route=%2Fajax%2Ffolder%2Ftree%2Fexpand&token=6c8389d51ddfef43ef37db0b4ececc926e3802b3",
+          "file_process": "\/typo3\/index.php?route=%2Fajax%2Ffile%2Fprocess&token=5354517fd1a2d69bc6541c0f958c8bdb935203d8",
+          "file_exists": "\/typo3\/index.php?route=%2Fajax%2Ffile%2Fexists&token=5e4d1bd532baeec5bba53b29abb60c1b83417980",
+          "record_inline_details": "\/typo3\/index.php?route=%2Fajax%2Frecord%2Finline%2Fdetails&token=acd99f5fd6ece44a79212501830047fc2250354b",
+          "record_inline_create": "\/typo3\/index.php?route=%2Fajax%2Frecord%2Finline%2Fcreate&token=7caa1e7472b3977ef932a9ce8ffff921833d4850",
+          "record_inline_synchronizelocalize": "\/typo3\/index.php?route=%2Fajax%2Frecord%2Finline%2Fsynchronizelocalize&token=81029eafdaa55c0f7c424e0777370a8f44fdff65",
+          "record_inline_expandcollapse": "\/typo3\/index.php?route=%2Fajax%2Frecord%2Finline%2Fexpandcollapse&token=ba698777a3e403bcb598aff4a1bbe84d772dd67a",
+          "site_configuration_inline_create": "\/typo3\/index.php?route=%2Fajax%2Fsiteconfiguration%2Finline%2Fcreate&token=cb232c4d7218a4ed5dd4c19412a7b6a4e19a0245",
+          "record_slug_suggest": "\/typo3\/index.php?route=%2Fajax%2Frecord%2Fslug%2Fsuggest&token=0eaadd1cb36f6c89353522fb67cd2e0d3a702d17",
+          "site_configuration_inline_details": "\/typo3\/index.php?route=%2Fajax%2Fsiteconfiguration%2Finline%2Fdetails&token=1bd91c79fd14fe5c181bc25f03741c2c479d8457",
+          "record_flex_container_add": "\/typo3\/index.php?route=%2Fajax%2Frecord%2Fflex%2Fcontaineradd&token=fae2a41e019b6c7c602e61507730cc0afc2a23a2",
+          "record_suggest": "\/typo3\/index.php?route=%2Fajax%2Fwizard%2Fsuggest%2Fsearch&token=845d3069b15c1588e41855db0d9e63d29b388490",
+          "record_tree_data": "\/typo3\/index.php?route=%2Fajax%2Frecord%2Ftree%2FfetchData&token=a32c335bba7c1ace37e0b3f21fddcae0bdda6f33",
+          "page_tree_data": "\/typo3\/index.php?route=%2Fajax%2Fpage%2Ftree%2FfetchData&token=52b94a84e7d12aaf21166f7580b6054a056f768e",
+          "page_tree_configuration": "\/typo3\/index.php?route=%2Fajax%2Fpage%2Ftree%2FfetchConfiguration&token=4510d0505043a6c0687eef1c5d52da808fd87dd9",
+          "page_tree_set_temporary_mount_point": "\/typo3\/index.php?route=%2Fajax%2Fpage%2Ftree%2FsetTemporaryMountPoint&token=a9dab407ac05ec2e89d0b02aa06cb2fa448ef665",
+          "shortcut_editform": "\/typo3\/index.php?route=%2Fajax%2Fshortcut%2Feditform&token=76b3e0844259add8ca1e0db1e7e3e6f7595e6763",
+          "shortcut_saveform": "\/typo3\/index.php?route=%2Fajax%2Fshortcut%2Fsaveform&token=a3d81b09b82eb3e7bd3c0602d21ee2348e91ed87",
+          "shortcut_list": "\/typo3\/index.php?route=%2Fajax%2Fshortcut%2Flist&token=f2df461749b75247fdc9a6d8049eb4a00f6ce66a",
+          "shortcut_remove": "\/typo3\/index.php?route=%2Fajax%2Fshortcut%2Fremove&token=f2fab4d917a03757df6cea9056c7162462419f82",
+          "shortcut_create": "\/typo3\/index.php?route=%2Fajax%2Fshortcut%2Fcreate&token=dd9a885de63651e6fd23ed5a2a05e1d32d105bc8",
+          "systeminformation_render": "\/typo3\/index.php?route=%2Fajax%2Fsystem-information%2Frender&token=c1832a0b6185de9c7b80cbb5df2148e9d244952c&skipSessionUpdate=1",
+          "modulemenu": "\/typo3\/index.php?route=%2Fajax%2Fmodule-menu&token=b8c69bf8376864528f13f0a23947a612fcd30084",
+          "topbar": "\/typo3\/index.php?route=%2Fajax%2Ftopbar&token=eecf6d8b1ba4e204c08c0d90d2f084d325bfe3f1",
+          "login": "\/typo3\/index.php?route=%2Fajax%2Flogin",
+          "logout": "\/typo3\/index.php?route=%2Fajax%2Flogout",
+          "login_refresh": "\/typo3\/index.php?route=%2Fajax%2Flogin%2Frefresh&token=9c7ced34c8aa554e472954fcf2b66d67094f2985",
+          "login_timedout": "\/typo3\/index.php?route=%2Fajax%2Flogin%2Ftimedout&skipSessionUpdate=1",
+          "flashmessages_render": "\/typo3\/index.php?route=%2Fajax%2Fflashmessages%2Frender&token=14253dfe3bb5d56bd71d9fd93957f83f3e9a29d7",
+          "contextmenu": "\/typo3\/index.php?route=%2Fajax%2Fcontext-menu&token=4e21d9e1981c90d408a4801318e30faee5944170",
+          "contextmenu_clipboard": "\/typo3\/index.php?route=%2Fajax%2Fcontext-menu%2Fclipboard&token=b617e2c87c575b299bf108f0e503f6a0e950a52a",
+          "record_process": "\/typo3\/index.php?route=%2Fajax%2Frecord%2Fprocess&token=1de3fa125328c0e1a3a31b5768c8673a82be0df7",
+          "usersettings_process": "\/typo3\/index.php?route=%2Fajax%2Fusersettings%2Fprocess&token=f0bd8aa5e177c24a6acf1dc7da3ff6c3ae7589d3",
+          "wizard_image_manipulation": "\/typo3\/index.php?route=%2Fajax%2Fwizard%2Fimage-manipulation&token=79a033ddbdb6dfcfcc59e75e7f1079e5a58b5bcc",
+          "livesearch": "\/typo3\/index.php?route=%2Fajax%2Flivesearch&token=72aac7dfd44f3fda26d4f352d8b3b30bac67f2fc",
+          "online_media_create": "\/typo3\/index.php?route=%2Fajax%2Fonline-media%2Fcreate&token=ed254bdd2edfcd96bcadd23cddca9e82b3de371d",
+          "icons": "\/typo3\/index.php?route=%2Fajax%2Ficons&token=7e6c240516b1b6cbccf46b7565a2da5d914bc446",
+          "icons_cache": "\/typo3\/index.php?route=%2Fajax%2Ficons%2Fcache&token=ba6c514a9ec337f36c5efc3707435bcafb783822",
+          "link_browser_encodetypolink": "\/typo3\/index.php?route=%2Fajax%2Flink-browser%2Fencode-typolink&token=d4d8dd6b7363ff60e9e43ac7db1de4f031ca096b",
+          "page_languages": "\/typo3\/index.php?route=%2Fajax%2Frecords%2Flocalize%2Fget-languages&token=23fa97247a8223da10943b38b021f4293941ec43",
+          "records_localize_summary": "\/typo3\/index.php?route=%2Fajax%2Frecords%2Flocalize%2Fsummary&token=3463de91defb123ae6cbf9fcf21a09dca17f52f6",
+          "records_localize": "\/typo3\/index.php?route=%2Fajax%2Frecords%2Flocalize&token=380cf5f8eeadf6287cb8387351284987e5b45969",
+          "context_help": "\/typo3\/index.php?route=%2Fajax%2Fcontext-help&token=f3feaede74e5d0ab63a39f315ac73271d41ccb09",
+          "recycler": "\/typo3\/index.php?route=%2Fajax%2Frecycler&token=d864753720f47f7954a3c018b794e99f997ce1f0",
+          "adminPanel_saveForm": "\/typo3\/index.php?route=%2Fajax%2Fadminpanel%2Fform%2Fsave&token=1e7da3c726f02ee5b8758d6e6f75a4dec81d3e2b",
+          "adminPanel_toggle": "\/typo3\/index.php?route=%2Fajax%2Fadminpanel%2FtoggleActiveState&token=e943759a9f9072c0288dcd62628cbb72910f2db8",
+          "user_access_permissions": "\/typo3\/index.php?route=%2Fajax%2Fusers%2Faccess%2Fpermissions&token=8494ac69d79c51de492f8d4d9d9a17b7251adc4f",
+          "workspace_switch": "\/typo3\/index.php?route=%2Fajax%2Fworkspace%2Fswitch&token=c8670b0e89744756e1110422bd0e0cb9b598f66b",
+          "workspace_dispatch": "\/typo3\/index.php?route=%2Fajax%2Fworkspace%2Fdispatch&token=a5806abe4c11c61b67bc840972fb5cae9f20c78f",
+          "dam_request": "\/typo3\/index.php?route=%2Fajax%2Fdam%2Frequest&token=835bf9fa01b33926115677c92b73295ff41f27bb"
+        }
+      };/*]]>*/
+    </script>
+
+    <script type="text/javascript">
+      /*<![CDATA[*/
+
+      /*RequireJS-Module-bootstrap*/
+      require(["bootstrap"]);
+
+      /*RequireJS-Module-TYPO3/CMS/Backend/ContextHelp*/
+      require(["TYPO3/CMS/Backend/ContextHelp"]);
+
+      /*RequireJS-Module-TYPO3/CMS/Backend/DocumentHeader*/
+      require(["TYPO3/CMS/Backend/DocumentHeader"]);
+
+      /*RequireJS-Module-TYPO3/CMS/Backend/SplitButtons*/
+      require(["TYPO3/CMS/Backend/SplitButtons"]);
+
+      /*RequireJS-Module-TYPO3/CMS/Backend/Notification*/
+      require(["TYPO3/CMS/Backend/Notification"]);
+
+      /*RequireJS-Module-TYPO3/CMS/Backend/Modal*/
+      require(["TYPO3/CMS/Backend/Modal"]);
+
+      /*]]>*/
+    </script>
+
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but vue-testing2 doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

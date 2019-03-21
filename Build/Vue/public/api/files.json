@@ -1,0 +1,84 @@
+{
+  "folders": [
+    {
+      "name": "folder1",
+      "type": "FOLDER",
+      "identifier": "1:/foo/bar/folder1",
+      "meta": "123",
+      "mtime": "12.12.2012",
+      "image": "/testfiles/folder.jpg",
+      "size": ""
+    }, {
+      "name": "folder2",
+      "type": "FOLDER",
+      "identifier": "1:/foo/bar/folder2",
+      "meta": "23",
+      "mtime": "2.12.2012",
+      "image": "/testfiles/folder.jpg",
+      "size": ""
+    },
+    {
+      "name": "folder3",
+      "type": "FOLDER",
+      "identifier": "1:/foo/bar/folder3",
+      "meta": "23",
+      "mtime": "2.12.2012",
+      "image": "/testfiles/folder.jpg",
+      "size": ""
+    }
+  ],
+  "files": [
+    {
+      "name": "somefile.txt",
+      "type": "FILE",
+      "identifier": "1:/foo/bar/somefile.txt",
+      "meta": "123",
+      "mtime": "12.12.2012",
+      "image": "/testfiles/no-image.png",
+      "size": "1024"
+    }, {
+      "name": "somefile2.txt",
+      "type": "FILE",
+      "identifier": "1:/foo/bar/somefile2.txt",
+      "meta": "23",
+      "mtime": "2.12.2012",
+      "image": "/testfiles/no-image.png",
+      "size": "512"
+    }, {
+      "name": "3.txt",
+      "type": "FILE",
+      "identifier": "1:/foo/bar/3.txt",
+      "meta": "12",
+      "mtime": "12.2.2012",
+      "image": "/testfiles/no-image.png",
+      "size": "2048"
+    }
+  ],
+  "images": [
+    {
+      "name": "somefile.png",
+      "type": "IMAGE",
+      "identifier": "1:/foo/bar/somefile.png",
+      "meta": "123",
+      "mtime": "12.12.2012",
+      "image": "/testfiles/somefile.jpg",
+      "size": "4096"
+    }, {
+      "name": "somefile2.png",
+      "type": "IMAGE",
+      "identifier": "1:/foo/bar/somefile2.png",
+      "meta": "23",
+      "mtime": "2.12.2012",
+      "image": "/testfiles/somefile2.jpg",
+      "size": "128"
+    }, {
+      "name": "3.jpg",
+      "type": "IMAGE",
+      "identifier": "1:/foo/bar/3.png",
+      "meta": "12",
+      "mtime": "12.2.2012",
+      "image": "/testfiles/3.jpg",
+      "size": "2048"
+    }
+  ]
+}
