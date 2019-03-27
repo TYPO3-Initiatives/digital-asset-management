@@ -51,6 +51,7 @@ class FileMount implements \JsonSerializable
 
     /**
      * @param ResourceStorage $storage
+     * @param array $fileMount
      */
     public function __construct(ResourceStorage $storage, array $fileMount)
     {

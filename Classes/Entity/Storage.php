@@ -24,7 +24,7 @@ class Storage implements \JsonSerializable
     protected $type = 'storage';
 
     /**
-     * @var int The storage uid
+     * @var int The storage uid, eg. 42
      */
     protected $identifier;
 

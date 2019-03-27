@@ -17,6 +17,7 @@ use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FileMount;
+use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemFolder;
 use TYPO3\CMS\DigitalAssetManagement\Entity\Storage;
 use TYPO3\CMS\DigitalAssetManagement\Exception\ControllerException;
 use TYPO3\CMS\DigitalAssetManagement\Http\JsonExceptionResponse;
@@ -54,10 +55,14 @@ class AjaxController
                 throw new ControllerException('Identifier is not a folder', 1553701684);
             }
             $subFolders = $folderObject->getSubfolders();
+            $data = [
+                'folders' => [],
+                'files' => [],
+                'images' => [],
+            ];
             foreach ($subFolders as $subFolder) {
-
+                $data['folders'][] = new FolderItemFolder($subFolder);
             }
-            $data = [];
         } catch (ResourceException $e) {
             return new JsonExceptionResponse($e);
         } catch (ControllerException $e) {
