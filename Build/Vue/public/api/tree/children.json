@@ -1,0 +1,23 @@
+[
+  {
+    "text": "Folder 2.1",
+    "identifier": "1:/folder/2_1/",
+    "icon": "http://master.ddev.local/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder-locked.svg",
+    "expanded": false,
+    "hasChildren": false
+  },
+  {
+    "text": "Cats",
+    "identifier": "1:/folder/cats/",
+    "icon": "http://master.ddev.local/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder-default.svg",
+    "expanded": false,
+    "hasChildren": false
+  },
+  {
+    "text": "Trash",
+    "identifier": "1:/folder/trash/",
+    "icon": "http://master.ddev.local/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder-recycler.svg",
+    "expanded": false,
+    "hasChildren": true
+  }
+]

@@ -1,3 +1,4 @@
+import FolderTreeNode from '@/models/FolderTreeNode';
 import Vue from 'vue';
 import Vuex, {StoreOptions} from 'vuex';
 import {
@@ -17,7 +18,6 @@ import {
 import {RootState} from '../../types/types';
 import client from '@/services/http/Typo3Client';
 import {SORT_FIELDS, SORT_ORDER} from '@/components/SortingSelector/SortOptions';
-import {TreeData} from 'tree-vue-component';
 
 Vue.use(Vuex);
 // https://codeburst.io/vuex-and-typescript-3427ba78cfa8
@@ -38,7 +38,8 @@ const options: StoreOptions<RootState> = {
         current: '',
         viewMode: TILE_VIEW,
         showTree: false,
-        tree: {},
+        tree: [],
+        treeIdentifierLocationMap: {},
     },
     mutations: {
         [FETCH_DATA](state: RootState, items: {folders: Array<any>, files: Array<any>, images: Array<any>}): void {
@@ -76,9 +77,28 @@ const options: StoreOptions<RootState> = {
         [SWITCH_VIEW](state: RootState, viewMode: String): void {
             state.viewMode = viewMode;
         },
-        [FETCH_TREE_DATA](state: RootState, tree: Array<TreeData>): void {
-            console.log('store.ts@80: ', tree);
-            state.tree = tree;
+        [FETCH_TREE_DATA](state: RootState, data: {identifier: string, folders: Array<FolderTreeNode>}): void {
+            const nestingStructure = state.treeIdentifierLocationMap[data.identifier] || [];
+
+            data.folders.forEach((node: FolderTreeNode, index: number): void => {
+                node.children = [];
+
+                // Store folder identifier and nesting information into state for faster tree traversal
+                const nesting = nestingStructure.slice(0); // This clones the nesting structure
+                nesting.push(index);
+                state.treeIdentifierLocationMap[node.identifier] = nesting;
+            });
+
+            if (data.identifier.match(/^\d+:\/$/)) {
+                // Storage root requested
+                state.tree = data.folders;
+            } else {
+                let node = state.tree;
+                for (let index of nestingStructure) {
+                    node = typeof node.children !== 'undefined' ? node.children[index] : node[index];
+                }
+                node.children = data.folders;
+            }
         },
         [TOGGLE_TREE](state: RootState): void {
             state.showTree = !state.showTree;
@@ -110,10 +130,20 @@ const options: StoreOptions<RootState> = {
             const response = await client.get('files.json?identifier=' + identifier);
             commit(FETCH_DATA, response.data);
         },
-        async [FETCH_TREE_DATA]({commit}: any): Promise<any> {
+        async [FETCH_TREE_DATA]({commit}: any, identifier: string): Promise<any> {
             // request [dummy data]:
-            const response = await client.get('tree_root.json');
-            commit(FETCH_TREE_DATA, response.data);
+            let endpoint;
+            if (identifier === '1:/') {
+                endpoint = 'tree/root.json';
+            } else if (identifier === '1:/folder_2/') {
+                endpoint = 'tree/children.json';
+            } else if (identifier === '1:/folder/trash/') {
+                endpoint = 'tree/trash.json';
+            } else {
+                throw 'Undefined dummy endpoint';
+            }
+            const response = await client.get(endpoint);
+            commit(FETCH_TREE_DATA, {identifier: identifier, folders: response.data});
         },
     },
 };

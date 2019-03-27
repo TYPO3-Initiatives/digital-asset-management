@@ -7,4 +7,5 @@ export interface RootState {
     sorting: any;
     showTree: boolean;
     tree: any;
+    treeIdentifierLocationMap: {[key: string]: Array<number>};
 }
