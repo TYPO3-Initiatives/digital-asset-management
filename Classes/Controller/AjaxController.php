@@ -9,7 +9,9 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
  * LICENSE file that was distributed with this source code.
  */
 
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\JsonResponse;
+use TYPO3\CMS\Core\Resource\ResourceStorage;
 
 /**
  * Main API endpoint. These are ajax actions called by JS side.
@@ -36,7 +38,7 @@ class AjaxController
 {
     /**
      * Returns list of storages (admins), or file mounts (non-admin). Admins
-     * do NOT receive a list of file mounts.
+     * do NOT receive a list of file mounts, just the storages.
      *
      * Storages are returned in no particular order, file mounts are ordered
      * by 'sorting' DB field.
@@ -60,20 +62,57 @@ class AjaxController
      *          // Storage driver. Often 'local', but can be 'AWS' or similar
      *          'storageType' => 'local'
      *
-     *          // True if storage is offline
-     *          'storageOffline' => false
+     *          // False if storage is offline
+     *          'storageOnline' => true
      *      ],
      *      ...
      * ]
      */
-    public function getStoragesAndMountsAction()
+    public function getStoragesAndMountsAction(): JsonResponse
     {
+        $backendUser = $this->getBackendUser();
+        $storages = $backendUser->getFileStorages();
+        $data = [];
+        if ($backendUser->isAdmin()) {
+            foreach ($storages as $storage) {
+                $data[] = [
+                    'type' => 'storage',
+                    'identifier' => $storage->getUid(),
+                    'name' => $storage->getName(),
+                    'storageName' => $storage->getName(),
+                    'storageType' => $storage->getDriverType(),
+                    'storageOnline' => $storage->isOnline(),
+                ];
+            }
+        } else {
+            foreach ($storages as $storage) {
+                $fileMounts = $storage->getFileMounts();
+                foreach ($fileMounts as $fileMount) {
+                    $data[] = [
+                        'type' => 'mount',
+                        'identifier' => $storage->getUid() . ':' . $fileMount['path'],
+                        'name' => $fileMount['title'],
+                        'storageName' => $storage->getName(),
+                        'storageType' => $storage->getDriverType(),
+                        'storageOnline' => $storage->isOnline(),
+                    ];
+                }
+            }
+        }
         return new JsonResponse(
             [
                 'success' => true,
-                'data' => 'foo',
+                'data' => $data,
             ],
             200
         );
+    }
+
+    /**
+     * @return BackendUserAuthentication
+     */
+    protected function getBackendUser(): BackendUserAuthentication
+    {
+        return $GLOBALS['BE_USER'];
     }
 }
