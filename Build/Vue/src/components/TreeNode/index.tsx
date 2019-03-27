@@ -28,7 +28,7 @@ export default class TreeNode extends Vue {
         }
         return(
             <span>
-                <a href='#' v-show={this.node.hasChildren} onclick={(event: Event) => this.tree.toggleNode(event, this.$props.node)}>
+                <a href='#' v-show={this.node.hasChildren} onclick={(event: Event) => this.toggleNode(event, this.$props.node)}>
                     [{ this.node.expanded ? '-' : '+' }]
                 </a>
                 <a href='#' data-identifier={this.node.identifier} onclick={(event: Event) => this.openNode(this.$props.node.identifier)}>
