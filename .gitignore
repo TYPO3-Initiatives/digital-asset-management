@@ -11,7 +11,7 @@ bin/
 # TYPO3 test
 .php_cs.cache
 /public/
-typo3/
+/typo3/
 var/
 logs/
 index.php
