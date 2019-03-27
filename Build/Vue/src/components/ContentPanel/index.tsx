@@ -45,6 +45,9 @@ export default class ContentPanel extends Vue {
     items: any;
 
     @State
+    readOnly: boolean = false;
+
+    @State
     itemsGrouped: any;
 
     @State
