@@ -45,7 +45,7 @@ class AjaxController
      *
      * Example data part of return structure:
      *
-     * [
+     * 'data' => [
      *      [
      *          // Either 'storage' or 'mount'
      *          'type' => 'mount',
@@ -60,7 +60,7 @@ class AjaxController
      *          'storageName' => 'Some storage'
      *
      *          // Storage driver. Often 'local', but can be 'AWS' or similar
-     *          'storageType' => 'local'
+     *          'storageType' => 'Local'
      *
      *          // False if storage is offline
      *          'storageOnline' => true
