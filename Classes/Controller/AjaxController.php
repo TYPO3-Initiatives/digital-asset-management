@@ -11,7 +11,6 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\JsonResponse;
-use TYPO3\CMS\Core\Resource\ResourceStorage;
 
 /**
  * Main API endpoint. These are ajax actions called by JS side.
@@ -23,16 +22,8 @@ use TYPO3\CMS\Core\Resource\ResourceStorage;
  * Methods that need Request arguments MUST send them via POST.
  *
  * All actions return a JsonResponse, if all is good, the return code is
- * 200 with 'success' => true, and the payload of the according action in
- * 'data'. On error, 'success' is false and an exception detail is
- * added (@todo: define error data structure).
- *
- * Example for a "good" response:
- *
- * [
- *      'success' => true,
- *      'data' => ...
- * ]
+ * 200. A different code, usually in 4xx range will be returned if the
+ * client sent a bogus request, often with some exception details.
  */
 class AjaxController
 {
@@ -43,30 +34,28 @@ class AjaxController
      * Storages are returned in no particular order, file mounts are ordered
      * by 'sorting' DB field.
      *
-     * Example data part of return structure:
+     * Return structure:
      *
-     * 'data' => [
-     *      [
-     *          // Either 'storage' or 'mount'
-     *          'type' => 'mount',
+     * [
+     *     // Either 'storage' or 'mount'
+     *     'type' => 'mount',
      *
-     *          // Only storage uid for storages, storageUid:path for file mounts
-     *          'identifier' => '42:file/mount/path'
+     *     // Only storage uid for storages, storageUid:path for file mounts
+     *     'identifier' => '42:file/mount/path'
      *
-     *          // Storage name for storages, file mount name file mounts
-     *          'name' => 'A user file mount',
+     *     // Storage name for storages, file mount name file mounts
+     *    'name' => 'A user file mount',
      *
-     *          // Always the storage name, identical with 'name' if 'type' is 'storage'
-     *          'storageName' => 'Some storage'
+     *     // Always the storage name, identical with 'name' if 'type' is 'storage'
+     *     'storageName' => 'Some storage'
      *
-     *          // Storage driver. Often 'local', but can be 'AWS' or similar
-     *          'storageType' => 'Local'
+     *     // Storage driver. Often 'local', but can be 'AWS' or similar
+     *     'storageType' => 'Local'
      *
-     *          // False if storage is offline
-     *          'storageOnline' => true
-     *      ],
-     *      ...
-     * ]
+     *     // False if storage is offline
+     *     'storageOnline' => true
+     * ],
+     * ...
      */
     public function getStoragesAndMountsAction(): JsonResponse
     {
@@ -99,13 +88,7 @@ class AjaxController
                 }
             }
         }
-        return new JsonResponse(
-            [
-                'success' => true,
-                'data' => $data,
-            ],
-            200
-        );
+        return new JsonResponse($data, 200);
     }
 
     /**
