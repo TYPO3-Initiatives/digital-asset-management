@@ -17,6 +17,8 @@ export default class List extends Vue {
     @State
     current: any;
 
+    visibleColumns: Array<string> = ['name', 'mtime-display', 'size-display', 'type', 'variants', 'references', 'permissions'];
+
     constructor(props: any) {
         super(props);
     }
@@ -27,17 +29,22 @@ export default class List extends Vue {
 
     private render(): VNode {
         const list = this.items.map(this.generateListItem, this);
-        const headline = Object.keys(this.getFirstItem()).map((key: String) => <th>{key}</th>);
+        const headline = Object.keys(this.getFirstItem()).map((key: string) => {
+            if (this.visibleColumns.indexOf(key) !== -1) {
+                return <th>{TYPO3.lang['List.table.header.' + key]}</th>;
+            }
+            return '';
+
+        });
+
         return (
-            <div class='panel panel-default'>
-                <table class='table table-striped table-hover'>
-                    <thead>
-                        <th><AllSelector listOfIdentifiers={this.items.map((item: any) => {return item.identifier; })}/></th>
-                        {headline}
-                    </thead>
-                    <tbody>{list}</tbody>
-                </table>
-            </div>
+            <table class='table table-striped table-hover'>
+                <thead>
+                    <th><AllSelector listOfIdentifiers={this.items.map((item: any) => {return item.identifier; })}/></th>
+                    {headline}
+                </thead>
+                <tbody>{list}</tbody>
+            </table>
         );
     }
 
@@ -47,6 +54,7 @@ export default class List extends Vue {
                 identifier={item.identifier}
                 item={item}
                 click={this.click}
+                visibleColumns={this.visibleColumns}
             />
         );
     }

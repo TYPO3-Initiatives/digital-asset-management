@@ -10,4 +10,4 @@
  *
  * The TYPO3 project - inspiring people to share!
  */
-define(["require", "exports", "Vue", "TYPO3/CMS/DigitalAssetManagement/Filelist"], function (e, t, a, fileList) {});
+define(["require", "TYPO3/CMS/DigitalAssetManagement/Library/filelist.umd.min"], function () {});
