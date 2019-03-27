@@ -1,27 +1,21 @@
-{
-  "nodes": [
-    {
-      "name": "folder1",
-      "identifier": "1:/foo/bar/folder1",
-      "hasChildren": false,
-      "expanded": false
-    }, {
-      "name": "folder2",
-      "identifier": "1:/foo/bar/folder2",
-      "hasChildren": false,
-      "expanded": true
-    },
-    {
-      "name": "folder3",
-      "identifier": "1:/foo/bar/folder3",
-      "hasChildren": true,
-      "expanded": false
-    },
-    {
-      "name": "folder4",
-      "identifier": "1:/foo/bar/folder4",
-      "hasChildren": true,
-      "expanded": true
+[
+  {
+    "text": "Folder 1",
+    "value": "1:/folder",
+    "icon": "some-icon-class_does-markup-work-as-well_questionmark",
+    "state": {
+      "opened": false,
+      "selected": false,
+      "openable": false
     }
-  ]
-}
+  },
+  {
+    "text": "Folder 2",
+    "value": "1:/folder_2",
+    "icon": "some-icon-class_does-markup-work-as-well_questionmark",
+    "state": {
+      "opened": false,
+      "selected": true
+    }
+  }
+]

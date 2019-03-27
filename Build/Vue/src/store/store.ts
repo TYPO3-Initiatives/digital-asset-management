@@ -12,10 +12,12 @@ import {
     CHANGE_SORTING,
     CHANGE_SORTORDER,
     TOGGLE_TREE,
+    FETCH_TREE_DATA,
 } from './mutations';
 import {RootState} from '../../types/types';
 import client from '@/services/http/Typo3Client';
 import {SORT_FIELDS, SORT_ORDER} from '@/components/SortingSelector/SortOptions';
+import {TreeData} from 'tree-vue-component';
 
 Vue.use(Vuex);
 // https://codeburst.io/vuex-and-typescript-3427ba78cfa8
@@ -36,6 +38,7 @@ const options: StoreOptions<RootState> = {
         current: '',
         viewMode: TILE_VIEW,
         showTree: false,
+        tree: {},
     },
     mutations: {
         [FETCH_DATA](state: RootState, items: {folders: Array<any>, files: Array<any>, images: Array<any>}): void {
@@ -73,6 +76,10 @@ const options: StoreOptions<RootState> = {
         [SWITCH_VIEW](state: RootState, viewMode: String): void {
             state.viewMode = viewMode;
         },
+        [FETCH_TREE_DATA](state: RootState, tree: Array<TreeData>): void {
+            console.log('store.ts@80: ', tree);
+            state.tree = tree;
+        },
         [TOGGLE_TREE](state: RootState): void {
             state.showTree = !state.showTree;
         },
@@ -102,6 +109,11 @@ const options: StoreOptions<RootState> = {
             // request [dummy data]:
             const response = await client.get('files.json?identifier=' + identifier);
             commit(FETCH_DATA, response.data);
+        },
+        async [FETCH_TREE_DATA]({commit}: any): Promise<any> {
+            // request [dummy data]:
+            const response = await client.get('tree_root.json');
+            commit(FETCH_TREE_DATA, response.data);
         },
     },
 };

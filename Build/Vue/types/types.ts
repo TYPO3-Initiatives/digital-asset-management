@@ -6,4 +6,5 @@ export interface RootState {
     viewMode: String; // LIST_VIEW|TILE_VIEW
     sorting: any;
     showTree: boolean;
+    tree: any;
 }
