@@ -19,8 +19,6 @@ use TYPO3\CMS\Core\Http\JsonResponse;
  * path is something like /ajax/dam/getStoragesAndMounts which maps to a method
  * with the same name plus word "Action": getStoragesAndMountsAction().
  *
- * Methods that need Request arguments MUST send them via POST.
- *
  * All actions return a JsonResponse, if all is good, the return code is
  * 200. A different code, usually in 4xx range will be returned if the
  * client sent a bogus request, often with some exception details.
