@@ -28,8 +28,10 @@ export default class AllSelector extends Vue {
     private render(): VNode {
         // fix me, I'm ugly
         return (
-            <span onClick={(event: Event) => this.toggleSelect(event, this.listOfIdentifiers)}
-            >{this.isSelected ? 'X' : 'O'}</span>
+            <a href='#' onClick={(event: Event) => this.toggleSelect(event, this.listOfIdentifiers)} class='btn btn-sm btn-default'>
+                <i class='fa fa-check-square' v-show={this.isSelected}></i>
+                <i class='fa fa-square-o' v-show={!this.isSelected}></i>
+            </a>
         );
     }
 

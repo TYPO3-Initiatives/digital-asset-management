@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0" xmlns:t3="http://typo3.org/schemas/xliff">
+  <file t3:id="65436677" source-language="en" datatype="plaintext" original="messages" date="2018-04-12T22:22:32Z" product-name="backend">
+    <header/>
+    <body>
+      <trans-unit id="List.table.header.name">
+        <source>Name</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.mtime-display">
+        <source>Modified</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.size-display">
+        <source>Size</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.type">
+        <source>Type</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.variants">
+        <source>Variants</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.references">
+        <source>References</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.permissions">
+        <source>RW</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

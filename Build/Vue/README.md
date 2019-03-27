@@ -15,6 +15,11 @@ yarn run serve
 yarn run build
 ```
 
+### Watch and Compiles and minifies for production
+```
+yarn run watch
+```
+
 ### Run your tests
 ```
 yarn run test
@@ -43,5 +48,13 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 To integrate with requirejs compile vue project as lib and manually copy it to extensions' resources dir.
 
 ```
-yarn lib ./src/main.ts
+yarn lib
+```
+
+### Watch & Build lib for TYPO3
+
+To integrate with requirejs compile vue project as lib and manually copy it to extensions' resources dir.
+
+```
+yarn watch-lib
 ```

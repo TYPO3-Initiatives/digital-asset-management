@@ -1,4 +1,7 @@
+const path = require("path");
+
 module.exports = {
+  outputDir: path.resolve(__dirname, "../../Resources/Public/JavaScript/Library/"),
   configureWebpack: {
     devServer: {
       headers: {
