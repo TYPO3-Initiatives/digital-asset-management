@@ -6,7 +6,7 @@ import {
     UNSELECT_ITEM,
     NAVIGATE,
     SWITCH_VIEW,
-    TILE_VIEW,
+    LIST_VIEW,
     SELECT_ALL,
     UNSELECT_ALL,
     CHANGE_SORTING,
@@ -34,8 +34,8 @@ const options: StoreOptions<RootState> = {
         },
         items: [],
         current: '',
-        viewMode: TILE_VIEW,
-        showTree: false,
+        viewMode: LIST_VIEW,
+        showTree: true,
     },
     mutations: {
         [FETCH_DATA](state: RootState, items: {folders: Array<any>, files: Array<any>, images: Array<any>}): void {

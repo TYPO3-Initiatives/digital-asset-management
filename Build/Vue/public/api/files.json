@@ -2,83 +2,128 @@
   "folders": [
     {
       "name": "folder1",
+      "mtime": "1553687038",
+      "mtime-display": "27.03.2019",
+      "size": "",
+      "size-display": "",
       "type": "FOLDER",
+      "variants": 0,
+      "references": 0,
+      "permissions": "RW",
       "identifier": "1:/foo/bar/folder1",
-      "meta": "123",
-      "mtime": "12.12.2012",
-      "image": "/testfiles/folder.jpg",
-      "size": ""
+      "icon": "/testfiles/folder.jpg",
+      "editUrl": "<URL TO EDIT DOCUMENT>"
     }, {
       "name": "folder2",
+      "mtime": "1553687037",
+      "mtime-display": "27.03.2019",
+      "size": "",
+      "size-display": "",
       "type": "FOLDER",
+      "variants": 0,
+      "references": 0,
+      "permissions": "RW",
       "identifier": "1:/foo/bar/folder2",
-      "meta": "23",
-      "mtime": "2.12.2012",
-      "image": "/testfiles/folder.jpg",
-      "size": ""
+      "icon": "/testfiles/folder.jpg",
+      "editUrl": "<URL TO EDIT DOCUMENT>"
     },
     {
       "name": "folder3",
+      "mtime": "1553687036",
+      "mtime-display": "27.03.2019",
+      "size": "",
+      "size-display": "",
       "type": "FOLDER",
+      "variants": 0,
+      "references": 0,
+      "permissions": "RW",
       "identifier": "1:/foo/bar/folder3",
-      "meta": "23",
-      "mtime": "2.12.2012",
-      "image": "/testfiles/folder.jpg",
-      "size": ""
+      "icon": "/testfiles/folder.jpg",
+      "editUrl": "<URL TO EDIT DOCUMENT>"
     }
   ],
   "files": [
     {
       "name": "somefile.txt",
-      "type": "FILE",
+      "mtime": "1553687035",
+      "mtime-display": "27.03.2019",
+      "size": "1024",
+      "size-display": "1 KB",
+      "type": "txt",
+      "variants": 0,
+      "references": 0,
+      "permissions": "RW",
       "identifier": "1:/foo/bar/somefile.txt",
-      "meta": "123",
-      "mtime": "12.12.2012",
-      "image": "/testfiles/no-image.png",
-      "size": "1024"
+      "icon": "/testfiles/no-image.png",
+      "editUrl": "<URL TO EDIT DOCUMENT>"
     }, {
       "name": "somefile2.txt",
-      "type": "FILE",
+      "mtime": "1553687034",
+      "mtime-display": "27.03.2019",
+      "size": "1024",
+      "size-display": "1 KB",
+      "type": "txt",
+      "variants": 0,
+      "references": 0,
+      "permissions": "RW",
       "identifier": "1:/foo/bar/somefile2.txt",
-      "meta": "23",
-      "mtime": "2.12.2012",
-      "image": "/testfiles/no-image.png",
-      "size": "512"
+      "icon": "/testfiles/no-image.png",
+      "editUrl": "<URL TO EDIT DOCUMENT>"
     }, {
       "name": "3.txt",
-      "type": "FILE",
+      "mtime": "1553687033",
+      "mtime-display": "27.03.2019",
+      "size": "1024",
+      "size-display": "1 KB",
+      "type": "txt",
+      "variants": 0,
+      "references": 0,
+      "permissions": "RW",
       "identifier": "1:/foo/bar/3.txt",
-      "meta": "12",
-      "mtime": "12.2.2012",
-      "image": "/testfiles/no-image.png",
-      "size": "2048"
+      "icon": "/testfiles/no-image.png",
+      "editUrl": "<URL TO EDIT DOCUMENT>"
     }
   ],
   "images": [
     {
       "name": "somefile.png",
-      "type": "IMAGE",
+      "mtime": "1553687032",
+      "mtime-display": "27.03.2019",
+      "size": "4096",
+      "size-display": "4 KB",
+      "type": "png",
+      "variants": 0,
+      "references": 1,
+      "permissions": "RW",
       "identifier": "1:/foo/bar/somefile.png",
-      "meta": "123",
-      "mtime": "12.12.2012",
-      "image": "/testfiles/somefile.jpg",
-      "size": "4096"
+      "icon": "/testfiles/somefile.png",
+      "editUrl": "<URL TO EDIT DOCUMENT>"
     }, {
       "name": "somefile2.png",
-      "type": "IMAGE",
+      "mtime": "1553687031",
+      "mtime-display": "27.03.2019",
+      "size": "4096",
+      "size-display": "4 KB",
+      "type": "png",
+      "variants": 0,
+      "references": 0,
+      "permissions": "RW",
       "identifier": "1:/foo/bar/somefile2.png",
-      "meta": "23",
-      "mtime": "2.12.2012",
-      "image": "/testfiles/somefile2.jpg",
-      "size": "128"
+      "icon": "/testfiles/somefile2.png",
+      "editUrl": "<URL TO EDIT DOCUMENT>"
     }, {
       "name": "3.jpg",
-      "type": "IMAGE",
-      "identifier": "1:/foo/bar/3.png",
-      "meta": "12",
-      "mtime": "12.2.2012",
-      "image": "/testfiles/3.jpg",
-      "size": "2048"
+      "mtime": "1553687030",
+      "mtime-display": "27.03.2019",
+      "size": "2048",
+      "size-display": "2 KB",
+      "type": "png",
+      "variants": 0,
+      "references": 0,
+      "permissions": "RW",
+      "identifier": "1:/foo/bar/3.jpg",
+      "icon": "/testfiles/3.jpg",
+      "editUrl": "<URL TO EDIT DOCUMENT>"
     }
   ]
 }

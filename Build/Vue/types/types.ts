@@ -7,3 +7,13 @@ export interface RootState {
     sorting: any;
     showTree: boolean;
 }
+
+declare global {
+    interface Window { TYPO3: any; }
+}
+
+window.TYPO3 = window.TYPO3 || {};
+
+declare global {
+    const TYPO3: any;
+}
