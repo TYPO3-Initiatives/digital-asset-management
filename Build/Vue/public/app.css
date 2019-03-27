@@ -25,13 +25,26 @@
     float: left;
     width: 200px;
     height: 200px;
+    border: 1px solid #e1e1e1;
 }
 
 .tile img {
-    max-height:50px;
-    max-width:50px;
+    max-height: 100%;
+    max-width: 100%;
 }
 
 .tile.selected {
     background-color: aliceblue;
+}
+
+.tile-thumbnail {
+    width: 100%;
+    height: 100%;
+}
+
+.tiles-empty {
+    background-size: 25%;
+    background-repeat: no-repeat;
+    background-image: url(http://localhost:8080/testfiles/no-image.png);
+    background-position: center;
 }

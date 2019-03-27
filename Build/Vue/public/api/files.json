@@ -9,9 +9,10 @@
       "type": "FOLDER",
       "variants": 0,
       "references": 0,
+      "fileCount": 0,
       "permissions": "RW",
       "identifier": "1:/foo/bar/folder1",
-      "icon": "/testfiles/folder.jpg",
+      "icon": "http://localhost:8080/testfiles/folder.jpg",
       "editUrl": "<URL TO EDIT DOCUMENT>"
     }, {
       "name": "folder2",
@@ -22,9 +23,10 @@
       "type": "FOLDER",
       "variants": 0,
       "references": 0,
+      "fileCount": 17,
       "permissions": "RW",
       "identifier": "1:/foo/bar/folder2",
-      "icon": "/testfiles/folder.jpg",
+      "icon": "http://localhost:8080/testfiles/folder.jpg",
       "editUrl": "<URL TO EDIT DOCUMENT>"
     },
     {
@@ -36,9 +38,10 @@
       "type": "FOLDER",
       "variants": 0,
       "references": 0,
+      "fileCount": 9758,
       "permissions": "RW",
       "identifier": "1:/foo/bar/folder3",
-      "icon": "/testfiles/folder.jpg",
+      "icon": "http://localhost:8080/testfiles/folder.jpg",
       "editUrl": "<URL TO EDIT DOCUMENT>"
     }
   ],
@@ -54,7 +57,7 @@
       "references": 0,
       "permissions": "RW",
       "identifier": "1:/foo/bar/somefile.txt",
-      "icon": "/testfiles/no-image.png",
+      "icon": "http://localhost:8080/testfiles/no-image.png",
       "editUrl": "<URL TO EDIT DOCUMENT>"
     }, {
       "name": "somefile2.txt",
@@ -67,7 +70,7 @@
       "references": 0,
       "permissions": "RW",
       "identifier": "1:/foo/bar/somefile2.txt",
-      "icon": "/testfiles/no-image.png",
+      "icon": "http://localhost:8080/testfiles/no-image.png",
       "editUrl": "<URL TO EDIT DOCUMENT>"
     }, {
       "name": "3.txt",
@@ -80,7 +83,7 @@
       "references": 0,
       "permissions": "RW",
       "identifier": "1:/foo/bar/3.txt",
-      "icon": "/testfiles/no-image.png",
+      "icon": "http://localhost:8080/testfiles/no-image.png",
       "editUrl": "<URL TO EDIT DOCUMENT>"
     }
   ],
@@ -96,7 +99,8 @@
       "references": 1,
       "permissions": "RW",
       "identifier": "1:/foo/bar/somefile.png",
-      "icon": "/testfiles/somefile.png",
+      "icon": "http://localhost:8080/testfiles/somefile.png",
+      "thumbnail": "http://localhost:8080/testfiles/somefile.png",
       "editUrl": "<URL TO EDIT DOCUMENT>"
     }, {
       "name": "somefile2.png",
@@ -109,7 +113,8 @@
       "references": 0,
       "permissions": "RW",
       "identifier": "1:/foo/bar/somefile2.png",
-      "icon": "/testfiles/somefile2.png",
+      "icon": "http://localhost:8080/testfiles/somefile2.png",
+      "thumbnail": "http://localhost:8080/testfiles/somefile2.png",
       "editUrl": "<URL TO EDIT DOCUMENT>"
     }, {
       "name": "3.jpg",
@@ -122,7 +127,8 @@
       "references": 0,
       "permissions": "RW",
       "identifier": "1:/foo/bar/3.jpg",
-      "icon": "/testfiles/3.jpg",
+      "icon": "http://localhost:8080/testfiles/3.jpg",
+      "thumbnail": "http://localhost:8080/testfiles/3.jpg",
       "editUrl": "<URL TO EDIT DOCUMENT>"
     }
   ]
