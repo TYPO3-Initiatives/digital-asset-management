@@ -16,6 +16,7 @@ import {FolderInterface} from '@/interfaces/FolderInterface';
 import {FileInterface} from '@/interfaces/FileInterface';
 import {ImageInterface} from '@/interfaces/ImageInterface';
 import {ResourceInterface} from '@/interfaces/ResourceInterface';
+import DropZone from '@/components/DropZone';
 import StorageSelector from '@/components/StorageSelector';
 
 @Component
@@ -86,13 +87,19 @@ export default class ContentPanel extends Vue {
     private render(): VNode {
         return (
           <div class='typo3-filelist-contentpanel'>
+              <DropZone>
+                  <template slot='beforeUploadTable'>
               <DocHeader>
                   <template slot='topBarLeft'><TreeToggle/><ViewSelector/></template>
                   <template slot='topBarRight'><SortingSelector/></template>
                   <template slot='bottomBarLeft'><StorageSelector /><Breadcrumb/></template>
                   <template slot='bottomBarRight'><SelectIndicator/></template>
               </DocHeader>
-              {this.renderContent()}
+                  </template>
+                  <template slot='afterUploadTable'>
+                      {this.renderContent()}
+                  </template>
+              </DropZone>
           </div>
         );
     }

@@ -28,9 +28,11 @@
     background: #e1e1e1;
     padding: 5px;
 }
+
 .module-docheader-bar-column-left {
     width: 50%;
 }
+
 .module-docheader-bar-column-right {
     width: 50%;
     text-align: right;
