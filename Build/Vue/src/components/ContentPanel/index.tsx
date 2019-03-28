@@ -1,4 +1,4 @@
-import {Component, Vue} from 'vue-property-decorator';
+import {Component, Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import ButtonBar from '@/components/ButtonBar';
 import DocHeader from '@/components/DocHeader';
@@ -8,11 +8,12 @@ import Breadcrumb from '@/components/Breadcrumb';
 import SelectIndicator from '@/components/SelectIndicator';
 import Tiles from '@/components/Tiles';
 import {Action, State} from 'vuex-class';
-import {FETCH_DATA, LIST_VIEW} from '@/store/mutations';
 import List from '@/components/List';
-import {FOLDER} from '@/models/FileType';
+import {FileType} from '@/enums/FileType';
 import StorageSelector from '@/components/StorageSelector';
 import TreeToggle from '@/components/TreeToggle';
+import {ViewType} from '@/enums/ViewType';
+import {AjaxRoutes} from '@/enums/AjaxRoutes';
 
 @Component
 export default class ContentPanel extends Vue {
@@ -37,7 +38,7 @@ export default class ContentPanel extends Vue {
         return this.viewMode;
     }
 
-    @Action(FETCH_DATA)
+    @Action(AjaxRoutes.damGetFolderItems)
     fetchData: any;
 
     @State
@@ -49,6 +50,9 @@ export default class ContentPanel extends Vue {
     @State
     viewMode!: String;
 
+    @Prop()
+    readOnly!: boolean;
+
     constructor(props: any) {
         super(props);
     }
@@ -58,7 +62,7 @@ export default class ContentPanel extends Vue {
     }
 
     private open(identifier: String, type: String): void {
-        if (type === FOLDER) {
+        if (type === FileType.FOLDER) {
             this.openFolder(identifier);
         }
         // open files and images?
@@ -91,7 +95,7 @@ export default class ContentPanel extends Vue {
     }
 
     private renderContent(): VNode {
-        if (this.currentViewMode === LIST_VIEW) {
+        if (this.currentViewMode === ViewType.LIST) {
             return this.renderList();
         } else {
             return this.renderTiles();
@@ -100,17 +104,27 @@ export default class ContentPanel extends Vue {
 
     private renderList(): VNode {
         return (
-            <div className='module-body t3js-module-body'>
+            <div className={
+                'module-body t3js-module-body'
+                + (this.readOnly ? ' readonly' : '')
+                + (this.allItems.length === 0 ? ' empty' : '')
+            }>
                 <List items={this.allItems} click={this.open} />
             </div>
         );
     }
 
     private renderTiles(): VNode {
-        return <div class='module-body t3js-module-body'>
+        return (
+          <div className={
+              'module-body t3js-module-body'
+              + (this.readOnly ? ' readonly' : '')
+              + (this.allItems.length === 0 ? ' empty' : '')
+          }>
             {this.renderFolderTiles()}
             {this.renderFileTiles()}
             {this.renderImageTiles()}
-        </div>;
+          </div>
+        );
     }
 }

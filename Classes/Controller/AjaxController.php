@@ -9,8 +9,20 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
  * LICENSE file that was distributed with this source code.
  */
 
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\JsonResponse;
+use TYPO3\CMS\Core\Resource\Exception as ResourceException;
+use TYPO3\CMS\Core\Resource\Folder;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\DigitalAssetManagement\Entity\FileMount;
+use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemFolder;
+use TYPO3\CMS\DigitalAssetManagement\Entity\Storage;
+use TYPO3\CMS\DigitalAssetManagement\Exception\ControllerException;
+use TYPO3\CMS\DigitalAssetManagement\Http\FolderItemsResponse;
+use TYPO3\CMS\DigitalAssetManagement\Http\JsonExceptionResponse;
+use TYPO3\CMS\DigitalAssetManagement\Http\StoragesAndMountsResponse;
 
 /**
  * Main API endpoint. These are ajax actions called by JS side.
@@ -26,67 +38,66 @@ use TYPO3\CMS\Core\Http\JsonResponse;
 class AjaxController
 {
     /**
+     * Return item list (folders, files, images) of a storage:path
+     * FAL folder identifier. GET request with identifier argument.
+     *
+     * @param ServerRequestInterface $request
+     * @return JsonResponse
+     */
+    public function getFolderItemsAction(ServerRequestInterface $request): JsonResponse
+    {
+        try {
+            $identifier = $request->getQueryParams()['identifier'];
+            if (empty($identifier)) {
+                throw new ControllerException('Identifier needed', 1553699828);
+            }
+            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+            $folderObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+            if (!$folderObject instanceof Folder) {
+                throw new ControllerException('Identifier is not a folder', 1553701684);
+            }
+            $subFolders = $folderObject->getSubfolders();
+            $folders = [];
+            $files = [];
+            $images = [];
+            foreach ($subFolders as $subFolder) {
+                $folders[] = new FolderItemFolder($subFolder);
+            }
+            return new FolderItemsResponse($folders, $files, $images);
+        } catch (ResourceException $e) {
+            return new JsonExceptionResponse($e);
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
+        }
+    }
+
+    /**
      * Returns list of storages (admins), or file mounts (non-admin). Admins
      * do NOT receive a list of file mounts, just the storages.
      *
      * Storages are returned in no particular order, file mounts are ordered
      * by 'sorting' DB field.
      *
-     * Return structure:
-     *
-     * [
-     *     // Either 'storage' or 'mount'
-     *     'type' => 'mount',
-     *
-     *     // Only storage uid for storages, storageUid:path for file mounts
-     *     'identifier' => '42:file/mount/path'
-     *
-     *     // Storage name for storages, file mount name file mounts
-     *    'name' => 'A user file mount',
-     *
-     *     // Always the storage name, identical with 'name' if 'type' is 'storage'
-     *     'storageName' => 'Some storage'
-     *
-     *     // Storage driver. Often 'local', but can be 'AWS' or similar
-     *     'storageType' => 'Local'
-     *
-     *     // False if storage is offline
-     *     'storageOnline' => true
-     * ],
-     * ...
+     * Return structure is an array of Storage or FileMount objects.
      */
     public function getStoragesAndMountsAction(): JsonResponse
     {
         $backendUser = $this->getBackendUser();
         $storages = $backendUser->getFileStorages();
-        $data = [];
+        $entities = [];
         if ($backendUser->isAdmin()) {
             foreach ($storages as $storage) {
-                $data[] = [
-                    'type' => 'storage',
-                    'identifier' => $storage->getUid(),
-                    'name' => $storage->getName(),
-                    'storageName' => $storage->getName(),
-                    'storageType' => $storage->getDriverType(),
-                    'storageOnline' => $storage->isOnline(),
-                ];
+                $entities[] = new Storage($storage);
             }
         } else {
             foreach ($storages as $storage) {
                 $fileMounts = $storage->getFileMounts();
                 foreach ($fileMounts as $fileMount) {
-                    $data[] = [
-                        'type' => 'mount',
-                        'identifier' => $storage->getUid() . ':' . $fileMount['path'],
-                        'name' => $fileMount['title'],
-                        'storageName' => $storage->getName(),
-                        'storageType' => $storage->getDriverType(),
-                        'storageOnline' => $storage->isOnline(),
-                    ];
+                    $entities[] = new FileMount($storage, $fileMount);
                 }
             }
         }
-        return new JsonResponse($data, 200);
+        return new StoragesAndMountsResponse($entities);
     }
 
     /**

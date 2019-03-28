@@ -22,9 +22,9 @@ export default class Tiles extends Vue {
     private render(): VNode {
         const tiles = this.items.map(this.generateTile, this);
         return (
-            <div class='panel panel-default'>
-                <div class='panel-body'>
-                    {tiles}
+            <div class='tiles'>
+                <div v-show={this.items.length > 0}>
+                {tiles}
                 </div>
             </div>
         );
@@ -35,11 +35,13 @@ export default class Tiles extends Vue {
             <Tile
                 identifier={item.identifier}
                 header={item.name}
-                subheader={item.mtime}
-                meta={item.meta}
-                click={this.$props.click}
+                fileCount={item.fileCount}
+                mtime={item.mtime}
+                mtimeDisplay={item['mtime-display']}
+                click={this.click}
                 type={item.type}
-                image={item.image}
+                icon={item.icon}
+                thumbnail={item.thumbnail || null}
             />
         );
     }

@@ -1,6 +1,8 @@
+import {GroupedResourcesInterface} from '@/interfaces/GroupedResourcesInterface';
+
 export interface RootState {
     selected: Array<String>; // Array<String == FileIdentifier>
-    itemsGrouped: any; // Object<{files,folders,images}>
+    itemsGrouped: GroupedResourcesInterface;
     items: any; // Array<File>
     current: String; // current identifier
     viewMode: String; // LIST_VIEW|TILE_VIEW

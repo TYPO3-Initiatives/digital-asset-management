@@ -7,7 +7,6 @@ import {
     UNSELECT_ITEM,
     NAVIGATE,
     SWITCH_VIEW,
-    LIST_VIEW,
     SELECT_ALL,
     UNSELECT_ALL,
     CHANGE_SORTING,
@@ -18,6 +17,11 @@ import {
 import {RootState} from '../../types/types';
 import client from '@/services/http/Typo3Client';
 import {SORT_FIELDS, SORT_ORDER} from '@/components/SortingSelector/SortOptions';
+import {FolderInterface} from '@/interfaces/FolderInterface';
+import {FileInterface} from '@/interfaces/FileInterface';
+import {ImageInterface} from '@/interfaces/ImageInterface';
+import {ViewType} from '@/enums/ViewType';
+import {AjaxRoutes} from '@/enums/AjaxRoutes';
 
 Vue.use(Vuex);
 // https://codeburst.io/vuex-and-typescript-3427ba78cfa8
@@ -36,13 +40,17 @@ const options: StoreOptions<RootState> = {
         },
         items: [],
         current: '',
-        viewMode: LIST_VIEW,
+        viewMode: ViewType.TILE,
         showTree: true,
         tree: [],
         treeIdentifierLocationMap: {},
     },
     mutations: {
-        [FETCH_DATA](state: RootState, items: {folders: Array<any>, files: Array<any>, images: Array<any>}): void {
+        [FETCH_DATA](state: RootState, items: {
+                folders: Array<FolderInterface>,
+                files: Array<FileInterface>,
+                images: Array<ImageInterface>,
+        }): void {
             const sortItems = (a: any, b: any) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'});
 
             state.itemsGrouped = items;
@@ -127,18 +135,28 @@ const options: StoreOptions<RootState> = {
         async [FETCH_DATA]({commit}: any, identifier: String): Promise<any> {
             commit(NAVIGATE, identifier);
             // request [dummy data]:
-            const response = await client.get('files.json?identifier=' + identifier);
+            const response = await client.get('http://localhost:8080/api/files.json?identifier=' + identifier);
+            commit(FETCH_DATA, response.data);
+        },
+        async [AjaxRoutes.damGetFolderItems]({commit}: any, identifier: String): Promise<any> {
+            commit(NAVIGATE, identifier);
+            const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetFolderItems] + '&identifier=' + identifier);
+            commit(FETCH_DATA, response.data);
+        },
+        async [AjaxRoutes.damGetStoragesAndMounts]({commit}: any, identifier: String): Promise<any> {
+            commit(NAVIGATE, identifier);
+            const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetStoragesAndMounts] + '&identifier=' + identifier);
             commit(FETCH_DATA, response.data);
         },
         async [FETCH_TREE_DATA]({commit}: any, identifier: string): Promise<any> {
             // request [dummy data]:
             let endpoint;
             if (identifier === '1:/') {
-                endpoint = 'tree/root.json';
+                endpoint = 'http://localhost:8080/api/tree/root.json';
             } else if (identifier === '1:/folder_2/') {
-                endpoint = 'tree/children.json';
+                endpoint = 'http://localhost:8080/api/tree/children.json';
             } else if (identifier === '1:/folder/trash/') {
-                endpoint = 'tree/trash.json';
+                endpoint = 'http://localhost:8080/api/tree/trash.json';
             } else {
                 throw 'Undefined dummy endpoint';
             }

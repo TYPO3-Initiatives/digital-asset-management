@@ -7,7 +7,7 @@ import {SELECT_ITEM, UNSELECT_ITEM} from '@/store/mutations';
 export default class ItemSelector extends Vue {
 
     get isSelected(): boolean {
-        return this.selected.includes(this.$props.identifier);
+        return this.selected.includes(this.identifier);
     }
     @Mutation(SELECT_ITEM)
     selectItem: any;
@@ -28,7 +28,7 @@ export default class ItemSelector extends Vue {
     private render(): VNode {
         // fix me, I'm ugly
         return (
-          <a href='#' onClick={(event: Event) => this.toggleSelect(event, this.$props.identifier)} className='btn btn-sm btn-default'>
+          <a href='#' onClick={(event: Event) => this.toggleSelect(event, this.identifier)} className='btn btn-sm btn-default'>
               <i class='fa fa-check-square' v-show={this.isSelected}></i>
               <i class='fa fa-square-o' v-show={!this.isSelected}></i>
           </a>
