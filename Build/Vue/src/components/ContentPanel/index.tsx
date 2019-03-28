@@ -10,7 +10,6 @@ import Tiles from '@/components/Tiles';
 import {Action, State} from 'vuex-class';
 import List from '@/components/List';
 import {FileType} from '@/enums/FileType';
-import StorageSelector from '@/components/StorageSelector';
 import TreeToggle from '@/components/TreeToggle';
 import {ViewType} from '@/enums/ViewType';
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
@@ -86,7 +85,7 @@ export default class ContentPanel extends Vue {
                 <DocHeader>
                     <template slot='topBarLeft'><ButtonBar/></template>
                     <template slot='topBarRight'><SortingSelector/><ViewSelector/></template>
-                    <template slot='bottomBarLeft'><TreeToggle /><StorageSelector /><Breadcrumb/></template>
+                    <template slot='bottomBarLeft'><TreeToggle /><Breadcrumb/></template>
                     <template slot='bottomBarRight'><SelectIndicator/></template>
                 </DocHeader>
                 {this.renderContent()}
