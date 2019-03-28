@@ -1,5 +1,5 @@
 export enum FileType {
-  FOLDER = 'FOLDER',
-  FILE = 'FILE',
-  IMAGE = 'IMAGE',
+  FOLDER = 'folder',
+  FILE = 'file',
+  IMAGE = 'image',
 }

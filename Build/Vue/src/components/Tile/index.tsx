@@ -2,6 +2,7 @@ import {Component, Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {State} from 'vuex-class';
 import ItemSelector from '@/components/ItemSelector';
+import {FileType} from '@/enums/FileType';
 
 @Component
 export default class Tile extends Vue {
@@ -45,7 +46,7 @@ export default class Tile extends Vue {
     }
 
     private render(): VNode {
-        if (this.type === 'FOLDER') {
+        if (this.type === FileType.FOLDER) {
             return this.renderFolder();
         }
         if (this.thumbnail !== null) {
