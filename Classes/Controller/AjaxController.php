@@ -61,7 +61,6 @@ class AjaxController
             $subFolders = $folderObject->getSubfolders();
             $folders = [];
             foreach ($subFolders as $subFolder) {
-                $request->getAttribute('normalizedParams');
                 $folders[] = new FolderItemFolder($subFolder);
             }
             $allFiles = $folderObject->getFiles();
