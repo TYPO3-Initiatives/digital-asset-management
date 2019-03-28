@@ -19,5 +19,6 @@ index.php
 # Vue
 Resources/Public/JavaScript/Library/demo.html
 Resources/Public/JavaScript/Library/filelist.common.js
+Resources/Public/JavaScript/Library/filelist.common.js.map
 Resources/Public/JavaScript/Library/*hot-update.js
 Resources/Public/JavaScript/Library/*hot-update.json

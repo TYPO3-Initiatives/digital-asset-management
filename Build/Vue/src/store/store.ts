@@ -6,7 +6,6 @@ import {
     UNSELECT_ITEM,
     NAVIGATE,
     SWITCH_VIEW,
-    LIST_VIEW,
     SELECT_ALL,
     UNSELECT_ALL,
     CHANGE_SORTING,
@@ -16,6 +15,10 @@ import {
 import {RootState} from '../../types/types';
 import client from '@/services/http/Typo3Client';
 import {SORT_FIELDS, SORT_ORDER} from '@/components/SortingSelector/SortOptions';
+import {FolderInterface} from '@/interfaces/FolderInterface';
+import {FileInterface} from '@/interfaces/FileInterface';
+import {ImageInterface} from '@/interfaces/ImageInterface';
+import {ViewType} from '@/enums/ViewType';
 
 Vue.use(Vuex);
 // https://codeburst.io/vuex-and-typescript-3427ba78cfa8
@@ -34,11 +37,15 @@ const options: StoreOptions<RootState> = {
         },
         items: [],
         current: '',
-        viewMode: LIST_VIEW,
+        viewMode: ViewType.TILE,
         showTree: true,
     },
     mutations: {
-        [FETCH_DATA](state: RootState, items: {folders: Array<any>, files: Array<any>, images: Array<any>}): void {
+        [FETCH_DATA](state: RootState, items: {
+                folders: Array<FolderInterface>,
+                files: Array<FileInterface>,
+                images: Array<ImageInterface>,
+        }): void {
             const sortItems = (a: any, b: any) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'});
 
             state.itemsGrouped = items;

@@ -1,5 +1,5 @@
 import {Component, Vue} from 'vue-property-decorator';
-import {CreateElement, VNode} from 'vue';
+import {VNode} from 'vue';
 import {State} from 'vuex-class';
 
 @Component
@@ -17,7 +17,7 @@ export default class SelectIndicator extends Vue {
     }
 
 
-    private render(h: CreateElement): VNode {
+    private render(): VNode {
         return (
             <div>Selected {this.selectedCount}</div>
         );

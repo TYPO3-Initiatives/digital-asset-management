@@ -1,7 +1,8 @@
 import {Component, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {Mutation, State} from 'vuex-class';
-import {LIST_VIEW, SWITCH_VIEW, TILE_VIEW} from '@/store/mutations';
+import {SWITCH_VIEW} from '@/store/mutations';
+import {ViewType} from '@/enums/ViewType';
 
 @Component
 export default class ViewSelector extends Vue {
@@ -26,8 +27,8 @@ export default class ViewSelector extends Vue {
     private getTileViewSelected(): VNode {
         return (
             <select onChange={(event: Event) => this.changeView((event.target as HTMLSelectElement).value)}>
-                <option value={TILE_VIEW} selected>Tiles</option>
-                <option value={LIST_VIEW}>List</option>
+                <option value={ViewType.TILE} selected>Tiles</option>
+                <option value={ViewType.LIST}>List</option>
             </select>
         );
     }
@@ -35,15 +36,15 @@ export default class ViewSelector extends Vue {
     private getListViewSelected(): VNode {
         return (
             <select onChange={(event: Event) => this.changeView((event.target as HTMLSelectElement).value)}>
-                <option value={TILE_VIEW}>Tiles</option>
-                <option value={LIST_VIEW} selected>List</option>
+                <option value={ViewType.TILE}>Tiles</option>
+                <option value={ViewType.LIST} selected>List</option>
             </select>
         );
     }
 
     private render(): VNode {
         let options;
-        if (this.currentViewMode === TILE_VIEW) {
+        if (this.currentViewMode === ViewType.TILE) {
             options = this.getTileViewSelected();
         } else {
             options = this.getListViewSelected();
