@@ -19,6 +19,7 @@ import {FolderInterface} from '@/interfaces/FolderInterface';
 import {FileInterface} from '@/interfaces/FileInterface';
 import {ImageInterface} from '@/interfaces/ImageInterface';
 import {ViewType} from '@/enums/ViewType';
+import {AjaxRoutes} from '@/enums/AjaxRoutes';
 
 Vue.use(Vuex);
 // https://codeburst.io/vuex-and-typescript-3427ba78cfa8
@@ -107,7 +108,17 @@ const options: StoreOptions<RootState> = {
         async [FETCH_DATA]({commit}: any, identifier: String): Promise<any> {
             commit(NAVIGATE, identifier);
             // request [dummy data]:
-            const response = await client.get('files.json?identifier=' + identifier);
+            const response = await client.get('http://localhost:8080/api/files.json?identifier=' + identifier);
+            commit(FETCH_DATA, response.data);
+        },
+        async [AjaxRoutes.damGetFolderItems]({commit}: any, identifier: String): Promise<any> {
+            commit(NAVIGATE, identifier);
+            const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetFolderItems] + '&identifier=' + identifier);
+            commit(FETCH_DATA, response.data);
+        },
+        async [AjaxRoutes.damGetStoragesAndMounts]({commit}: any, identifier: String): Promise<any> {
+            commit(NAVIGATE, identifier);
+            const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetStoragesAndMounts] + '&identifier=' + identifier);
             commit(FETCH_DATA, response.data);
         },
     },

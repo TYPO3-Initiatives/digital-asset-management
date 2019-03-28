@@ -8,12 +8,12 @@ import Breadcrumb from '@/components/Breadcrumb';
 import SelectIndicator from '@/components/SelectIndicator';
 import Tiles from '@/components/Tiles';
 import {Action, State} from 'vuex-class';
-import {FETCH_DATA} from '@/store/mutations';
 import List from '@/components/List';
 import {FileType} from '@/enums/FileType';
 import StorageSelector from '@/components/StorageSelector';
 import TreeToggle from '@/components/TreeToggle';
 import {ViewType} from '@/enums/ViewType';
+import {AjaxRoutes} from '@/enums/AjaxRoutes';
 
 @Component
 export default class ContentPanel extends Vue {
@@ -38,7 +38,7 @@ export default class ContentPanel extends Vue {
         return this.viewMode;
     }
 
-    @Action(FETCH_DATA)
+    @Action(AjaxRoutes.damGetFolderItems)
     fetchData: any;
 
     @State

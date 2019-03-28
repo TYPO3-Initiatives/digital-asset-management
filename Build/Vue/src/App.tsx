@@ -3,11 +3,11 @@ import {CreateElement, VNode} from 'vue';
 import TreePanel from '@/components/TreePanel';
 import ContentPanel from '@/components/ContentPanel';
 import {Action} from 'vuex-class';
-import {FETCH_DATA} from '@/store/mutations';
+import {AjaxRoutes} from '@/enums/AjaxRoutes';
 
 @Component
 export default class App extends Vue {
-    @Action(FETCH_DATA)
+    @Action(AjaxRoutes.damGetFolderItems)
     fetchData: any;
 
 

@@ -2,6 +2,7 @@ import {Component, Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {State} from 'vuex-class';
 import ItemSelector from '@/components/ItemSelector';
+import {FileType} from '@/enums/FileType';
 
 @Component
 export default class ListItem extends Vue {
@@ -50,7 +51,7 @@ export default class ListItem extends Vue {
                         if (this.visibleColumns.indexOf(key) !== -1) {
                             const val = this.item[key];
                             if (key === 'name') {
-                                if (this.item.type === 'FOLDER') {
+                                if (this.item.type === FileType.FOLDER) {
                                     return <td><img src={this.item.icon} height='16' /> <a href='#' onClick={onClick}>{val}</a></td>;
                                 } else {
                                     return <td><img src={this.item.icon} height='16' /> <a href={this.item.editUrl}>{val}</a></td>;
