@@ -9,13 +9,13 @@ namespace TYPO3\CMS\DigitalAssetManagement\Entity;
  * LICENSE file that was distributed with this source code.
  */
 
-use TYPO3\CMS\Core\Resource\Folder;
+use TYPO3\CMS\Core\Resource\File;
 
 /**
- * Immutable permission object, used by FolderItemFolder
- * entity to represent permissions of folders.
+ * Immutable permission object, used by FileItemFolder
+ * entity to represent permissions of files.
  */
-class FolderPermission implements \JsonSerializable
+class FilePermission implements \JsonSerializable
 {
     /**
      * @var bool True if entity is readable
@@ -28,12 +28,12 @@ class FolderPermission implements \JsonSerializable
     protected $isWritable;
 
     /**
-     * @param Folder $folder
+     * @param File $file
      */
-    public function __construct(Folder $folder)
+    public function __construct(File $file)
     {
-        $this->isReadable = $folder->checkActionPermission('read');
-        $this->isWritable = $folder->checkActionPermission('write');
+        $this->isReadable = $file->checkActionPermission('read');
+        $this->isWritable = $file->checkActionPermission('write');
     }
 
     public function jsonSerialize()

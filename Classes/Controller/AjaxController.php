@@ -17,6 +17,7 @@ use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FileMount;
+use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemFile;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemFolder;
 use TYPO3\CMS\DigitalAssetManagement\Entity\Storage;
 use TYPO3\CMS\DigitalAssetManagement\Exception\ControllerException;
@@ -58,12 +59,16 @@ class AjaxController
             }
             $subFolders = $folderObject->getSubfolders();
             $folders = [];
-            $files = [];
-            $images = [];
             foreach ($subFolders as $subFolder) {
                 $request->getAttribute('normalizedParams');
                 $folders[] = new FolderItemFolder($subFolder);
             }
+            $allFiles = $folderObject->getFiles();
+            $files = [];
+            foreach ($allFiles as $file) {
+                $files[] = new FolderItemFile($file);
+            }
+            $images = [];
             return new FolderItemsResponse($folders, $files, $images);
         } catch (ResourceException $e) {
             return new JsonExceptionResponse($e);
