@@ -6,17 +6,17 @@
       <trans-unit id="List.table.header.name">
         <source>Name</source>
       </trans-unit>
-      <trans-unit id="List.table.header.mtime-display">
+      <trans-unit id="List.table.header.mtimeDisplay">
         <source>Modified</source>
       </trans-unit>
-      <trans-unit id="List.table.header.size-display">
+      <trans-unit id="List.table.header.sizeDisplay">
         <source>Size</source>
       </trans-unit>
       <trans-unit id="List.table.header.type">
         <source>Type</source>
       </trans-unit>
-      <trans-unit id="List.table.header.variants">
-        <source>Variants</source>
+      <trans-unit id="List.table.header.translations">
+        <source>Translations</source>
       </trans-unit>
       <trans-unit id="List.table.header.references">
         <source>References</source>

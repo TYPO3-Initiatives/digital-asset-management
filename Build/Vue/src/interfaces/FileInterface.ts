@@ -1,3 +1,5 @@
+import {ResourcePermissionsInterface} from '@/interfaces/ResourcePermissionsInterface';
+
 export interface FileInterface {
   type: string;
   name: string;
@@ -5,7 +7,10 @@ export interface FileInterface {
   mtimeDisplay: string;
   size: number;
   sizeDisplay: string;
-  permissions: Array<string>;
+  extension: string;
+  translations: Array<any>;
+  references: number;
+  permissions: ResourcePermissionsInterface;
   identifier: string;
   iconIdentifier: string;
   editMetaUrl: string;

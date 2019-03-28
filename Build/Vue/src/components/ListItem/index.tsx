@@ -41,34 +41,38 @@ export default class ListItem extends Vue {
         if (this.click) {
             onClick = () => this.click(this.identifier, this.item.type);
         }
+
+        const columns: Array<VNode> = [];
+        for (let field in this.visibleColumns) {
+            if (this.visibleColumns.hasOwnProperty(field)) {
+                let fieldName = this.visibleColumns[field];
+                let val: any = this.item[fieldName] || '';
+                if (fieldName === 'name') {
+                    if (this.item.type === FileType.FOLDER) {
+                        columns.push(<td><img src={this.item.icon} height='16' /> <a href='#' onClick={onClick}>{val}</a></td>);
+                    } else {
+                        columns.push(<td><img src={this.item.icon} height='16' /> <a href={this.item.editUrl}>{val}</a></td>);
+                    }
+                } else if (fieldName === 'references' && val > 0) {
+                    const clickFunction = (e: Event) => {
+                        e.stopPropagation();
+                        top.TYPO3.InfoWindow.showItem('_FILE', this.identifier);
+                    };
+                    columns.push(<td><a href='#' onClick={clickFunction}>{val}</a></td>);
+                } else if (fieldName === 'permissions') {
+                    columns.push(<td>{val.isReadable ? 'R' : ''}{val.isWritable ? 'W' : ''}</td>);
+                } else {
+                    columns.push(<td>{val}</td>);
+                }
+            }
+        }
+
         return (
             <tr class={classes}
                 data-identifier={this.identifier}
             >
                 <th><ItemSelector identifier={this.identifier}/></th>
-                {
-                    Object.keys(this.item).map((key: any) => {
-                        if (this.visibleColumns.indexOf(key) !== -1) {
-                            const val = this.item[key];
-                            if (key === 'name') {
-                                if (this.item.type === FileType.FOLDER) {
-                                    return <td><img src={this.item.icon} height='16' /> <a href='#' onClick={onClick}>{val}</a></td>;
-                                } else {
-                                    return <td><img src={this.item.icon} height='16' /> <a href={this.item.editUrl}>{val}</a></td>;
-                                }
-                            }
-                            if (key === 'references' && val > 0) {
-                                const clickFunction = (e: Event) => {
-                                    e.stopPropagation();
-                                    top.TYPO3.InfoWindow.showItem('_FILE', this.identifier);
-                                };
-                                return <td><a href='#' onClick={clickFunction}>{val}</a></td>;
-                            }
-                            return <td>{val}</td>;
-                        }
-                        return '';
-                    })
-                }
+                {columns}
             </tr>
         );
     }
