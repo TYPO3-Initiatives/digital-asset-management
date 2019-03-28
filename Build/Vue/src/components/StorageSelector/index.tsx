@@ -14,10 +14,12 @@ export default class StorageSelector extends Vue {
 
     private render(): VNode {
         return (
-            <div><select onchange={this.updateStorage}>
-                <option value='1:/'>fileadmin/ (auto-created)</option>
-                <option value='2:/'>also fileadmin/ (but another ID)</option>
-            </select></div>
+            <div class='storage-selector' onchange={this.updateStorage}>
+                <select class='form-control'>
+                    <option value='1:/'>fileadmin/ (auto-created)</option>
+                    <option value='2:/'>also fileadmin/ (but another ID)</option>
+                </select>
+            </div>
         );
     }
 

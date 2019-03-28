@@ -48,3 +48,24 @@
     background-image: url(http://localhost:8080/testfiles/no-image.png);
     background-position: center;
 }
+
+.breadcrumb {
+    display: flex;
+    width: 100%;
+    padding: 5px;
+}
+
+.breadcrumb .storage-selector {
+    margin-right: 10px;
+}
+
+.breadcrumb .breadcrumb-item {
+    color: #999;
+    margin-top: 4px;
+    margin-right: 4px;
+}
+
+.breadcrumb .breadcrumb-item:after {
+    content: " / ";
+    color: #999;
+}
