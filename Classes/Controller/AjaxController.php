@@ -61,6 +61,7 @@ class AjaxController
             $files = [];
             $images = [];
             foreach ($subFolders as $subFolder) {
+                $request->getAttribute('normalizedParams');
                 $folders[] = new FolderItemFolder($subFolder);
             }
             return new FolderItemsResponse($folders, $files, $images);

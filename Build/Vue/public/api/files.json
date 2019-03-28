@@ -3,53 +3,47 @@
     {
       "name": "folder1",
       "mtime": "1553687038",
-      "mtime-display": "27.03.2019",
-      "size": "",
-      "size-display": "",
-      "type": "FOLDER",
-      "variants": 0,
-      "references": 0,
-      "fileCount": 0,
-      "permissions": "RW",
+      "mtimeDisplay": "27.03.2019",
+      "type": "folder",
+      "itemCount": 5,
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
       "identifier": "1:/foo/bar/folder1",
-      "icon": "http://localhost:8080/testfiles/folder.jpg",
-      "editUrl": "<URL TO EDIT DOCUMENT>"
+      "icon": "http://localhost:8080/testfiles/folder.jpg"
     }, {
       "name": "folder2",
       "mtime": "1553687037",
-      "mtime-display": "27.03.2019",
-      "size": "",
-      "size-display": "",
-      "type": "FOLDER",
-      "variants": 0,
-      "references": 0,
-      "fileCount": 17,
-      "permissions": "RW",
+      "mtimeDisplay": "27.03.2019",
+      "type": "folder",
+      "itemCount": 3,
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
       "identifier": "1:/foo/bar/folder2",
-      "icon": "http://localhost:8080/testfiles/folder.jpg",
-      "editUrl": "<URL TO EDIT DOCUMENT>"
+      "icon": "http://localhost:8080/testfiles/folder.jpg"
     },
     {
       "name": "folder3",
       "mtime": "1553687036",
-      "mtime-display": "27.03.2019",
-      "size": "",
-      "size-display": "",
-      "type": "FOLDER",
-      "variants": 0,
-      "references": 0,
-      "fileCount": 9758,
-      "permissions": "RW",
+      "mtimeDisplay": "27.03.2019",
+      "type": "folder",
+      "itemCount": 7,
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
       "identifier": "1:/foo/bar/folder3",
-      "icon": "http://localhost:8080/testfiles/folder.jpg",
-      "editUrl": "<URL TO EDIT DOCUMENT>"
+      "icon": "http://localhost:8080/testfiles/folder.jpg"
     }
   ],
   "files": [
     {
       "name": "somefile.txt",
       "mtime": "1553687035",
-      "mtime-display": "27.03.2019",
+      "mtimeDisplay": "27.03.2019",
       "size": "1024",
       "size-display": "1 KB",
       "type": "txt",
@@ -62,7 +56,7 @@
     }, {
       "name": "somefile2.txt",
       "mtime": "1553687034",
-      "mtime-display": "27.03.2019",
+      "mtimeDisplay": "27.03.2019",
       "size": "1024",
       "size-display": "1 KB",
       "type": "txt",
@@ -75,7 +69,7 @@
     }, {
       "name": "3.txt",
       "mtime": "1553687033",
-      "mtime-display": "27.03.2019",
+      "mtimeDisplay": "27.03.2019",
       "size": "1024",
       "size-display": "1 KB",
       "type": "txt",
@@ -91,7 +85,7 @@
     {
       "name": "somefile.png",
       "mtime": "1553687032",
-      "mtime-display": "27.03.2019",
+      "mtimeDisplay": "27.03.2019",
       "size": "4096",
       "size-display": "4 KB",
       "type": "png",
@@ -105,7 +99,7 @@
     }, {
       "name": "somefile2.png",
       "mtime": "1553687031",
-      "mtime-display": "27.03.2019",
+      "mtimeDisplay": "27.03.2019",
       "size": "4096",
       "size-display": "4 KB",
       "type": "png",
@@ -119,7 +113,7 @@
     }, {
       "name": "3.jpg",
       "mtime": "1553687030",
-      "mtime-display": "27.03.2019",
+      "mtimeDisplay": "27.03.2019",
       "size": "2048",
       "size-display": "2 KB",
       "type": "png",

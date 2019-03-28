@@ -11,6 +11,9 @@ namespace TYPO3\CMS\DigitalAssetManagement\Entity;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Resource\Folder;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 
 /**
  * Immutable folder object, used by getFolderItemsAction().
@@ -51,6 +54,19 @@ class FolderItemFolder implements \JsonSerializable
     protected $itemCount;
 
     /**
+     * @var FolderPermission Entity representing access permissions
+     */
+    protected $permissions;
+
+    /**
+     * Path to folder icon, relative to document root with leading slash, eg.
+     * "/typo3conf/ext/digital_asset_management/Resources/Public/Images/empty.png"
+     *
+     * @var string
+     */
+    protected $icon;
+
+    /**
      * @param Folder $folder
      */
     public function __construct(Folder $folder)
@@ -60,6 +76,10 @@ class FolderItemFolder implements \JsonSerializable
         $this->mtime = $folder->getModificationTime();
         $this->mtimeDisplay = BackendUtility::date($this->mtime) ?? '';
         $this->itemCount = $folder->getFileCount() + count($folder->getSubfolders());
+        $this->permissions = new FolderPermission($folder);
+        $this->icon = PathUtility::getAbsoluteWebPath(
+            GeneralUtility::getFileAbsFileName('EXT:digital_asset_management/Resources/Public/Images/empty.png')
+        );
     }
 
     public function jsonSerialize()
@@ -71,6 +91,8 @@ class FolderItemFolder implements \JsonSerializable
             'mtime' => $this->mtime,
             'mtimeDisplay' => $this->mtimeDisplay,
             'itemCount' => $this->itemCount,
+            'permissions' => $this->permissions,
+            'icon' => $this->icon,
         ];
     }
 }
