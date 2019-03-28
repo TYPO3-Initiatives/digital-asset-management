@@ -83,9 +83,9 @@ export default class ContentPanel extends Vue {
         return (
             <div class='typo3-filelist-contentpanel'>
                 <DocHeader>
-                    <template slot='topBarLeft'><ButtonBar/></template>
-                    <template slot='topBarRight'><SortingSelector/><ViewSelector/></template>
-                    <template slot='bottomBarLeft'><TreeToggle /><Breadcrumb/></template>
+                    <template slot='topBarLeft'><TreeToggle/><ViewSelector/></template>
+                    <template slot='topBarRight'><SortingSelector/></template>
+                    <template slot='bottomBarLeft'><Breadcrumb/></template>
                     <template slot='bottomBarRight'><SelectIndicator/></template>
                 </DocHeader>
                 {this.renderContent()}
@@ -103,9 +103,8 @@ export default class ContentPanel extends Vue {
 
     private renderList(): VNode {
         return (
-            <div className={
-                'module-body t3js-module-body'
-                + (this.readOnly ? ' readonly' : '')
+            <div class={
+                (this.readOnly ? ' readonly' : '')
                 + (this.allItems.length === 0 ? ' empty' : '')
             }>
                 <List items={this.allItems} click={this.open} />
@@ -115,15 +114,14 @@ export default class ContentPanel extends Vue {
 
     private renderTiles(): VNode {
         return (
-          <div className={
-              'module-body t3js-module-body'
-              + (this.readOnly ? ' readonly' : '')
-              + (this.allItems.length === 0 ? ' empty' : '')
-          }>
-            {this.renderFolderTiles()}
-            {this.renderFileTiles()}
-            {this.renderImageTiles()}
-          </div>
+            <div className={
+                (this.readOnly ? ' readonly' : '')
+                + (this.allItems.length === 0 ? ' empty' : '')
+            }>
+                {this.renderFolderTiles()}
+                {this.renderFileTiles()}
+                {this.renderImageTiles()}
+            </div>
         );
     }
 }

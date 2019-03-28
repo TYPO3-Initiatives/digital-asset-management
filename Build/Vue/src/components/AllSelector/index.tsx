@@ -29,18 +29,16 @@ export default class AllSelector extends Vue {
         // fix me, I'm ugly
         return (
             <a href='#' onClick={(event: Event) => this.toggleSelect(event, this.listOfIdentifiers)} class='btn btn-sm btn-default'>
-                <i class='fa fa-check-square' v-show={this.isSelected}></i>
-                <i class='fa fa-square-o' v-show={!this.isSelected}></i>
+                <i class='fa fa-check-square' v-show={this.isSelected} />
+                <i class='fa fa-square-o' v-show={!this.isSelected} />
             </a>
         );
     }
 
     private toggleSelect(event: Event, listOfIdentifiers: Array<String>): void {
         event.stopPropagation();
-        if (this.selected.length > 0) {
-            this.unselectItems(listOfIdentifiers);
-        } else {
-            this.selectItems(listOfIdentifiers);
-        }
+        this.selected.length > 0
+            ? this.unselectItems(listOfIdentifiers)
+            : this.selectItems(listOfIdentifiers);
     }
 }

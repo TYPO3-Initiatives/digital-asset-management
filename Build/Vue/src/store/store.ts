@@ -14,12 +14,12 @@ import {
 } from './mutations';
 import {RootState} from '../../types/types';
 import client from '@/services/http/Typo3Client';
-import {SORT_FIELDS, SORT_ORDER} from '@/components/SortingSelector/SortOptions';
 import {FolderInterface} from '@/interfaces/FolderInterface';
 import {FileInterface} from '@/interfaces/FileInterface';
 import {ImageInterface} from '@/interfaces/ImageInterface';
 import {ViewType} from '@/enums/ViewType';
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
+import {SortingFields, SortingOrder} from '@/enums/Sorting';
 
 Vue.use(Vuex);
 // https://codeburst.io/vuex-and-typescript-3427ba78cfa8
@@ -84,7 +84,7 @@ const options: StoreOptions<RootState> = {
         [TOGGLE_TREE](state: RootState): void {
             state.showTree = !state.showTree;
         },
-        [CHANGE_SORTING](state: RootState, sorting: SORT_FIELDS): void {
+        [CHANGE_SORTING](state: RootState, sorting: SortingFields): void {
             const sortItems = (a: any, b: any) => a[sorting].localeCompare(b[sorting], undefined, {numeric: true, sensitivity: 'base'});
 
             state.sorting.field = sorting;
@@ -93,7 +93,7 @@ const options: StoreOptions<RootState> = {
             state.itemsGrouped.files.sort(sortItems);
             state.itemsGrouped.images.sort(sortItems);
         },
-        [CHANGE_SORTORDER](state: RootState, sortOrder: SORT_ORDER): void {
+        [CHANGE_SORTORDER](state: RootState, sortOrder: SortingOrder): void {
             if (state.sorting.orger !== sortOrder) {
                 state.sorting.order = sortOrder;
                 state.items.reverse();

@@ -23,10 +23,6 @@ export default class List extends Vue {
         super(props);
     }
 
-    private getFirstItem(): {} {
-        return this.items[0] ? this.items[0] : {};
-    }
-
     private render(): VNode {
         const list = this.items.map(this.generateListItem, this);
         const headerColumns: Array<VNode> = [];

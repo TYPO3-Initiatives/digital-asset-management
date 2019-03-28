@@ -26,10 +26,9 @@ export default class TreePanel extends Vue {
         return (
             <div class='typo3-filelist-treepanel'>
                 <DocHeader>
-                    <template slot='topBarLeft'><ButtonBar/></template>
                     <template slot='bottomBarLeft'><StorageSelector/></template>
                 </DocHeader>
-                <div class='module-body t3js-module-body'>
+                <div class=''>
                     <Tree/>
                 </div>
             </div>

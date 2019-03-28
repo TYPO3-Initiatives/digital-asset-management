@@ -52,22 +52,19 @@ export default class Tile extends Vue {
             onClick = () => this.click(item.identifier, item.type);
         }
         return (
-          <div class={classes}
-            onClick={onClick}
-            data-identifier={item.identifier}
-          >
-              <div class='tile-content'>
-                  <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
-                  <span class='tile-image-container'>
+            <div class={classes} onClick={onClick} data-identifier={item.identifier}>
+                <div class='tile-content'>
+                    <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
+                    <span class='tile-image-container'>
                         <img src={item.icon} class='tile-image'/>
                         <span class='tile-image-meta file-count' v-show={item.itemCount}>{item.itemCount}</span>
                     </span>
-              </div>
-              <div className='tile-title'>
-                  <span class='tile-header'>{item.name}</span><br/>
-                  <span class='tile-image-meta file-mtime' v-show={item.mtimeDisplay}>{item.mtimeDisplay}</span>
-              </div>
-          </div>
+                </div>
+                <div className='tile-title'>
+                    <span class='tile-header'>{item.name}</span><br/>
+                    <span class='tile-image-meta file-mtime' v-show={item.mtimeDisplay}>{item.mtimeDisplay}</span>
+                </div>
+            </div>
         );
     }
 
@@ -82,21 +79,18 @@ export default class Tile extends Vue {
             onClick = () => this.click(item.identifier, item.type);
         }
         return (
-          <div class={classes}
-            onClick={onClick}
-            data-identifier={item.identifier}
-          >
-              <div class='tile-content'>
-                  <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
-                  <span class='tile-image-container'>
+            <div class={classes} onClick={onClick} data-identifier={item.identifier}>
+                <div class='tile-content'>
+                    <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
+                    <span class='tile-image-container'>
                         <img src={item.iconIdentifier} class='tile-image'/>
                     </span>
-              </div>
-              <div className='tile-title'>
-                  <span class='tile-header'>{this.item.name}</span><br/>
-                  <span class='tile-image-meta file-mtime' v-show={item.mtimeDisplay}>{item.mtimeDisplay}</span>
-              </div>
-          </div>
+                </div>
+                <div className='tile-title'>
+                    <span class='tile-header'>{this.item.name}</span><br/>
+                    <span class='tile-image-meta file-mtime' v-show={item.mtimeDisplay}>{item.mtimeDisplay}</span>
+                </div>
+            </div>
         );
     }
 
@@ -111,17 +105,14 @@ export default class Tile extends Vue {
             onClick = () => this.click(item.identifier, item.type);
         }
         return (
-          <div class={classes}
-            onClick={onClick}
-            data-identifier={item.identifier}
-          >
-             <div class='tile-content'>
-                <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
-                <span class='tile-image-container'>
-                  <img src={item.thumbnailUrl} class='tile-thumbnail'/>
-                </span>
-              </div>
-          </div>
+            <div class={classes} onClick={onClick} data-identifier={item.identifier}>
+                <div class='tile-content'>
+                    <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
+                    <span class='tile-image-container'>
+                        <img src={item.thumbnailUrl} class='tile-thumbnail'/>
+                    </span>
+                </div>
+            </div>
         );
     }
 }
