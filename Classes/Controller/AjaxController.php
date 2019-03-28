@@ -20,7 +20,9 @@ use TYPO3\CMS\DigitalAssetManagement\Entity\FileMount;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemFolder;
 use TYPO3\CMS\DigitalAssetManagement\Entity\Storage;
 use TYPO3\CMS\DigitalAssetManagement\Exception\ControllerException;
+use TYPO3\CMS\DigitalAssetManagement\Http\FolderItemsResponse;
 use TYPO3\CMS\DigitalAssetManagement\Http\JsonExceptionResponse;
+use TYPO3\CMS\DigitalAssetManagement\Http\StoragesAndMountsResponse;
 
 /**
  * Main API endpoint. These are ajax actions called by JS side.
@@ -54,21 +56,19 @@ class AjaxController
             if (!$folderObject instanceof Folder) {
                 throw new ControllerException('Identifier is not a folder', 1553701684);
             }
-            $data = [
-                'folders' => [],
-                'files' => [],
-                'images' => [],
-            ];
             $subFolders = $folderObject->getSubfolders();
+            $folders = [];
+            $files = [];
+            $images = [];
             foreach ($subFolders as $subFolder) {
-                $data['folders'][] = new FolderItemFolder($subFolder);
+                $folders[] = new FolderItemFolder($subFolder);
             }
+            return new FolderItemsResponse($folders, $files, $images);
         } catch (ResourceException $e) {
             return new JsonExceptionResponse($e);
         } catch (ControllerException $e) {
             return new JsonExceptionResponse($e);
         }
-        return new JsonResponse($data);
     }
 
     /**
@@ -84,20 +84,20 @@ class AjaxController
     {
         $backendUser = $this->getBackendUser();
         $storages = $backendUser->getFileStorages();
-        $data = [];
+        $entities = [];
         if ($backendUser->isAdmin()) {
             foreach ($storages as $storage) {
-                $data[] = new Storage($storage);
+                $entities[] = new Storage($storage);
             }
         } else {
             foreach ($storages as $storage) {
                 $fileMounts = $storage->getFileMounts();
                 foreach ($fileMounts as $fileMount) {
-                    $data[] = new FileMount($storage, $fileMount);
+                    $entities[] = new FileMount($storage, $fileMount);
                 }
             }
         }
-        return new JsonResponse($data);
+        return new StoragesAndMountsResponse($entities);
     }
 
     /**

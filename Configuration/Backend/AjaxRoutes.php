@@ -1,7 +1,7 @@
 <?php
 return [
     'damGetFolderItems' => [
-        'path' => '/dam/getGetFolderItems',
+        'path' => '/dam/getFolderItems',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::getFolderItemsAction',
     ],
     'damGetStoragesAndMounts' => [
