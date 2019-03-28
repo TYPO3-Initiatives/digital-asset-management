@@ -7,5 +7,6 @@ export const NAVIGATE = 'NAVIGATE';
 export const SWITCH_VIEW = 'SWITCH_VIEW';
 export const CHANGE_SORTORDER = 'CHANGE_SORTORDER';
 export const CHANGE_SORTING = 'CHANGE_SORTING';
+export const SET_STORAGE = 'SET_STORAGE';
 export const TOGGLE_TREE = 'TOGGLE_TREE';
 export const FETCH_TREE_DATA = 'FETCH_TREE_DATA';

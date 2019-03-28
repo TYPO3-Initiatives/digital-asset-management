@@ -2,6 +2,7 @@ import FolderTreeNode from '@/models/FolderTreeNode';
 import Vue from 'vue';
 import Vuex, {StoreOptions} from 'vuex';
 import {
+    SET_STORAGE,
     SELECT_ITEM,
     FETCH_DATA,
     UNSELECT_ITEM,
@@ -28,6 +29,7 @@ Vue.use(Vuex);
 // further type definitions missing, just an example on how to use the store.
 const options: StoreOptions<RootState> = {
     state: {
+        storage: '1:/',
         selected: [],
         itemsGrouped: {
             folders: [],
@@ -61,6 +63,9 @@ const options: StoreOptions<RootState> = {
             state.itemsGrouped.folders.sort(sortItems);
             state.itemsGrouped.files.sort(sortItems);
             state.itemsGrouped.images.sort(sortItems);
+        },
+        [SET_STORAGE](state: RootState, identifier: string): void {
+            state.storage = identifier;
         },
         [SELECT_ITEM](state: RootState, identifier: String): void {
             if (!state.selected.includes(identifier)) {
@@ -162,6 +167,11 @@ const options: StoreOptions<RootState> = {
             }
             const response = await client.get(endpoint);
             commit(FETCH_TREE_DATA, {identifier: identifier, folders: response.data});
+        },
+        async [SET_STORAGE]({commit, dispatch}: any, identifier: string): Promise<any> {
+            commit(SET_STORAGE, identifier);
+            dispatch(AjaxRoutes.damGetFolderItems, identifier);
+            dispatch(FETCH_TREE_DATA, identifier);
         },
     },
 };

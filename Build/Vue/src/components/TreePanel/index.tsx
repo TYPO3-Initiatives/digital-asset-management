@@ -9,9 +9,6 @@ import {State} from 'vuex-class';
 @Component
 export default class TreePanel extends Vue {
     @State
-    tree!: any;
-
-    @State
     showTree!: boolean;
 
     constructor(props: any) {
@@ -34,7 +31,7 @@ export default class TreePanel extends Vue {
                     <template slot='bottomBarLeft'><StorageSelector/></template>
                 </DocHeader>
                 <div class='module-body t3js-module-body'>
-                    <Tree data={this.tree}></Tree>
+                    <Tree></Tree>
                 </div>
             </div>
         );

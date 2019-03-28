@@ -3,31 +3,33 @@ import {FETCH_TREE_DATA} from '@/store/mutations';
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {CreateElement, VNode} from 'vue';
 import TreeNode from '@/components/TreeNode';
-import {Action} from 'vuex-class';
+import {Action, State} from 'vuex-class';
 
 @Component
 export default class Tree extends Vue {
     @Action(FETCH_TREE_DATA)
     fetchTreeData: any;
 
-    @Prop()
-    data!: any;
+    @State
+    tree!: any;
+
+    @State
+    storage!: string;
 
     constructor(props: any) {
         super(props);
     }
 
-    // lifecycle method
     mounted(): void {
-        this.fetchTreeData('1:/');
+        this.fetchTreeData(this.storage);
     }
 
     private render(h: CreateElement): VNode|null {
-        if (!this.data) {
+        if (!this.tree) {
             return null;
         }
 
-        const nodes = [this.data].map(this.generateNodes, this);
+        const nodes = [this.tree].map(this.generateNodes, this);
         return(
             <ul class='list-tree list-tree-root'><li>{nodes}</li></ul>
         );

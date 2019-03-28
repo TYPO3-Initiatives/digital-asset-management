@@ -1,6 +1,7 @@
 import {GroupedResourcesInterface} from '@/interfaces/GroupedResourcesInterface';
 
 export interface RootState {
+    storage: string;
     selected: Array<String>; // Array<String == FileIdentifier>
     itemsGrouped: GroupedResourcesInterface;
     items: any; // Array<File>
