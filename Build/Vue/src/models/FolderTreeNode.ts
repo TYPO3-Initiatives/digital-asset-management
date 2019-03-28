@@ -1,5 +1,5 @@
 export default interface FolderTreeNode {
-    text: string;
+    name: string;
     identifier: string;
     icon: any;
     expanded: boolean;

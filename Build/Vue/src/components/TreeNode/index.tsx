@@ -22,17 +22,22 @@ export default class TreeNode extends Vue {
         super(props);
     }
 
-    private render(h: CreateElement): VNode {
+    // lifecycle method
+    mounted(): void {
         if (this.$props.node.expanded) {
             this.fetchTreeData(this.$props.node.identifier);
         }
+    }
+
+    private render(h: CreateElement): VNode {
+        const controlClassName = 'list-tree-control ' + (this.node.expanded ? 'list-tree-control-open' : 'list-tree-control-closed');
         return(
-            <span>
-                <a href='#' v-show={this.node.hasChildren} onclick={(event: Event) => this.toggleNode(event, this.$props.node)}>
-                    [{ this.node.expanded ? '-' : '+' }]
+            <span class='list-tree-group'>
+                <a class={controlClassName} href='#' v-show={this.node.hasChildren} onclick={() => this.toggleNode(this.$props.node)}>
+                    <i class='fa'></i>
                 </a>
-                <a href='#' data-identifier={this.node.identifier} onclick={(event: Event) => this.openNode(this.$props.node.identifier)}>
-                    <img src={this.node.icon} width='16' height='16' /> {this.node.text}
+                <a href='#' data-identifier={this.node.identifier} onclick={() => this.openNode(this.$props.node.identifier)}>
+                    <img src={this.node.icon} width='16' height='16' /> {this.node.name}
                 </a>
             </span>
         );
@@ -48,14 +53,20 @@ export default class TreeNode extends Vue {
     /**
      * Called by TreeNode
      *
-     * @param {Event} e
      * @param {FolderTreeNode} node
      */
-    private toggleNode(e: Event, node: FolderTreeNode): void {
-        if (!node.expanded && node.hasChildren && !node.children.length) {
-            this.fetchTreeData(node.identifier);
-        }
-
+    private toggleNode(node: FolderTreeNode): void {
         node.expanded = !node.expanded;
+
+        if (node.expanded) {
+            if (node.hasChildren && !node.children.length) {
+                this.fetchTreeData(node.identifier);
+            }
+        } else {
+            // Collapse all children
+            for (let nodeToCollapse of node.children.filter((child: FolderTreeNode) => child.expanded)) {
+                this.toggleNode(nodeToCollapse);
+            }
+        }
     }
 }

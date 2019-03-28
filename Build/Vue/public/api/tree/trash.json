@@ -1,6 +1,6 @@
 [
   {
-    "text": "Buy it",
+    "name": "Buy it",
     "identifier": "1:/folder/trash/buyit",
     "icon": "http://master.ddev.local/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder-locked.svg",
     "state": {
@@ -10,49 +10,49 @@
     "hasChildren": false
   },
   {
-    "text": "Use it ",
+    "name": "Use it ",
     "identifier": "1:/folder/trash/useit/",
     "icon": "http://master.ddev.local/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder-default.svg",
     "expanded": false,
     "hasChildren": false
   },
   {
-    "text": "Break it",
+    "name": "Break it",
     "identifier": "1:/folder/trash/breakit",
     "icon": "http://master.ddev.local/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder-recycler.svg",
     "expanded": false,
     "hasChildren": false
   },
   {
-    "text": "Fix it",
+    "name": "Fix it",
     "identifier": "1:/folder/trash/fixit",
     "icon": "http://master.ddev.local/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder-recycler.svg",
     "expanded": false,
     "hasChildren": false
   },
   {
-    "text": "Trash it",
+    "name": "Trash it",
     "identifier": "1:/folder/trash/trashit",
     "icon": "http://master.ddev.local/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder-recycler.svg",
     "expanded": false,
     "hasChildren": false
   },
   {
-    "text": "Change it",
+    "name": "Change it",
     "identifier": "1:/folder/trash/changeit",
     "icon": "http://master.ddev.local/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder-recycler.svg",
     "expanded": false,
     "hasChildren": false
   },
   {
-    "text": "Mail",
+    "name": "Mail",
     "identifier": "1:/folder/trash/mail",
     "icon": "http://master.ddev.local/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder-recycler.svg",
     "expanded": false,
     "hasChildren": false
   },
   {
-    "text": "Upgrade it",
+    "name": "Upgrade it",
     "identifier": "1:/folder/trash/upgradeit",
     "icon": "http://master.ddev.local/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder-user.svg",
     "expanded": false,

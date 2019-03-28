@@ -3,9 +3,7 @@ import {FETCH_TREE_DATA} from '@/store/mutations';
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {CreateElement, VNode} from 'vue';
 import TreeNode from '@/components/TreeNode';
-import {Action, State} from 'vuex-class';
-// query: tree
-// render TYPO3 SVG Tree component
+import {Action} from 'vuex-class';
 
 @Component
 export default class Tree extends Vue {
@@ -31,13 +29,13 @@ export default class Tree extends Vue {
 
         const nodes = [this.data].map(this.generateNodes, this);
         return(
-            <div>{nodes}</div>
+            <ul class='list-tree list-tree-root'><li>{nodes}</li></ul>
         );
     }
 
     private generateNodes(nodeCollection: any): VNode {
         const collection = nodeCollection.map(this.generateNode, this);
-        return(<ul>{collection}</ul>);
+        return(<ul class='list-tree'>{collection}</ul>);
     }
 
     private generateNode(node: FolderTreeNode): VNode {

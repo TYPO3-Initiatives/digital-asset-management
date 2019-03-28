@@ -1,20 +1,20 @@
 [
   {
-    "text": "Folder 1",
+    "name": "Folder 1",
     "identifier": "1:/folder/",
     "icon": "http://master.ddev.local/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder-default.svg",
     "expanded": false,
     "hasChildren": false
   },
   {
-    "text": "Folder 2",
+    "name": "Folder 2",
     "identifier": "1:/folder_2/",
     "icon": "http://master.ddev.local/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder-default.svg",
     "expanded": true,
     "hasChildren": true
   },
   {
-    "text": "Folder 3",
+    "name": "Folder 3",
     "identifier": "1:/folder_3/",
     "icon": "http://master.ddev.local/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-folder-default.svg",
     "expanded": false,
