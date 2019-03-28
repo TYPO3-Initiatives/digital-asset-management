@@ -9,9 +9,11 @@ export default class StorageSelector extends Vue {
 
     private render(): VNode {
         return (
-            <div><select>
-                <option>StorageSelector</option>
-            </select></div>
+            <div class='storage-selector'>
+                <select class='form-control'>
+                    <option>StorageSelector</option>
+                </select>
+            </div>
         );
     }
 }
