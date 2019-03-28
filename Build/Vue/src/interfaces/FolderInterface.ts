@@ -1,12 +1,6 @@
-import {ResourcePermissionsInterface} from '@/interfaces/ResourcePermissionsInterface';
+import {ResourceInterface} from '@/interfaces/ResourceInterface';
 
-export interface FolderInterface {
-  type: string;
-  name: string;
-  mtime: number;
-  mtimeDisplay: string;
+export interface FolderInterface extends ResourceInterface {
   itemCount: number;
-  permissions: ResourcePermissionsInterface;
-  identifier: string;
   icon: string;
 }

@@ -32,17 +32,7 @@ export default class Tiles extends Vue {
 
     private generateTile(item: any): VNode {
         return (
-            <Tile
-                identifier={item.identifier}
-                header={item.name}
-                fileCount={item.fileCount}
-                mtime={item.mtime}
-                mtimeDisplay={item['mtime-display']}
-                click={this.click}
-                type={item.type}
-                icon={item.icon}
-                thumbnail={item.thumbnail || null}
-            />
+            <Tile item={item} click={this.click} />
         );
     }
 }

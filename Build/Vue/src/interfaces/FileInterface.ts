@@ -1,17 +1,11 @@
-import {ResourcePermissionsInterface} from '@/interfaces/ResourcePermissionsInterface';
+import {ResourceInterface} from '@/interfaces/ResourceInterface';
 
-export interface FileInterface {
-  type: string;
-  name: string;
-  mtime: number;
-  mtimeDisplay: string;
+export interface FileInterface extends ResourceInterface {
   size: number;
   sizeDisplay: string;
   extension: string;
   translations: Array<any>;
   references: number;
-  permissions: ResourcePermissionsInterface;
-  identifier: string;
   iconIdentifier: string;
   editMetaUrl: string;
   editContentUrl: string;
