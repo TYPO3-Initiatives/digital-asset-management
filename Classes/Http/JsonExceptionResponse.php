@@ -20,7 +20,6 @@ class JsonExceptionResponse extends JsonResponse
     public function __construct(\Exception $e)
     {
         $data = [
-            'type' => 'exception',
             'errorMessage' => $e->getMessage(),
             'errorCode' => $e->getCode(),
             'errorClass' => get_class($e),

@@ -54,12 +54,12 @@ class AjaxController
             if (!$folderObject instanceof Folder) {
                 throw new ControllerException('Identifier is not a folder', 1553701684);
             }
-            $subFolders = $folderObject->getSubfolders();
             $data = [
                 'folders' => [],
                 'files' => [],
                 'images' => [],
             ];
+            $subFolders = $folderObject->getSubfolders();
             foreach ($subFolders as $subFolder) {
                 $data['folders'][] = new FolderItemFolder($subFolder);
             }
