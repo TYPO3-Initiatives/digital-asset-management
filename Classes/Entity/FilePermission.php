@@ -13,7 +13,7 @@ use TYPO3\CMS\Core\Resource\File;
 
 /**
  * Immutable permission object, used by FileItemFolder
- * entity to represent permissions of files.
+ * entity to represent permissions of files including image files.
  */
 class FilePermission implements \JsonSerializable
 {
