@@ -50,8 +50,12 @@ export default class Tile extends Vue {
         if (this.isSelected) {
             classes += ' selected';
         }
+        const clickFunction = (e: Event) => {
+            e.stopPropagation();
+            this.openFolder(item.identifier);
+        };
         return (
-            <div class={classes} onClick={this.openFolder(item.identifier)} data-identifier={item.identifier}>
+            <div class={classes} onClick={clickFunction} data-identifier={item.identifier}>
                 <div class='tile-content'>
                     <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
                     <span class='tile-image-container'>

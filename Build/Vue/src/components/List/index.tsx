@@ -1,7 +1,6 @@
 import {Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {State} from 'vuex-class';
-import Tile from '@/components/Tile';
 import Component from 'vue-class-component';
 import ListItem from '@/components/ListItem';
 import AllSelector from '@/components/AllSelector';
@@ -10,9 +9,6 @@ import AllSelector from '@/components/AllSelector';
 export default class List extends Vue {
     @Prop()
     items: any;
-
-    @Prop()
-    click!: Function;
 
     @State
     current: any;
@@ -48,7 +44,6 @@ export default class List extends Vue {
             <ListItem
                 identifier={item.identifier}
                 item={item}
-                click={this.click}
                 visibleColumns={this.visibleColumns}
             />
         );

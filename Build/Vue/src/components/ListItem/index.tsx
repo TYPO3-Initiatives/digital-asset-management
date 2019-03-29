@@ -1,8 +1,9 @@
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
-import {State} from 'vuex-class';
+import {Action, State} from 'vuex-class';
 import ItemSelector from '@/components/ItemSelector';
 import {FileType} from '@/enums/FileType';
+import {AjaxRoutes} from '@/enums/AjaxRoutes';
 
 @Component
 export default class ListItem extends Vue {
@@ -10,6 +11,9 @@ export default class ListItem extends Vue {
     get isSelected(): boolean {
         return this.selected.includes(this.identifier);
     }
+
+    @Action(AjaxRoutes.damGetFolderItems)
+    fetchData: any;
 
     @State
     selected!: Array<object>;
@@ -23,23 +27,18 @@ export default class ListItem extends Vue {
     @Prop()
     item!: any;
 
-    @Prop()
-    click!: Function;
-
     constructor(props: any) {
         super(props);
     }
 
+    private openFolder(identifier: String): void {
+        this.fetchData(identifier);
+    }
+
     private render(): VNode {
-        // fix me, I'm ugly
         let classes = 'list-item ';
         if (this.isSelected) {
             classes += ' selected';
-        }
-        // noop
-        let onClick = () => null;
-        if (this.click) {
-            onClick = () => this.click(this.identifier, this.item.type);
         }
 
         const columns: Array<VNode> = [];
@@ -49,9 +48,21 @@ export default class ListItem extends Vue {
                 let val: any = this.item[fieldName] || '';
                 if (fieldName === 'name') {
                     if (this.item.type === FileType.FOLDER) {
-                        columns.push(<td><img src={this.item.icon} height='16' /> <a href='#' onClick={onClick}>{val}</a></td>);
+                        const clickFunction = (e: Event) => {
+                            e.stopPropagation();
+                            this.openFolder(this.item.identifier);
+                        };
+                        columns.push(
+                          <td>
+                              <img src={this.item.icon} height='16' />
+                              <a href='#' onClick={clickFunction}>{val}</a>
+                          </td>);
                     } else {
-                        columns.push(<td><img src={this.item.icon} height='16' /> <a href={this.item.editUrl}>{val}</a></td>);
+                        columns.push(
+                          <td>
+                              <img src={this.item.icon} height='16' />
+                              <a href={this.item.editMetaUrl}>{val}</a>
+                          </td>);
                     }
                 } else if (fieldName === 'references' && val > 0) {
                     const clickFunction = (e: Event) => {
@@ -68,9 +79,7 @@ export default class ListItem extends Vue {
         }
 
         return (
-            <tr class={classes}
-                data-identifier={this.identifier}
-            >
+            <tr class={classes} data-identifier={this.identifier}>
                 <th><ItemSelector identifier={this.identifier}/></th>
                 {columns}
             </tr>

@@ -8,7 +8,7 @@ import {ResourceInterface} from '@/interfaces/ResourceInterface';
 @Component
 export default class Tiles extends Vue {
     @Prop()
-    items: Array<ResourceInterface> = [];
+    items!: Array<ResourceInterface>;
 
     @State
     current: any;
