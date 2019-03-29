@@ -21,6 +21,7 @@ use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemFile;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemFolder;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemImage;
 use TYPO3\CMS\DigitalAssetManagement\Entity\Storage;
+use TYPO3\CMS\DigitalAssetManagement\Entity\TreeItemFolder;
 use TYPO3\CMS\DigitalAssetManagement\Exception\ControllerException;
 use TYPO3\CMS\DigitalAssetManagement\Http\FolderItemsResponse;
 use TYPO3\CMS\DigitalAssetManagement\Http\JsonExceptionResponse;
