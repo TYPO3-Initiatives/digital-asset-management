@@ -24,12 +24,12 @@ export default class SortingSelector extends Vue {
                     {Object.values(SortingFields).map((field: String) => {
                         return <option>{field}</option>;
                     })}
-                  </select>
-                  <select class='form-control' onChange={(e: Event) => this.changeSortOrder((e.target as HTMLSelectElement).value)}>
-                  {Object.values(SortingOrder).map((field: String) => {
-                      return <option>{field}</option>;
-                  })}
-                  </select>
+                    </select>
+                    <select class='form-control' onChange={(e: Event) => this.changeSortOrder((e.target as HTMLSelectElement).value)}>
+                    {Object.values(SortingOrder).map((field: String) => {
+                        return <option>{field}</option>;
+                    })}
+                    </select>
                 </div>
             </div>
         );

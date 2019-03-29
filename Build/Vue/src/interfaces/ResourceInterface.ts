@@ -7,4 +7,5 @@ export interface ResourceInterface {
   mtime: number;
   mtimeDisplay: string;
   permissions: ResourcePermissionsInterface;
+  [key: string]: any;
 }
