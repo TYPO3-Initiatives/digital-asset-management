@@ -1,10 +1,6 @@
-export interface FolderInterface {
-  type: string;
-  name: string;
-  mtime: number;
-  mtimeDisplay: string;
-  fileCount: number;
-  permissions: Array<string>;
-  identifier: string;
+import {ResourceInterface} from '@/interfaces/ResourceInterface';
+
+export interface FolderInterface extends ResourceInterface {
+  itemCount: number;
   icon: string;
 }

@@ -19,6 +19,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FileMount;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemFile;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemFolder;
+use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemImage;
 use TYPO3\CMS\DigitalAssetManagement\Entity\Storage;
 use TYPO3\CMS\DigitalAssetManagement\Exception\ControllerException;
 use TYPO3\CMS\DigitalAssetManagement\Http\FolderItemsResponse;
@@ -60,15 +61,22 @@ class AjaxController
             $subFolders = $folderObject->getSubfolders();
             $folders = [];
             foreach ($subFolders as $subFolder) {
-                $request->getAttribute('normalizedParams');
                 $folders[] = new FolderItemFolder($subFolder);
             }
             $allFiles = $folderObject->getFiles();
             $files = [];
-            foreach ($allFiles as $file) {
-                $files[] = new FolderItemFile($file);
-            }
             $images = [];
+            foreach ($allFiles as $file) {
+                // If file is an image or media, create image object, else file object
+                $fileExtension = strtolower($file->getExtension());
+                if (GeneralUtility::inList($GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'], $fileExtension)
+                    || GeneralUtility::inList($GLOBALS['TYPO3_CONF_VARS']['GFX']['mediafile_ext'], $fileExtension)
+                ) {
+                    $images[] = new FolderItemImage($file);
+                } else {
+                    $files[] = new FolderItemFile($file);
+                }
+            }
             return new FolderItemsResponse($folders, $files, $images);
         } catch (ResourceException $e) {
             return new JsonExceptionResponse($e);

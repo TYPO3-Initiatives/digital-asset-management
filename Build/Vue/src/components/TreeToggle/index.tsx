@@ -14,8 +14,8 @@ export default class TreeToggle extends Vue {
 
     private render(): VNode {
         return (
-            <div>
-                <button onClick={this.toggleTree}>Show / Hide Tree</button>
+            <div class='btn-group' role='group'>
+                <button onClick={this.toggleTree} class='btn btn-default'><i class='fa fa-fw fa-tree' /></button>
             </div>
         );
     }

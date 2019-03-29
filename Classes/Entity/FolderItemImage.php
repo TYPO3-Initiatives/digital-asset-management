@@ -16,19 +16,19 @@ use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Filelist\Configuration\ThumbnailConfiguration;
 
 /**
- * Immutable file object (not an image recognized by TYPO3), used by getFolderItemsAction().
+ * Immutable image object (a file recognized as image by TYPO3), used by getFolderItemsAction().
  *
- * @see FolderItemFolder
- * @see FolderItemImage
+ * @see FolderItemFile
  */
-class FolderItemFile implements \JsonSerializable
+class FolderItemImage implements \JsonSerializable
 {
     /**
-     * @var string Always set to "file"
+     * @var string Always set to "image"
      */
-    protected $type = 'file';
+    protected $type = 'image';
 
     /**
      * @var int FAL identifier, eg. "42:/path/to/file"
@@ -81,11 +81,6 @@ class FolderItemFile implements \JsonSerializable
     protected $references;
 
     /**
-     * @var string Icon identifier matching mime type or extension, eg. "mimetypes-text-text"
-     */
-    protected $iconIdentifier;
-
-    /**
      * Url to edit meta data of file, eg.
      * "/typo3/index.php?route=/record/edit&token=06db97b96d1e73ec14bf5d1f35604b20843d54f4&edit[sys_file_metadata][108]=edit"
      *
@@ -94,44 +89,46 @@ class FolderItemFile implements \JsonSerializable
     protected $editMetaUrl;
 
     /**
-     * Url to edit editable files like text files. Empty if file is not editable. eg. ""
+     * Url to get thumbnail of image, eg.
+     * "/typo3/index.php?route=/thumbnails&token=2ef7aa2f65b713771165b3dba9fb2f2aee6d6005&parameters=..."
      *
-     * @todo Not yet implemented
      * @var string
      */
-    protected $editContentUrl;
+    protected $thumbnailUrl;
 
     /**
-     * @param File $file
+     * @param File $image
      */
-    public function __construct(File $file)
+    public function __construct(File $image)
     {
-        $this->identifier = $file->getCombinedIdentifier();
-        $this->name = $file->getName();
-        $this->mtime = $file->getModificationTime();
+        $this->identifier = $image->getCombinedIdentifier();
+        $this->name = $image->getName();
+        $this->mtime = $image->getModificationTime();
         $this->mtimeDisplay = BackendUtility::date($this->mtime) ?? '';
-        $this->permissions = new FilePermission($file);
-        $this->extension = $file->getExtension();
-        $this->size = $file->getSize();
+        $this->permissions = new FilePermission($image);
+        $this->extension = $image->getExtension();
+        $this->size = $image->getSize();
         $this->sizeDisplay = GeneralUtility::formatSize(
             $this->size,
             $this->getLanguageService()->sL('LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:byteSizeUnits')
         );
         $this->translations = [];
-        $this->references = (int)BackendUtility::referenceCount('sys_file', $file->getUid());
-        $this->iconIdentifier = GeneralUtility::makeInstance(IconFactory::class)
-            ->getIconForResource($file, Icon::SIZE_SMALL)
-            ->getIdentifier();
+        $this->references = (int)BackendUtility::referenceCount('sys_file', $image->getUid());
         $urlParameters = [
             'edit' => [
                 'sys_file_metadata' => [
-                    $file->getMetaData()['uid'] => 'edit',
+                    $image->getMetaData()['uid'] => 'edit',
                 ]
             ],
         ];
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $this->editMetaUrl = (string)$uriBuilder->buildUriFromRoute('record_edit', $urlParameters);
-        $this->editContentUrl = '';
+        // @todo: This use an internal class of ext:filelist
+        $thumbnailConfiguration = GeneralUtility::makeInstance(ThumbnailConfiguration::class);
+        $this->thumbnailUrl = BackendUtility::getThumbnailUrl($image->getUid(), [
+            'width' => $thumbnailConfiguration->getWidth(),
+            'height' => $thumbnailConfiguration->getHeight()
+        ]);
     }
 
     public function jsonSerialize()
@@ -148,9 +145,8 @@ class FolderItemFile implements \JsonSerializable
             'sizeDisplay' => $this->sizeDisplay,
             'translations' => $this->translations,
             'references' => $this->references,
-            'iconIdentifier' => $this->iconIdentifier,
             'editMetaUrl' => $this->editMetaUrl,
-            'editContentUrl' => $this->editContentUrl,
+            'thumbnailUrl' => $this->thumbnailUrl,
         ];
     }
 

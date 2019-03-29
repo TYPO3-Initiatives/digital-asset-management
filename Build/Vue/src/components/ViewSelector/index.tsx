@@ -24,34 +24,17 @@ export default class ViewSelector extends Vue {
         this.switch(newView);
     }
 
-    private getTileViewSelected(): VNode {
-        return (
-            <select onChange={(event: Event) => this.changeView((event.target as HTMLSelectElement).value)}>
-                <option value={ViewType.TILE} selected>Tiles</option>
-                <option value={ViewType.LIST}>List</option>
-            </select>
-        );
-    }
-
-    private getListViewSelected(): VNode {
-        return (
-            <select onChange={(event: Event) => this.changeView((event.target as HTMLSelectElement).value)}>
-                <option value={ViewType.TILE}>Tiles</option>
-                <option value={ViewType.LIST} selected>List</option>
-            </select>
-        );
-    }
-
     private render(): VNode {
-        let options;
-        if (this.currentViewMode === ViewType.TILE) {
-            options = this.getTileViewSelected();
-        } else {
-            options = this.getListViewSelected();
-        }
+        const tileSelected: string = this.currentViewMode === ViewType.TILE ? 'active' : '';
+        const listSelected: string = this.currentViewMode === ViewType.LIST ? 'active' : '';
         return (
-            <div>
-                {options}
+            <div class='btn-group' role='group'>
+                <button class={'btn btn-default ' + listSelected} onclick={(event: Event) => this.changeView(ViewType.LIST)}>
+                    <i class='fa fa-fw fa-list' />
+                </button>
+                <button class={'btn btn-default ' + tileSelected} onclick={(event: Event) => this.changeView(ViewType.TILE)}>
+                    <i class='fa fa-fw fa-th' />
+                </button>
             </div>
         );
     }

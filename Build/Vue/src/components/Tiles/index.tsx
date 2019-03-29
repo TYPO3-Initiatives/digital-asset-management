@@ -3,14 +3,12 @@ import {VNode} from 'vue';
 import {State} from 'vuex-class';
 import Tile from '@/components/Tile';
 import Component from 'vue-class-component';
+import {ResourceInterface} from '@/interfaces/ResourceInterface';
 
 @Component
 export default class Tiles extends Vue {
     @Prop()
-    items: any;
-
-    @Prop()
-    click!: Function;
+    items!: Array<ResourceInterface>;
 
     @State
     current: any;
@@ -30,19 +28,9 @@ export default class Tiles extends Vue {
         );
     }
 
-    private generateTile(item: any): VNode {
+    private generateTile(item: ResourceInterface): VNode {
         return (
-            <Tile
-                identifier={item.identifier}
-                header={item.name}
-                fileCount={item.fileCount}
-                mtime={item.mtime}
-                mtimeDisplay={item['mtime-display']}
-                click={this.click}
-                type={item.type}
-                icon={item.icon}
-                thumbnail={item.thumbnail || null}
-            />
+            <Tile item={item} />
         );
     }
 }

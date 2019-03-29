@@ -1,12 +1,11 @@
-export interface FileInterface {
-  type: string;
-  name: string;
-  mtime: number;
-  mtimeDisplay: string;
+import {ResourceInterface} from '@/interfaces/ResourceInterface';
+
+export interface FileInterface extends ResourceInterface {
   size: number;
   sizeDisplay: string;
-  permissions: Array<string>;
-  identifier: string;
+  extension: string;
+  translations: Array<any>;
+  references: number;
   iconIdentifier: string;
   editMetaUrl: string;
   editContentUrl: string;

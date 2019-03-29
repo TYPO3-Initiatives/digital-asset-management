@@ -1,13 +1,5 @@
-export interface ImageInterface {
-  type: string;
-  name: string;
-  mtime: number;
-  mtimeDisplay: string;
-  size: number;
-  sizeDisplay: string;
-  permissions: Array<string>;
-  identifier: string;
-  editMetaUrl: string;
-  editContentUrl: string;
+import {FileInterface} from '@/interfaces/FileInterface';
+
+export interface ImageInterface extends FileInterface {
   thumbnailUrl: string;
 }

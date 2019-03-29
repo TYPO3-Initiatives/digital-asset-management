@@ -93,7 +93,6 @@
       "identifier": "1:/foo/bar/3.txt",
       "iconIdentifier": "mimetypes-text-text",
       "editMetaUrl": "/typo3/index.php?route=formEngineFoo",
-      "editContentUrl": "/typo3/index.php?route=formEngineFoo"
     }
   ],
   "images": [
@@ -107,11 +106,13 @@
       "extension": "png",
       "translations": [],
       "references": 1,
-      "permissions": "RW",
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
       "identifier": "1:/foo/bar/somefile.png",
-      "icon": "http://localhost:8080/testfiles/somefile.png",
       "thumbnail": "http://localhost:8080/testfiles/somefile.png",
-      "editUrl": "<URL TO EDIT DOCUMENT>"
+      "editMetaUrl": "/typo3/index.php?route=formEngineFoo"
     }, {
       "name": "somefile2.png",
       "mtime": "1553687031",
@@ -122,11 +123,13 @@
       "extension": "png",
       "translations": [],
       "references": 0,
-      "permissions": "RW",
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
       "identifier": "1:/foo/bar/somefile2.png",
-      "icon": "http://localhost:8080/testfiles/somefile2.png",
       "thumbnail": "http://localhost:8080/testfiles/somefile2.png",
-      "editUrl": "<URL TO EDIT DOCUMENT>"
+      "editMetaUrl": "/typo3/index.php?route=formEngineFoo"
     }, {
       "name": "3.jpg",
       "mtime": "1553687030",
@@ -137,11 +140,13 @@
       "extension": "png",
       "translations": [],
       "references": 0,
-      "permissions": "RW",
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
       "identifier": "1:/foo/bar/3.jpg",
-      "icon": "http://localhost:8080/testfiles/3.jpg",
       "thumbnail": "http://localhost:8080/testfiles/3.jpg",
-      "editUrl": "<URL TO EDIT DOCUMENT>"
+      "editMetaUrl": "/typo3/index.php?route=formEngineFoo"
     }
   ]
 }

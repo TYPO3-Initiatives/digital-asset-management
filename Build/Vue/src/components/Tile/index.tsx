@@ -1,141 +1,111 @@
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
-import {State} from 'vuex-class';
+import {Action, State} from 'vuex-class';
 import ItemSelector from '@/components/ItemSelector';
 import {FileType} from '@/enums/FileType';
+import {FolderInterface} from '@/interfaces/FolderInterface';
+import {FileInterface} from '@/interfaces/FileInterface';
+import {ImageInterface} from '@/interfaces/ImageInterface';
+import {AjaxRoutes} from '@/enums/AjaxRoutes';
+import {ResourceInterface} from '@/interfaces/ResourceInterface';
 
 @Component
 export default class Tile extends Vue {
-
-    get isSelected(): boolean {
-        return this.selected.includes(this.identifier);
-    }
+    @Action(AjaxRoutes.damGetFolderItems)
+    fetchData: any;
 
     @State
     selected!: Array<object>;
 
     @Prop()
-    identifier!: String;
-
-    @Prop()
-    header!: String;
-
-    @Prop()
-    fileCount!: Number;
-
-    @Prop()
-    type!: String;
-
-    @Prop()
-    icon!: String;
-
-    @Prop()
-    mtime!: Number;
-
-    @Prop()
-    mtimeDisplay!: String;
-
-    @Prop()
-    thumbnail!: String;
-
-    @Prop()
-    click!: Function;
+    item!: ResourceInterface;
 
     constructor(props: any) {
         super(props);
     }
 
+    get isSelected(): boolean {
+        return this.selected.includes(this.item);
+    }
+
+    private openFolder(identifier: String): void {
+        this.fetchData(identifier);
+    }
+
     private render(): VNode {
-        if (this.type === FileType.FOLDER) {
-            return this.renderFolder();
+        if (this.item.type === FileType.FOLDER) {
+            return this.renderFolder(this.item as FolderInterface);
         }
-        if (this.thumbnail !== null) {
-            return this.renderImage();
+        if (this.item.type === FileType.IMAGE) {
+            return this.renderImage(this.item as ImageInterface);
         }
-        return this.renderFile();
+        if (this.item.type === FileType.FILE) {
+            return this.renderFile(this.item as FileInterface);
+        }
+        throw new Error('invalid resource type');
     }
 
-    private renderFolder(): VNode {
-        let classes = 'tile tile-' + this.type;
+    private renderFolder(item: FolderInterface): VNode {
+        let classes = 'tile tile-' + item.type;
         if (this.isSelected) {
             classes += ' selected';
         }
-        // noop
-        let onClick = () => null;
-        if (this.click) {
-            onClick = () => this.click(this.identifier, this.type);
-        }
+        const clickFunction = (e: Event) => {
+            e.stopPropagation();
+            this.openFolder(item.identifier);
+        };
         return (
-          <div class={classes}
-            onClick={onClick}
-            data-identifier={this.identifier}
-          >
-              <div class='tile-content'>
-                  <span class='pull-right'><ItemSelector identifier={this.identifier}/></span>
-                  <span class='tile-image-container'>
-                        <img src={this.icon} class='tile-image'/>
-                        <span class='tile-image-meta file-count' v-show={this.fileCount}>{this.fileCount}</span>
+            <div class={classes} onClick={clickFunction} data-identifier={item.identifier}>
+                <div class='tile-content'>
+                    <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
+                    <span class='tile-image-container'>
+                        <img src={item.icon} class='tile-image'/>
+                        <span class='tile-image-meta file-count' v-show={item.itemCount}>{item.itemCount}</span>
                     </span>
-              </div>
-              <div className='tile-title'>
-                  <span class='tile-header'>{this.header}</span><br/>
-                  <span class='tile-image-meta file-mtime' v-show={this.mtimeDisplay}>{this.mtimeDisplay}</span>
-              </div>
-          </div>
+                </div>
+                <div className='tile-title'>
+                    <span class='tile-header'>{item.name}</span><br/>
+                    <span class='tile-image-meta file-mtime' v-show={item.mtimeDisplay}>{item.mtimeDisplay}</span>
+                </div>
+            </div>
         );
     }
 
-    private renderFile(): VNode {
-        let classes = 'tile tile-' + this.type;
+    private renderFile(item: FileInterface): VNode {
+        let classes = 'tile tile-' + item.type;
         if (this.isSelected) {
             classes += ' selected';
         }
-        // noop
-        let onClick = () => null;
-        if (this.click) {
-            onClick = () => this.click(this.identifier, this.type);
-        }
         return (
-          <div class={classes}
-            onClick={onClick}
-            data-identifier={this.identifier}
-          >
-              <div class='tile-content'>
-                  <span class='pull-right'><ItemSelector identifier={this.identifier}/></span>
-                  <span class='tile-image-container'>
-                        <img src={this.icon} class='tile-image'/>
+            <a class={classes} href={item.editMetaUrl} data-identifier={item.identifier}>
+                <div class='tile-content'>
+                    <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
+                    <span class='tile-image-container'>
+                        <img src={item.iconIdentifier} class='tile-image'/>
                     </span>
-              </div>
-              <div className='tile-title'>
-                  <span class='tile-header'>{this.header}</span><br/>
-                  <span class='tile-image-meta file-mtime' v-show={this.mtimeDisplay}>{this.mtimeDisplay}</span>
-              </div>
-          </div>
+                </div>
+                <div className='tile-title'>
+                    <span class='tile-header'>{this.item.name}</span><br/>
+                    <span class='tile-image-meta file-mtime' v-show={item.mtimeDisplay}>{item.mtimeDisplay}</span>
+                </div>
+            </a>
         );
     }
 
-    private renderImage(): VNode {
-        let classes = 'tile tile-' + this.type;
+    private renderImage(item: ImageInterface): VNode {
+        let classes = 'tile tile-' + item.type;
         if (this.isSelected) {
             classes += ' selected';
         }
-        // noop
-        let onClick = () => null;
-        if (this.click) {
-            onClick = () => this.click(this.identifier, this.type);
-        }
         return (
-          <div class={classes}
-            onClick={onClick}
-            data-identifier={this.identifier}
-          >
-             <div class='tile-content'>
-                <span class='pull-right'><ItemSelector identifier={this.identifier}/></span>
-                <span class='tile-image-container'>
-                  <img src={this.thumbnail} class='tile-thumbnail'/>
-                </span>
-              </div>
-          </div>
+            <div class={classes} data-identifier={item.identifier}>
+                <div class='tile-content'>
+                    <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
+                    <span class='tile-image-container'>
+                        <a href={item.editMetaUrl}><img src={item.thumbnailUrl} class='tile-thumbnail'/></a>
+                    </span>
+                </div>
+            </div>
         );
     }
 }

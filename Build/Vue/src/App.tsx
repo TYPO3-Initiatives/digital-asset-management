@@ -21,7 +21,7 @@ export default class App extends Vue {
 
         return (
             <div id='app' class='module'>
-                <TreePanel/>
+                <TreePanel />
                 <ContentPanel />
             </div>
         );
