@@ -1,19 +1,18 @@
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
-import {State} from 'vuex-class';
+import {Action, State} from 'vuex-class';
 import ItemSelector from '@/components/ItemSelector';
 import {FileType} from '@/enums/FileType';
 import {FolderInterface} from '@/interfaces/FolderInterface';
 import {FileInterface} from '@/interfaces/FileInterface';
 import {ImageInterface} from '@/interfaces/ImageInterface';
+import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {ResourceInterface} from '@/interfaces/ResourceInterface';
 
 @Component
 export default class Tile extends Vue {
-
-    get isSelected(): boolean {
-        return this.selected.includes(this.item);
-    }
+    @Action(AjaxRoutes.damGetFolderItems)
+    fetchData: any;
 
     @State
     selected!: Array<object>;
@@ -21,11 +20,16 @@ export default class Tile extends Vue {
     @Prop()
     item!: ResourceInterface;
 
-    @Prop()
-    click!: Function;
-
     constructor(props: any) {
         super(props);
+    }
+
+    get isSelected(): boolean {
+        return this.selected.includes(this.item);
+    }
+
+    private openFolder(identifier: String): void {
+        this.fetchData(identifier);
     }
 
     private render(): VNode {
@@ -46,13 +50,8 @@ export default class Tile extends Vue {
         if (this.isSelected) {
             classes += ' selected';
         }
-        // noop
-        let onClick = () => null;
-        if (this.click) {
-            onClick = () => this.click(item.identifier, item.type);
-        }
         return (
-            <div class={classes} onClick={onClick} data-identifier={item.identifier}>
+            <div class={classes} onClick={this.openFolder(item.identifier)} data-identifier={item.identifier}>
                 <div class='tile-content'>
                     <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
                     <span class='tile-image-container'>
@@ -73,13 +72,8 @@ export default class Tile extends Vue {
         if (this.isSelected) {
             classes += ' selected';
         }
-        // noop
-        let onClick = () => null;
-        if (this.click) {
-            onClick = () => this.click(item.identifier, item.type);
-        }
         return (
-            <div class={classes} onClick={onClick} data-identifier={item.identifier}>
+            <a class={classes} href={item.editMetaUrl} data-identifier={item.identifier}>
                 <div class='tile-content'>
                     <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
                     <span class='tile-image-container'>
@@ -90,7 +84,7 @@ export default class Tile extends Vue {
                     <span class='tile-header'>{this.item.name}</span><br/>
                     <span class='tile-image-meta file-mtime' v-show={item.mtimeDisplay}>{item.mtimeDisplay}</span>
                 </div>
-            </div>
+            </a>
         );
     }
 
@@ -99,17 +93,12 @@ export default class Tile extends Vue {
         if (this.isSelected) {
             classes += ' selected';
         }
-        // noop
-        let onClick = () => null;
-        if (this.click) {
-            onClick = () => this.click(item.identifier, item.type);
-        }
         return (
-            <div class={classes} onClick={onClick} data-identifier={item.identifier}>
+            <div class={classes} data-identifier={item.identifier}>
                 <div class='tile-content'>
                     <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
                     <span class='tile-image-container'>
-                        <img src={item.thumbnailUrl} class='tile-thumbnail'/>
+                        <a href={item.editMetaUrl}><img src={item.thumbnailUrl} class='tile-thumbnail'/></a>
                     </span>
                 </div>
             </div>
