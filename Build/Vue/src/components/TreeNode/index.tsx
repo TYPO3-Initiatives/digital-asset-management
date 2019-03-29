@@ -32,7 +32,14 @@ export default class TreeNode extends Vue {
     private render(h: CreateElement): VNode {
         const controlClassName = 'list-tree-control ' + (this.node.expanded ? 'list-tree-control-open' : 'list-tree-control-closed');
         return(
-            <span class='list-tree-group'>
+            <span
+                class='list-tree-group'
+                draggable='true'
+                ondragstart={this.dragStart}
+                ondragover={this.dragOver}
+                ondragenter={this.dragEnter}
+                ondragleave={this.dragLeave}
+            >
                 <a class={controlClassName} href='#' v-show={this.node.hasChildren} onclick={() => this.toggleNode(this.$props.node)}>
                     <i class='fa'></i>
                 </a>
@@ -67,6 +74,49 @@ export default class TreeNode extends Vue {
             for (let nodeToCollapse of node.children.filter((child: FolderTreeNode) => child.expanded)) {
                 this.toggleNode(nodeToCollapse);
             }
+        }
+    }
+
+    private dragStart(e: DragEvent): void {
+        if (e.dataTransfer && e.target) {
+            const eventTargetAsElement = (e.target as HTMLElement);
+            eventTargetAsElement.style.border = '1px dashed tomato';
+            const identifier = eventTargetAsElement.dataset.identifier;
+            if (identifier) {
+                console.log('index.tsx@96: ', eventTargetAsElement);
+
+                e.dataTransfer.effectAllowed = 'move';
+                // console.log('index.tsx@97: ', eventTargetAsElement.outerHTML);
+
+                e.dataTransfer.setData('text/html', eventTargetAsElement.outerHTML);
+            } else {
+                e.stopImmediatePropagation();
+            }
+        }
+        console.log('index.tsx@72: ', e);
+    }
+
+    private dragOver(e: DragEvent): void {
+        e.preventDefault();
+        if (e.dataTransfer && e.currentTarget) {
+            console.log('index.tsx@121: ', e.dataTransfer);
+
+            e.dataTransfer.dropEffect = 'move';
+
+            // const isWithinPath =
+            // console.log('index.tsx@120: ', e);
+        }
+    }
+
+    private dragEnter(e: DragEvent): void {
+        if (e.currentTarget) {
+            (e.currentTarget as HTMLElement).style.background = '#7f8082';
+        }
+    }
+
+    private dragLeave(e: DragEvent): void {
+        if (e.currentTarget) {
+            (e.currentTarget as HTMLElement).style.background = 'transparent';
         }
     }
 }

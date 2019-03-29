@@ -15,7 +15,7 @@ import {
     TOGGLE_TREE,
     FETCH_TREE_DATA,
 } from './mutations';
-import {RootState} from '../../types/types';
+import {RootState} from 'types/types';
 import client from '@/services/http/Typo3Client';
 import {SORT_FIELDS, SORT_ORDER} from '@/components/SortingSelector/SortOptions';
 import {FolderInterface} from '@/interfaces/FolderInterface';
