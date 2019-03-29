@@ -1,7 +1,6 @@
 import {Component, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import DocHeader from '@/components/DocHeader';
-import ButtonBar from '@/components/ButtonBar';
 import Tree from '@/components/Tree';
 import StorageSelector from '@/components/StorageSelector';
 import {State} from 'vuex-class';

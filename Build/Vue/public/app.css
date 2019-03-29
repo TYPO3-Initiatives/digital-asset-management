@@ -97,3 +97,16 @@
     margin-left: 0.6rem;
     margin-right: 0.6rem;
 }
+
+.tree-dropzone-blocked {
+    background-color: tomato;
+    opacity: 0.3;
+}
+
+.list-tree-group[draggable="true"].drag-active {
+    border: 1px dashed tomato;
+}
+
+.tree-dropzone-allowed {
+    background-color: lightblue;
+}

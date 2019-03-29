@@ -5,6 +5,7 @@ import {Component, Vue} from 'vue-property-decorator';
 import {CreateElement, VNode} from 'vue';
 import TreeNode from '@/components/TreeNode';
 import {Action, State} from 'vuex-class';
+import {DraggableService, DragConfiguration} from '@/services/DraggableService';
 
 @Component
 export default class Tree extends Vue {
@@ -17,37 +18,30 @@ export default class Tree extends Vue {
     @State
     storage!: string;
 
+    private draggableService: DraggableService;
+
     constructor(props: any) {
         super(props);
+
+        const configuration: DragConfiguration = {
+            draggableElements: 'li[data-type="' + FileType.FOLDER + '"] .list-tree-group',
+            dropInto: 'li[data-type="' + FileType.FOLDER + '"] .list-tree-group',
+        };
+        this.draggableService = new DraggableService(configuration);
     }
 
     mounted(): void {
         this.fetchTreeData(this.storage);
     }
 
+    updated(): void {
+        this.draggableService.makeDraggable();
+    }
+
     private render(h: CreateElement): VNode|null {
         if (!this.tree) {
             return null;
         }
-
-        // const dndOptions = {
-        //     dropzoneSelector: 'ul.list-tree',
-        //     draggableSelector: 'li[data-type="folder"]',
-        //     handlerSelector: null,
-        //     multipleDropzonesItemsDraggingEnabled: true,
-        //     showDropzoneAreas: true,
-        //     onDragstart: (e: VueDraggableEvent): void => {
-        //         console.log('index.tsx@44: ', e);
-        //     },
-        //     onDrop: (e: VueDraggableEvent): void => {
-        //         const action = ((e.nativeEvent as EventModifierInit).ctrlKey) ? 'copy' : 'move';
-        //         console.log('index.tsx@48: ', e);
-        //         console.log('index.tsx@49: ', action);
-        //     },
-        //     onDragend: (e: VueDraggableEvent): void => {
-        //         console.log('index.tsx@52: ', e);
-        //     },
-        // };
 
         const nodes = [this.tree].map(this.generateNodes, this);
         return(
@@ -58,7 +52,7 @@ export default class Tree extends Vue {
     private generateNodes(nodeCollection: any): VNode {
         const collection = nodeCollection.map(this.generateNode, this);
         return(
-            <ul class='list-tree' ondrop={this.drop}>
+            <ul class='list-tree'>
                 {collection}
             </ul>
         );
@@ -66,22 +60,16 @@ export default class Tree extends Vue {
 
     private generateNode(node: FolderTreeNode): VNode {
         let treeNodeElement = <TreeNode tree={this} node={node}></TreeNode>;
+        let childNodes;
         if (node.expanded && node.hasChildren && node.children.length) {
-            treeNodeElement.children = [node.children].map(this.generateNodes, this);
+            childNodes = [node.children].map(this.generateNodes, this);
         }
+
         return(
             <li data-type={FileType.FOLDER}>
                 {treeNodeElement}
+                {childNodes}
             </li>
         );
-    }
-
-    private drop(e: DragEvent): void {
-        e.preventDefault();
-        if (e.dataTransfer) {
-            (e.currentTarget as HTMLElement).style.background = 'transparent';
-            const data = e.dataTransfer.getData('text/html');
-            console.log('index.tsx@86: ', data);
-        }
     }
 }
