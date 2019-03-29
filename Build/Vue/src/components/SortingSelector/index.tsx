@@ -1,15 +1,15 @@
 import {Component, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {Mutation} from 'vuex-class';
-import {CHANGE_SORTING, CHANGE_SORTORDER} from '@/store/mutations';
 import {SortingFields, SortingOrder} from '@/enums/Sorting';
+import {Mutations} from '@/enums/Mutations';
 
 @Component
 export default class SortingSelector extends Vue {
-    @Mutation(CHANGE_SORTING)
+    @Mutation(Mutations.CHANGE_SORTING)
     changeSorting: any;
 
-    @Mutation(CHANGE_SORTORDER)
+    @Mutation(Mutations.CHANGE_SORTORDER)
     changeSortOrder: any;
 
     constructor(props: any) {

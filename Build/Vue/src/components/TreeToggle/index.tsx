@@ -1,11 +1,11 @@
 import {Component, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {Mutation} from 'vuex-class';
-import {TOGGLE_TREE} from '@/store/mutations';
+import {Mutations} from '@/enums/Mutations';
 
 @Component
 export default class TreeToggle extends Vue {
-    @Mutation(TOGGLE_TREE)
+    @Mutation(Mutations.TOGGLE_TREE)
     toggleTree!: Function;
 
     constructor(props: any) {

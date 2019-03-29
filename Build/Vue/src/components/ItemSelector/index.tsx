@@ -1,7 +1,7 @@
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {Mutation, State} from 'vuex-class';
-import {SELECT_ITEM, UNSELECT_ITEM} from '@/store/mutations';
+import {Mutations} from '@/enums/Mutations';
 
 @Component
 export default class ItemSelector extends Vue {
@@ -9,10 +9,10 @@ export default class ItemSelector extends Vue {
     get isSelected(): boolean {
         return this.selected.includes(this.identifier);
     }
-    @Mutation(SELECT_ITEM)
+    @Mutation(Mutations.SELECT_ITEM)
     selectItem: any;
 
-    @Mutation(UNSELECT_ITEM)
+    @Mutation(Mutations.UNSELECT_ITEM)
     unselectItem: any;
 
     @State
