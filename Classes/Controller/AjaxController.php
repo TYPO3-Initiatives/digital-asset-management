@@ -115,6 +115,39 @@ class AjaxController
     }
 
     /**
+     * Returns list of folders only. No files, no images
+     * Result is sorted by name
+     *
+     * Return structure is an array of TreeItemFolder objects.
+     */
+    public function getTreeFoldersAction(ServerRequestInterface $request): JsonResponse
+    {
+        try {
+            $identifier = $request->getQueryParams()['identifier'];
+            if (empty($identifier)) {
+                throw new ControllerException('Identifier needed', 1553699828);
+            }
+            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+            $folderObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+            if (!$folderObject instanceof Folder) {
+                throw new ControllerException('Identifier is not a folder', 1553701684);
+            }
+            $subFolders = $folderObject->getSubfolders();
+            $folders = [];
+            $files = [];
+            $images = [];
+            foreach ($subFolders as $subFolder) {
+                $folders[] = new TreeItemFolder($subFolder);
+            }
+            return new FolderItemsResponse($folders, $files, $images);
+        } catch (ResourceException $e) {
+            return new JsonExceptionResponse($e);
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
+        }
+    }
+
+    /**
      * @return BackendUserAuthentication
      */
     protected function getBackendUser(): BackendUserAuthentication
