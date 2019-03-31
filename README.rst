@@ -7,6 +7,7 @@ A new backend module to organize the files. Respecting storages, mounts and user
 Experimental: Do not use at all.
 
 Done:
+
 - New backend module with backend view
 - JSON based communication
 - CSS based folder and file icons
@@ -14,6 +15,7 @@ Done:
 
 
 ToDo:
+
 - Save user settings, position in file tree etc.
 
 
