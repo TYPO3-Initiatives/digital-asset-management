@@ -89,15 +89,6 @@
     color: #999;
 }
 
-.item-dropzone-area {
-    height: 2rem;
-    background: tomato;
-    opacity: 0.8;
-    animation-duration: 0.5s;
-    margin-left: 0.6rem;
-    margin-right: 0.6rem;
-}
-
 .tree-dropzone-blocked {
     background-color: tomato;
     opacity: 0.3;
