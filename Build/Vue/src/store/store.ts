@@ -161,7 +161,7 @@ const options: StoreOptions<RootState> = {
         async [Mutations.SET_STORAGE]({commit, dispatch}: any, identifier: string): Promise<any> {
             commit(Mutations.SET_STORAGE, identifier);
             dispatch(AjaxRoutes.damGetFolderItems, identifier);
-            dispatch(Mutations.FETCH_TREE_DATA, identifier);
+            dispatch(AjaxRoutes.damGetTreeFolders, identifier);
         },
     },
 };

@@ -24,9 +24,7 @@ export default class StorageSelector extends Vue {
     }
 
     private updateStorage(e: Event): void {
-        if (e.target instanceof HTMLSelectElement) {
-            const selectedStorage = e.target.selectedOptions[0].value;
-            this.setStorage(selectedStorage);
-        }
+        const selectedStorage = (e.target as HTMLSelectElement).selectedOptions[0].value;
+        this.setStorage(selectedStorage);
     }
 }
