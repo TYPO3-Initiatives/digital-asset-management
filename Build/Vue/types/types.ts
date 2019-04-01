@@ -1,9 +1,11 @@
 import FolderTreeNode from '@/interfaces/FolderTreeNode';
 import {StorageInterface} from '@/interfaces/StorageInterface';
 import {GroupedResourcesInterface} from '@/interfaces/GroupedResourcesInterface';
+import {VNode} from 'vue';
+import {ResourceInterface} from '@/interfaces/ResourceInterface';
 
 export interface RootState {
-    selected: Array<String>; // Array<String == FileIdentifier>
+    selected: Array<ResourceInterface>; // Array<String == FileIdentifier>
     itemsGrouped: GroupedResourcesInterface;
     items: any; // Array<File>
     current: String; // current identifier
@@ -14,6 +16,7 @@ export interface RootState {
     treeFolders: Array<FolderTreeNode>;
     storages: Array<StorageInterface>;
     treeIdentifierLocationMap: {[key: string]: Array<number>};
+    modalContent: VNode | null;
 }
 
 declare global {

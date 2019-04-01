@@ -2,12 +2,13 @@ import {Component, Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {Mutation, State} from 'vuex-class';
 import {Mutations} from '@/enums/Mutations';
+import {ResourceInterface} from '@/interfaces/ResourceInterface';
 
 @Component
 export default class ItemSelector extends Vue {
 
     get isSelected(): boolean {
-        return this.selected.includes(this.identifier);
+        return this.selected.includes(this.item);
     }
     @Mutation(Mutations.SELECT_ITEM)
     selectItem: any;
@@ -16,10 +17,10 @@ export default class ItemSelector extends Vue {
     unselectItem: any;
 
     @State
-    selected!: Array<object>;
+    selected!: Array<ResourceInterface>;
 
     @Prop()
-    identifier!: String;
+    item!: ResourceInterface;
 
     constructor(props: any) {
         super(props);
@@ -28,17 +29,17 @@ export default class ItemSelector extends Vue {
     private render(): VNode {
         // fix me, I'm ugly
         return (
-          <a href='#' onClick={(event: Event) => this.toggleSelect(event, this.identifier)} className='btn btn-sm btn-default'>
+          <a href='#' onClick={(event: Event) => this.toggleSelect(event, this.item)} className='btn btn-sm btn-default xx'>
               <i class='fa fa-check-square' v-show={this.isSelected} />
               <i class='fa fa-square-o' v-show={!this.isSelected} />
           </a>
         );
     }
 
-    private toggleSelect(event: Event, identifier: String): void {
+    private toggleSelect(event: Event, item: ResourceInterface): void {
         event.stopPropagation();
-        this.selected.includes(identifier)
-            ? this.unselectItem(identifier)
-            : this.selectItem(identifier);
+        this.selected.includes(item)
+            ? this.unselectItem(item)
+            : this.selectItem(item);
     }
 }

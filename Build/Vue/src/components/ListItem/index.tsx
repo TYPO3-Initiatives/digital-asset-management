@@ -4,6 +4,7 @@ import {Action, State} from 'vuex-class';
 import ItemSelector from '@/components/ItemSelector';
 import {FileType} from '@/enums/FileType';
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
+import Icon from '@/components/Icon';
 
 @Component
 export default class ListItem extends Vue {
@@ -60,7 +61,7 @@ export default class ListItem extends Vue {
                     } else {
                         columns.push(
                           <td>
-                              <img src={this.item.icon} height='16' />
+                              <Icon identifier={this.item.iconIdentifier} />
                               <a href={this.item.editMetaUrl}>{val}</a>
                           </td>);
                     }
@@ -80,7 +81,7 @@ export default class ListItem extends Vue {
 
         return (
             <tr class={classes} data-identifier={this.identifier}>
-                <th><ItemSelector identifier={this.identifier}/></th>
+                <th><ItemSelector item={this.item}/></th>
                 {columns}
             </tr>
         );

@@ -19,6 +19,7 @@ module.exports = {
         },
       },
       'TYPO3/CMS/Backend/Icons',
+      'TYPO3/CMS/Backend/Modal',
     ],
   }
 };

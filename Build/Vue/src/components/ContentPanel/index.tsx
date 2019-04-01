@@ -16,6 +16,7 @@ import {FolderInterface} from '@/interfaces/FolderInterface';
 import {FileInterface} from '@/interfaces/FileInterface';
 import {ImageInterface} from '@/interfaces/ImageInterface';
 import {ResourceInterface} from '@/interfaces/ResourceInterface';
+import ButtonBar from '@/components/ButtonBar';
 
 @Component
 export default class ContentPanel extends Vue {
@@ -86,7 +87,7 @@ export default class ContentPanel extends Vue {
         return (
           <div class='typo3-filelist-contentpanel'>
               <DocHeader>
-                  <template slot='topBarLeft'><TreeToggle/><ViewSelector/></template>
+                  <template slot='topBarLeft'><TreeToggle/><ViewSelector/><ButtonBar/></template>
                   <template slot='topBarRight'><SortingSelector/></template>
                   <template slot='bottomBarLeft'><Breadcrumb/></template>
                   <template slot='bottomBarRight'><SelectIndicator/></template>

@@ -2,8 +2,8 @@ import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {FileType} from '@/enums/FileType';
 import FolderTreeNode from '@/interfaces/FolderTreeNode';
 import {StorageInterface} from '@/interfaces/StorageInterface';
-import {Component, Vue} from 'vue-property-decorator';
-import {CreateElement, VNode} from 'vue';
+import {Component, Prop, Vue} from 'vue-property-decorator';
+import {VNode} from 'vue';
 import TreeNode from '@/components/TreeNode';
 import TreeRootNode from '@/components/TreeRootNode';
 import {Action, State} from 'vuex-class';
@@ -20,6 +20,10 @@ export default class Tree extends Vue {
     @State
     treeFolders!: Array<FolderTreeNode>;
 
+    @Prop()
+    selectCallBack!: Function;
+
+    private selectedNodeIdentifier: string = '';
     private draggableService: DraggableService;
 
     constructor(props: any) {
@@ -36,18 +40,29 @@ export default class Tree extends Vue {
         return this.activeStorage.identifier + ':/';
     }
 
-    mounted(): void {
-        this.draggableService.makeDraggable();
-        this.fetchTreeData(this.browsableIdentifier);
+    get activeNode(): string {
+        return this.selectedNodeIdentifier;
     }
 
-    private render(h: CreateElement): VNode | null {
+    mounted(): void {
+        this.draggableService.makeDraggable();
+        if (this.treeFolders.length === 0) {
+            this.fetchTreeData(this.browsableIdentifier);
+        }
+    }
+
+    private select(identifier: string): void {
+        this.selectedNodeIdentifier = identifier;
+        this.selectCallBack(identifier);
+    }
+
+    private render(): VNode | null {
         const nodes = [this.treeFolders].map(this.generateNodes, this);
         return(
             <div>
                 <ul class='list-tree list-tree-root'>
                     <li class='list-tree-control-open'>
-                        <TreeRootNode storage={this.activeStorage}></TreeRootNode>
+                        <TreeRootNode storage={this.activeStorage} />
                         {nodes}
                     </li>
                 </ul>
@@ -65,7 +80,8 @@ export default class Tree extends Vue {
     }
 
     private generateNode(node: FolderTreeNode): VNode {
-        let treeNodeElement = <TreeNode node={node}></TreeNode>;
+        let treeNodeElement = <TreeNode node={node} selectCallBack={this.select}
+          selectedNodeIdentifier={this.activeNode} />;
         let childNodes;
         if (node.expanded && node.hasChildren && node.folders.length) {
             childNodes = [node.folders].map(this.generateNodes, this);

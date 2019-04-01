@@ -1,6 +1,4 @@
-import FolderTreeNode from '@/interfaces/FolderTreeNode';
-import {StorageInterface} from '@/interfaces/StorageInterface';
-import Vue from 'vue';
+import Vue, {VNode} from 'vue';
 import Vuex, {StoreOptions} from 'vuex';
 import {RootState} from 'types/types';
 import client from '@/services/http/Typo3Client';
@@ -12,6 +10,8 @@ import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {SortingFields, SortingOrder} from '@/enums/Sorting';
 import {ResourceInterface} from '@/interfaces/ResourceInterface';
 import {Mutations} from '@/enums/Mutations';
+import FolderTreeNode from '@/interfaces/FolderTreeNode';
+import {StorageInterface} from '@/interfaces/StorageInterface';
 
 Vue.use(Vuex);
 // https://codeburst.io/vuex-and-typescript-3427ba78cfa8
@@ -30,6 +30,7 @@ const options: StoreOptions<RootState> = {
         },
         items: [],
         current: '',
+        modalContent: null,
         viewMode: ViewType.TILE,
         showTree: true,
         activeStorage: null,
@@ -71,18 +72,18 @@ const options: StoreOptions<RootState> = {
                 }
             }
         },
-        [Mutations.SELECT_ITEM](state: RootState, identifier: String): void {
-            if (!state.selected.includes(identifier)) {
-                state.selected.push(identifier);
+        [Mutations.SELECT_ITEM](state: RootState, item: ResourceInterface): void {
+            if (!state.selected.includes(item)) {
+                state.selected.push(item);
             }
         },
-        [Mutations.UNSELECT_ITEM](state: RootState, identifier: String): void {
-            if (state.selected.includes(identifier)) {
-                state.selected.splice(state.selected.indexOf(identifier), 1);
+        [Mutations.UNSELECT_ITEM](state: RootState, item: ResourceInterface): void {
+            if (state.selected.includes(item)) {
+                state.selected.splice(state.selected.indexOf(item), 1);
             }
         },
-        [Mutations.SELECT_ALL](state: RootState, listOfIdentifiers: Array<String>): void {
-            state.selected = listOfIdentifiers;
+        [Mutations.SELECT_ALL](state: RootState, listOfResources: Array<ResourceInterface>): void {
+            state.selected = listOfResources;
         },
         [Mutations.UNSELECT_ALL](state: RootState): void {
             state.selected = [];
@@ -128,6 +129,9 @@ const options: StoreOptions<RootState> = {
         [Mutations.TOGGLE_TREE](state: RootState): void {
             state.showTree = !state.showTree;
         },
+        [Mutations.SET_MODAL_CONTENT](state: RootState, modalContent: VNode): void {
+            state.modalContent = modalContent;
+        },
         [Mutations.CHANGE_SORTING](state: RootState, sorting: SortingFields): void {
             const stringSort = (a: ResourceInterface, b: ResourceInterface) => a[sorting].localeCompare(
                 b[sorting],
@@ -164,6 +168,11 @@ const options: StoreOptions<RootState> = {
             const response = await client.get('http://localhost:8080/api/files.json?identifier=' + identifier);
             commit(Mutations.FETCH_DATA, response.data);
         },
+        async [Mutations.SET_STORAGE]({commit, dispatch}: any, data: {id: number, browsableIdentifier: string}): Promise<any> {
+            commit(Mutations.SET_STORAGE, data.id);
+            dispatch(AjaxRoutes.damGetTreeFolders, data.browsableIdentifier);
+            dispatch(AjaxRoutes.damGetFolderItems, data.browsableIdentifier);
+        },
         async [AjaxRoutes.damGetFolderItems]({commit}: any, identifier: String): Promise<any> {
             commit(Mutations.NAVIGATE, identifier);
             const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetFolderItems] + '&identifier=' + identifier);
@@ -181,11 +190,6 @@ const options: StoreOptions<RootState> = {
         async [AjaxRoutes.damGetStoragesAndMounts]({commit}: any): Promise<any> {
             const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetStoragesAndMounts]);
             commit(Mutations.FETCH_STORAGES, response.data);
-        },
-        async [Mutations.SET_STORAGE]({commit, dispatch}: any, data: {id: number, browsableIdentifier: string}): Promise<any> {
-            commit(Mutations.SET_STORAGE, data.id);
-            dispatch(AjaxRoutes.damGetTreeFolders, data.browsableIdentifier);
-            dispatch(AjaxRoutes.damGetFolderItems, data.browsableIdentifier);
         },
     },
 };

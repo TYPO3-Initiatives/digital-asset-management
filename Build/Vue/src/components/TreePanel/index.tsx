@@ -4,34 +4,38 @@ import DocHeader from '@/components/DocHeader';
 import Tree from '@/components/Tree';
 import StorageSelector from '@/components/StorageSelector';
 import {StorageInterface} from '@/interfaces/StorageInterface';
-import {State} from 'vuex-class';
+import {Action, State} from 'vuex-class';
+import {AjaxRoutes} from '@/enums/AjaxRoutes';
 
 @Component
 export default class TreePanel extends Vue {
-    @State
-    showTree!: boolean;
+  @Action(AjaxRoutes.damGetFolderItems)
+  fetchFolderItems: any;
 
-    @State
-    activeStorage!: StorageInterface;
+  @State
+  showTree!: boolean;
 
-    constructor(props: any) {
-        super(props);
-    }
+  @State
+  activeStorage!: StorageInterface;
 
-    get shallShowTree(): boolean {
-        return this.showTree;
-    }
+  constructor(props: any) {
+    super(props);
+  }
 
-    private render(): VNode|null {
-        return (
-            <div class='typo3-filelist-treepanel' v-show={this.shallShowTree}>
-                <DocHeader>
-                    <template slot='bottomBarLeft'><StorageSelector/></template>
-                </DocHeader>
-                <div class=''>
-                    {this.activeStorage ? <Tree storage={this.activeStorage}/> : ''}
-                </div>
-            </div>
-        );
-    }
+  get shallShowTree(): boolean {
+    return this.showTree;
+  }
+
+  private render(): VNode | null {
+    return (
+      <div class='typo3-filelist-treepanel' v-show={this.shallShowTree}>
+        <DocHeader>
+          <template slot='bottomBarLeft'><StorageSelector/></template>
+        </DocHeader>
+        <div class=''>
+          {this.activeStorage ? <Tree storage={this.activeStorage} selectCallBack={this.fetchFolderItems}/> : ''}
+        </div>
+      </div>
+    );
+  }
 }

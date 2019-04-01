@@ -13,6 +13,7 @@
     "watch-lib": "vue-cli-service build --watch --target lib --name filelist ./src/main.ts"
   },
   "dependencies": {
+    "@types/jquery": "^3.3.29",
     "axios": "^0.18.0",
     "vue": "^2.6.6",
     "vue-class-component": "^6.0.0",

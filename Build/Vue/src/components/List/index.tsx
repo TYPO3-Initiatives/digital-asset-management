@@ -31,7 +31,7 @@ export default class List extends Vue {
         return (
             <table class='table table-striped table-hover'>
                 <thead>
-                    <th><AllSelector listOfIdentifiers={this.items.map((item: any) => {return item.identifier; })}/></th>
+                    <th><AllSelector listOfResources={this.items}/></th>
                     {headerColumns}
                 </thead>
                 <tbody>{list}</tbody>

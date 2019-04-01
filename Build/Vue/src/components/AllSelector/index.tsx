@@ -2,6 +2,7 @@ import {Component, Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {Mutation, State} from 'vuex-class';
 import {Mutations} from '@/enums/Mutations';
+import {ResourceInterface} from '@/interfaces/ResourceInterface';
 
 @Component
 export default class AllSelector extends Vue {
@@ -16,10 +17,10 @@ export default class AllSelector extends Vue {
     unselectItems: any;
 
     @State
-    selected!: Array<object>;
+    selected!: Array<ResourceInterface>;
 
     @Prop()
-    listOfIdentifiers!: Array<String>;
+    listOfResources!: Array<ResourceInterface>;
 
     constructor(props: any) {
         super(props);
@@ -28,17 +29,17 @@ export default class AllSelector extends Vue {
     private render(): VNode {
         // fix me, I'm ugly
         return (
-            <a href='#' onClick={(event: Event) => this.toggleSelect(event, this.listOfIdentifiers)} class='btn btn-sm btn-default'>
+            <a href='#' onClick={(event: Event) => this.toggleSelect(event, this.listOfResources)} class='btn btn-sm btn-default'>
                 <i class='fa fa-check-square' v-show={this.isSelected} />
                 <i class='fa fa-square-o' v-show={!this.isSelected} />
             </a>
         );
     }
 
-    private toggleSelect(event: Event, listOfIdentifiers: Array<String>): void {
+    private toggleSelect(event: Event, listOfResources: Array<ResourceInterface>): void {
         event.stopPropagation();
         this.selected.length > 0
-            ? this.unselectItems(listOfIdentifiers)
-            : this.selectItems(listOfIdentifiers);
+            ? this.unselectItems(listOfResources)
+            : this.selectItems(listOfResources);
     }
 }
