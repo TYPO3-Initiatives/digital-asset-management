@@ -32,9 +32,6 @@ export default class Tree extends Vue {
 
     mounted(): void {
         this.fetchTreeData(this.storage);
-    }
-
-    updated(): void {
         this.draggableService.makeDraggable();
     }
 

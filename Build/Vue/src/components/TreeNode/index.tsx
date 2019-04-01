@@ -36,18 +36,11 @@ export default class TreeNode extends Vue {
                 <a class={controlClassName} href='#' v-show={this.node.hasChildren} onclick={() => this.toggleNode(this.$props.node)}>
                     <i class='fa'></i>
                 </a>
-                <a href='#' data-identifier={this.node.identifier} onclick={() => this.openNode(this.$props.node.identifier)}>
+                <a href='#' data-identifier={this.node.identifier} onclick={() => this.fetchData(this.$props.node.identifier)}>
                     <img src={this.node.icon} width='16' height='16' /> {this.node.name}
                 </a>
             </span>
         );
-    }
-
-    /**
-     * @param {string} identifier
-     */
-    private openNode(identifier: string): void {
-        this.fetchData(identifier);
     }
 
     /**
