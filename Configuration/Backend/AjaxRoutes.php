@@ -16,4 +16,8 @@ return [
         'path' => '/dam/copyResources',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::copyResourcesAction',
     ],
+    'damMoveResources' => [
+        'path' => '/dam/moveResources',
+        'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::moveResourcesAction',
+    ],
 ];

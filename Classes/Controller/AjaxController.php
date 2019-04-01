@@ -218,6 +218,71 @@ class AjaxController
     }
 
     /**
+     * Move files or folders
+     * Query parameter
+     *  'identifiers' array of identifier to move
+     *  'targetFolderIdentifier' string the target identifier. Must be a folder.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return JsonResponse
+     */
+    public function moveResourcesAction(ServerRequestInterface $request): JsonResponse
+    {
+        try {
+            $identifiers = $request->getQueryParams()['identifiers'];
+            $targetFolderIdentifier
+                = $request->getQueryParams()['targetFolderIdentifier'];
+            if (empty($identifiers)) {
+                throw new ControllerException('Identifier needed', 1553699828);
+            }
+            if (empty($targetFolderIdentifier)) {
+                throw new ControllerException('Target folder identifier needed',
+                    1554122023);
+            }
+            $resourceFactory
+                = GeneralUtility::makeInstance(ResourceFactory::class);
+            $targetFolderObject
+                = $resourceFactory->getObjectFromCombinedIdentifier($targetFolderIdentifier);
+            if (!$targetFolderObject instanceof Folder) {
+                throw new ControllerException('Target identifier is not a folder',
+                    1553701684);
+            }
+        } catch (ResourceException $e) {
+            return new JsonExceptionResponse($e);
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
+        }
+        $resources = [];
+        foreach ($identifiers as $identifier) {
+            try {
+                $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+                $message = '';
+                if ($resultFolder
+                    = $sourceObject->moveTo($targetFolderObject, null,
+                    DuplicationBehavior::CANCEL)
+                ) {
+                    $resources[$identifier] = [
+                        'status' => 'MOVED',
+                        'resultIdentifier' => $resultFolder->getIdentifier()
+                    ];
+                }
+            } catch (InvalidTargetFolderException $e) {
+                $message = $e->getMessage();
+            } catch (ResourceException\ResourceDoesNotExistException $e) {
+                $message = $e->getMessage();
+            }
+            if ($message !== '') {
+                $resources[$identifier] = [
+                    'status' => 'FAILED',
+                    'message' => $message
+                ];
+            }
+        }
+        return new JsonResponse(['resources' => $resources]);
+    }
+
+    /**
      * @return BackendUserAuthentication
      */
     protected function getBackendUser(): BackendUserAuthentication
