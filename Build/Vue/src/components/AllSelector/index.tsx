@@ -1,7 +1,7 @@
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {Mutation, State} from 'vuex-class';
-import {SELECT_ALL, UNSELECT_ALL} from '@/store/mutations';
+import {Mutations} from '@/enums/Mutations';
 
 @Component
 export default class AllSelector extends Vue {
@@ -9,10 +9,10 @@ export default class AllSelector extends Vue {
     get isSelected(): boolean {
         return this.selected.length > 0;
     }
-    @Mutation(SELECT_ALL)
+    @Mutation(Mutations.SELECT_ALL)
     selectItems: any;
 
-    @Mutation(UNSELECT_ALL)
+    @Mutation(Mutations.UNSELECT_ALL)
     unselectItems: any;
 
     @State

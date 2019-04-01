@@ -1,17 +1,5 @@
 import Vue from 'vue';
 import Vuex, {StoreOptions} from 'vuex';
-import {
-    CHANGE_SORTING,
-    CHANGE_SORTORDER,
-    FETCH_DATA,
-    NAVIGATE,
-    SELECT_ALL,
-    SELECT_ITEM,
-    SWITCH_VIEW,
-    TOGGLE_TREE,
-    UNSELECT_ALL,
-    UNSELECT_ITEM,
-} from './mutations';
 import {RootState} from '../../types/types';
 import client from '@/services/http/Typo3Client';
 import {FolderInterface} from '@/interfaces/FolderInterface';
@@ -21,6 +9,7 @@ import {ViewType} from '@/enums/ViewType';
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {SortingFields, SortingOrder} from '@/enums/Sorting';
 import {ResourceInterface} from '@/interfaces/ResourceInterface';
+import {Mutations} from '@/enums/Mutations';
 
 Vue.use(Vuex);
 // https://codeburst.io/vuex-and-typescript-3427ba78cfa8
@@ -43,7 +32,7 @@ const options: StoreOptions<RootState> = {
         showTree: true,
     },
     mutations: {
-        [FETCH_DATA](state: RootState, items: {
+        [Mutations.FETCH_DATA](state: RootState, items: {
                 folders: Array<FolderInterface>,
                 files: Array<FileInterface>,
                 images: Array<ImageInterface>,
@@ -59,33 +48,33 @@ const options: StoreOptions<RootState> = {
             state.itemsGrouped.files.sort(sortItems);
             state.itemsGrouped.images.sort(sortItems);
         },
-        [SELECT_ITEM](state: RootState, identifier: String): void {
+        [Mutations.SELECT_ITEM](state: RootState, identifier: String): void {
             if (!state.selected.includes(identifier)) {
                 state.selected.push(identifier);
             }
         },
-        [UNSELECT_ITEM](state: RootState, identifier: String): void {
+        [Mutations.UNSELECT_ITEM](state: RootState, identifier: String): void {
             if (state.selected.includes(identifier)) {
                 state.selected.splice(state.selected.indexOf(identifier), 1);
             }
         },
-        [SELECT_ALL](state: RootState, listOfIdentifiers: Array<String>): void {
+        [Mutations.SELECT_ALL](state: RootState, listOfIdentifiers: Array<String>): void {
             state.selected = listOfIdentifiers;
         },
-        [UNSELECT_ALL](state: RootState): void {
+        [Mutations.UNSELECT_ALL](state: RootState): void {
             state.selected = [];
         },
-        [NAVIGATE](state: RootState, identifier: String): void {
+        [Mutations.NAVIGATE](state: RootState, identifier: String): void {
             state.current = identifier;
             state.selected = [];
         },
-        [SWITCH_VIEW](state: RootState, viewMode: String): void {
+        [Mutations.SWITCH_VIEW](state: RootState, viewMode: String): void {
             state.viewMode = viewMode;
         },
-        [TOGGLE_TREE](state: RootState): void {
+        [Mutations.TOGGLE_TREE](state: RootState): void {
             state.showTree = !state.showTree;
         },
-        [CHANGE_SORTING](state: RootState, sorting: SortingFields): void {
+        [Mutations.CHANGE_SORTING](state: RootState, sorting: SortingFields): void {
             const stringSort = (a: ResourceInterface, b: ResourceInterface) => a[sorting].localeCompare(
                 b[sorting],
                 undefined,
@@ -103,7 +92,7 @@ const options: StoreOptions<RootState> = {
             state.itemsGrouped.files.sort(sortItems);
             state.itemsGrouped.images.sort(sortItems);
         },
-        [CHANGE_SORTORDER](state: RootState, sortOrder: SortingOrder): void {
+        [Mutations.CHANGE_SORTORDER](state: RootState, sortOrder: SortingOrder): void {
             if (state.sorting.order !== sortOrder) {
                 state.sorting.order = sortOrder;
                 state.items.reverse();
@@ -115,21 +104,21 @@ const options: StoreOptions<RootState> = {
         },
     },
     actions: {
-        async [FETCH_DATA]({commit}: any, identifier: String): Promise<any> {
-            commit(NAVIGATE, identifier);
+        async [Mutations.FETCH_DATA]({commit}: any, identifier: String): Promise<any> {
+            commit(Mutations.NAVIGATE, identifier);
             // request [dummy data]:
             const response = await client.get('http://localhost:8080/api/files.json?identifier=' + identifier);
-            commit(FETCH_DATA, response.data);
+            commit(Mutations.FETCH_DATA, response.data);
         },
         async [AjaxRoutes.damGetFolderItems]({commit}: any, identifier: String): Promise<any> {
-            commit(NAVIGATE, identifier);
+            commit(Mutations.NAVIGATE, identifier);
             const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetFolderItems] + '&identifier=' + identifier);
-            commit(FETCH_DATA, response.data);
+            commit(Mutations.FETCH_DATA, response.data);
         },
         async [AjaxRoutes.damGetStoragesAndMounts]({commit}: any, identifier: String): Promise<any> {
-            commit(NAVIGATE, identifier);
+            commit(Mutations.NAVIGATE, identifier);
             const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetStoragesAndMounts] + '&identifier=' + identifier);
-            commit(FETCH_DATA, response.data);
+            commit(Mutations.FETCH_DATA, response.data);
         },
     },
 };

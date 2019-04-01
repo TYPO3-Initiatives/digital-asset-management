@@ -1,8 +1,8 @@
 import {Component, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {Mutation, State} from 'vuex-class';
-import {SWITCH_VIEW} from '@/store/mutations';
 import {ViewType} from '@/enums/ViewType';
+import {Mutations} from '@/enums/Mutations';
 
 @Component
 export default class ViewSelector extends Vue {
@@ -11,7 +11,7 @@ export default class ViewSelector extends Vue {
         return this.viewMode;
     }
 
-    @Mutation(SWITCH_VIEW)
+    @Mutation(Mutations.SWITCH_VIEW)
     switch: any;
 
     @State
