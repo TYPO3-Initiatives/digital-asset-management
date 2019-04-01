@@ -135,12 +135,10 @@ class AjaxController
             }
             $subFolders = $folderObject->getSubfolders();
             $folders = [];
-            $files = [];
-            $images = [];
             foreach ($subFolders as $subFolder) {
                 $folders[] = new TreeItemFolder($subFolder);
             }
-            return new FolderItemsResponse($folders, $files, $images);
+            return new JsonResponse($folders);
         } catch (ResourceException $e) {
             return new JsonExceptionResponse($e);
         } catch (ControllerException $e) {
