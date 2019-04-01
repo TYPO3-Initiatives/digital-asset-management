@@ -1,5 +1,9 @@
 <?php
 return [
+    'damFileExists' => [
+        'path' => '/dam/fileExists',
+        'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::fileExistsAction',
+    ],
     'damGetFolderItems' => [
         'path' => '/dam/getFolderItems',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::getFolderItemsAction',

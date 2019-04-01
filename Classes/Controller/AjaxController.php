@@ -13,6 +13,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Resource\Exception as ResourceException;
+use TYPO3\CMS\Core\Resource\Exception\ResourceDoesNotExistException;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -23,6 +24,7 @@ use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemImage;
 use TYPO3\CMS\DigitalAssetManagement\Entity\Storage;
 use TYPO3\CMS\DigitalAssetManagement\Entity\TreeItemFolder;
 use TYPO3\CMS\DigitalAssetManagement\Exception\ControllerException;
+use TYPO3\CMS\DigitalAssetManagement\Http\FileExistsResponse;
 use TYPO3\CMS\DigitalAssetManagement\Http\FolderItemsResponse;
 use TYPO3\CMS\DigitalAssetManagement\Http\JsonExceptionResponse;
 use TYPO3\CMS\DigitalAssetManagement\Http\StoragesAndMountsResponse;
@@ -40,6 +42,36 @@ use TYPO3\CMS\DigitalAssetManagement\Http\StoragesAndMountsResponse;
  */
 class AjaxController
 {
+    /**
+     * @param ServerRequestInterface $request
+     * @return JsonResponse
+     */
+    public function fileExistsAction(ServerRequestInterface $request): JsonResponse
+    {
+        $identifier = $request->getQueryParams()['identifier'];
+        try {
+            if (empty($identifier)) {
+                throw new ControllerException('Identifier needed', 1554125449);
+            }
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
+        }
+        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+        $folderIdentifier = dirname($identifier) . '/';
+        $fileIdentifier = basename($identifier);
+        try {
+            $folder = $resourceFactory->retrieveFileOrFolderObject($folderIdentifier);
+        } catch (ResourceDoesNotExistException $e) {
+            return new FileExistsResponse(FileExistsResponse::PARENT_FOLDER_DOES_NOT_EXIST);
+        }
+        $fileName = $folder->getStorage()->sanitizeFileName($fileIdentifier, $folder);
+        if ($folder->hasFile($fileName)) {
+            return new FileExistsResponse(FileExistsResponse::FILE_EXISTS);
+        } else {
+            return new FileExistsResponse(FileExistsResponse::FILE_DOES_NOT_EXIST);
+        }
+    }
+
     /**
      * Return item list (folders, files, images) of a storage:path
      * FAL folder identifier. GET request with identifier argument.
