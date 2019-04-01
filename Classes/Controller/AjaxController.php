@@ -12,7 +12,9 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\JsonResponse;
+use TYPO3\CMS\Core\Resource\DuplicationBehavior;
 use TYPO3\CMS\Core\Resource\Exception as ResourceException;
+use TYPO3\CMS\Core\Resource\Exception\InvalidTargetFolderException;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -120,6 +122,10 @@ class AjaxController
      * Result is sorted by name
      *
      * Return structure is an array of TreeItemFolder objects.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return JsonResponse
      */
     public function getTreeFoldersAction(ServerRequestInterface $request): JsonResponse
     {
@@ -144,6 +150,71 @@ class AjaxController
         } catch (ControllerException $e) {
             return new JsonExceptionResponse($e);
         }
+    }
+
+    /**
+     * Copy files or folders
+     * Query parameter
+     *  'identifiers' array of identifier to copy
+     *  'targetFolderIdentifier' string the target identifier. Must be a folder.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return JsonResponse
+     */
+    public function copyResourcesAction(ServerRequestInterface $request): JsonResponse
+    {
+        try {
+            $identifiers = $request->getQueryParams()['identifiers'];
+            $targetFolderIdentifier
+                = $request->getQueryParams()['targetFolderIdentifier'];
+            if (empty($identifiers)) {
+                throw new ControllerException('Identifier needed', 1553699828);
+            }
+            if (empty($targetFolderIdentifier)) {
+                throw new ControllerException('Target folder identifier needed',
+                    1554122023);
+            }
+            $resourceFactory
+                = GeneralUtility::makeInstance(ResourceFactory::class);
+            $targetFolderObject
+                = $resourceFactory->getObjectFromCombinedIdentifier($targetFolderIdentifier);
+            if (!$targetFolderObject instanceof Folder) {
+                throw new ControllerException('Target identifier is not a folder',
+                    1553701684);
+            }
+        } catch (ResourceException $e) {
+            return new JsonExceptionResponse($e);
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
+        }
+        $resources = [];
+        foreach ($identifiers as $identifier) {
+            try {
+                $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+                $message = '';
+                if ($resultFolder
+                    = $sourceObject->moveTo($targetFolderObject, null,
+                    DuplicationBehavior::CANCEL)
+                ) {
+                    $resources[$identifier] = [
+                        'status' => 'COPIED',
+                        'resultIdentifier' => $resultFolder->getIdentifier()
+                    ];
+                }
+            } catch (InvalidTargetFolderException $e) {
+                $message = $e->getMessage();
+            } catch (ResourceException\ResourceDoesNotExistException $e) {
+                $message = $e->getMessage();
+            }
+            if ($message !== '') {
+                $resources[$identifier] = [
+                    'status' => 'FAILED',
+                    'message' => $message
+                ];
+            }
+        }
+        return new JsonResponse(['resources' => $resources]);
     }
 
     /**

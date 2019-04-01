@@ -12,4 +12,8 @@ return [
         'path' => '/dam/getTreeFolders',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::getTreeFoldersAction',
     ],
+    'damCopyResources' => [
+        'path' => '/dam/copyResources',
+        'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::copyResourcesAction',
+    ],
 ];
