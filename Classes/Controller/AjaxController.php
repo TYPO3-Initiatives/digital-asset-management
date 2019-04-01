@@ -194,7 +194,7 @@ class AjaxController
                 $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
                 $message = '';
                 if ($resultFolder
-                    = $sourceObject->moveTo($targetFolderObject, null,
+                    = $sourceObject->copyTo($targetFolderObject, null,
                     DuplicationBehavior::CANCEL)
                 ) {
                     $resources[$identifier] = [
