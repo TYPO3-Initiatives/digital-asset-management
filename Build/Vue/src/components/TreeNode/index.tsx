@@ -1,15 +1,15 @@
+import {Mutations} from '@/enums/Mutations';
 import FolderTreeNode from '@/models/FolderTreeNode';
-import {FETCH_DATA, FETCH_TREE_DATA} from '@/store/mutations';
 import {CreateElement, VNode} from 'vue';
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {Action} from 'vuex-class';
 
 @Component
 export default class TreeNode extends Vue {
-    @Action(FETCH_DATA)
+    @Action(Mutations.FETCH_DATA)
     fetchData: any;
 
-    @Action(FETCH_TREE_DATA)
+    @Action(Mutations.FETCH_TREE_DATA)
     fetchTreeData: any;
 
     @Prop()

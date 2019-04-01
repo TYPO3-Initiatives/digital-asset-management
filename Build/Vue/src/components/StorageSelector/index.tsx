@@ -1,11 +1,11 @@
-import {SET_STORAGE} from '@/store/mutations';
+import {Mutations} from '@/enums/Mutations';
 import {Component, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {Action} from 'vuex-class';
 
 @Component
 export default class StorageSelector extends Vue {
-    @Action(SET_STORAGE)
+    @Action(Mutations.SET_STORAGE)
     setStorage!: Function;
 
     constructor(props: any) {

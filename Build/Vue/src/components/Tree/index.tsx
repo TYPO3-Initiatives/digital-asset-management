@@ -1,6 +1,6 @@
 import {FileType} from '@/enums/FileType';
+import {Mutations} from '@/enums/Mutations';
 import FolderTreeNode from '@/models/FolderTreeNode';
-import {FETCH_TREE_DATA} from '@/store/mutations';
 import {Component, Vue} from 'vue-property-decorator';
 import {CreateElement, VNode} from 'vue';
 import TreeNode from '@/components/TreeNode';
@@ -9,7 +9,7 @@ import {DraggableService, DragConfiguration} from '@/services/DraggableService';
 
 @Component
 export default class Tree extends Vue {
-    @Action(FETCH_TREE_DATA)
+    @Action(Mutations.FETCH_TREE_DATA)
     fetchTreeData: any;
 
     @State
