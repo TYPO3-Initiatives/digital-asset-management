@@ -13,9 +13,6 @@ export default class TreeNode extends Vue {
     fetchTreeData: any;
 
     @Prop()
-    tree!: any;
-
-    @Prop()
     node!: FolderTreeNode;
 
     constructor(props: any) {

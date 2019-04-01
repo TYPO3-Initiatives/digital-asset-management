@@ -35,6 +35,7 @@ const options: StoreOptions<RootState> = {
             folders: [],
             title: '/fileadmin',
             identifier: '1:/',
+            icon: '/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-mount.svg',
         },
         treeIdentifierLocationMap: {},
     },

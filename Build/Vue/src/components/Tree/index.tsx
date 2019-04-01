@@ -5,6 +5,7 @@ import {StorageInterface} from '@/interfaces/StorageInterface';
 import {Component, Vue} from 'vue-property-decorator';
 import {CreateElement, VNode} from 'vue';
 import TreeNode from '@/components/TreeNode';
+import TreeRootNode from '@/components/TreeRootNode';
 import {Action, State} from 'vuex-class';
 import {DraggableService, DragConfiguration} from '@/services/DraggableService';
 
@@ -40,11 +41,18 @@ export default class Tree extends Vue {
 
         const nodes = [this.storage.folders].map(this.generateNodes, this);
         return(
-            <div><ul class='list-tree list-tree-root'><li>{nodes}</li></ul></div>
+            <div>
+                <ul class='list-tree list-tree-root'>
+                    <li class='list-tree-control-open'>
+                        <TreeRootNode></TreeRootNode>
+                        {nodes}
+                    </li>
+                </ul>
+            </div>
         );
     }
 
-    private generateNodes(nodeCollection: any): VNode {
+    private generateNodes(nodeCollection: Array<FolderTreeNode>): VNode {
         const collection = nodeCollection.map(this.generateNode, this);
         return(
             <ul class='list-tree'>
@@ -54,7 +62,7 @@ export default class Tree extends Vue {
     }
 
     private generateNode(node: FolderTreeNode): VNode {
-        let treeNodeElement = <TreeNode tree={this} node={node}></TreeNode>;
+        let treeNodeElement = <TreeNode node={node}></TreeNode>;
         let childNodes;
         if (node.expanded && node.hasChildren && node.folders.length) {
             childNodes = [node.folders].map(this.generateNodes, this);
