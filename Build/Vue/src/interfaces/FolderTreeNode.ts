@@ -4,5 +4,5 @@ export default interface FolderTreeNode {
     icon: any;
     expanded: boolean;
     hasChildren: boolean;
-    children: Array<FolderTreeNode>;
+    folders: Array<FolderTreeNode>;
 }

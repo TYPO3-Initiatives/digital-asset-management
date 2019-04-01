@@ -1,4 +1,4 @@
-import FolderTreeNode from '@/models/FolderTreeNode';
+import FolderTreeNode from '@/interfaces/FolderTreeNode';
 import Vue from 'vue';
 import Vuex, {StoreOptions} from 'vuex';
 import {RootState} from 'types/types';
@@ -17,7 +17,6 @@ Vue.use(Vuex);
 // further type definitions missing, just an example on how to use the store.
 const options: StoreOptions<RootState> = {
     state: {
-        storage: '1:/',
         selected: [],
         itemsGrouped: {
             folders: [],
@@ -32,7 +31,11 @@ const options: StoreOptions<RootState> = {
         current: '',
         viewMode: ViewType.TILE,
         showTree: true,
-        tree: [],
+        storage: {
+            folders: [],
+            title: '/fileadmin',
+            identifier: '1:/',
+        },
         treeIdentifierLocationMap: {},
     },
     mutations: {
@@ -57,7 +60,7 @@ const options: StoreOptions<RootState> = {
             }
         },
         [Mutations.SET_STORAGE](state: RootState, identifier: string): void {
-            state.storage = identifier;
+            state.storage.identifier = identifier;
         },
         [Mutations.SELECT_ITEM](state: RootState, identifier: String): void {
             if (!state.selected.includes(identifier)) {
@@ -86,7 +89,7 @@ const options: StoreOptions<RootState> = {
             const nestingStructure = state.treeIdentifierLocationMap[data.identifier] || [];
 
             data.folders.forEach((node: FolderTreeNode, index: number): void => {
-                node.children = [];
+                node.folders = [];
 
                 // Store folder identifier and nesting information into state for faster tree traversal
                 const nesting = nestingStructure.slice(0); // This clones the nesting structure
@@ -96,13 +99,17 @@ const options: StoreOptions<RootState> = {
 
             if (data.identifier.match(/^\d+:\/$/)) {
                 // Storage root requested
-                state.tree = data.folders;
+                state.storage.folders = data.folders;
             } else {
-                let node = state.tree;
+                let node;
+                let folders = state.storage.folders;
                 for (let index of nestingStructure) {
-                    node = typeof node.children !== 'undefined' ? node.children[index] : node[index];
+                    node = folders[index];
+                    folders = folders[index].folders;
                 }
-                node.children = data.folders;
+                if (typeof node !== 'undefined') {
+                    node.folders = data.folders;
+                }
             }
         },
         [Mutations.TOGGLE_TREE](state: RootState): void {

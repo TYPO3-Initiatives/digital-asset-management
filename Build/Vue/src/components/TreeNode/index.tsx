@@ -1,5 +1,5 @@
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
-import FolderTreeNode from '@/models/FolderTreeNode';
+import FolderTreeNode from '@/interfaces/FolderTreeNode';
 import {CreateElement, VNode} from 'vue';
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {Action} from 'vuex-class';
@@ -52,12 +52,12 @@ export default class TreeNode extends Vue {
         node.expanded = !node.expanded;
 
         if (node.expanded) {
-            if (node.hasChildren && !node.children.length) {
+            if (node.hasChildren && !node.folders.length) {
                 this.fetchTreeData(node.identifier);
             }
         } else {
             // Collapse all children
-            for (let nodeToCollapse of node.children.filter((child: FolderTreeNode) => child.expanded)) {
+            for (let nodeToCollapse of node.folders.filter((child: FolderTreeNode) => child.expanded)) {
                 this.toggleNode(nodeToCollapse);
             }
         }

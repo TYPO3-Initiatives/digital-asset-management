@@ -1,7 +1,7 @@
+import {StorageInterface} from '@/interfaces/StorageInterface';
 import {GroupedResourcesInterface} from '@/interfaces/GroupedResourcesInterface';
 
 export interface RootState {
-    storage: string;
     selected: Array<String>; // Array<String == FileIdentifier>
     itemsGrouped: GroupedResourcesInterface;
     items: any; // Array<File>
@@ -9,7 +9,7 @@ export interface RootState {
     viewMode: String; // LIST_VIEW|TILE_VIEW
     sorting: any;
     showTree: boolean;
-    tree: any;
+    storage: StorageInterface;
     treeIdentifierLocationMap: {[key: string]: Array<number>};
 }
 

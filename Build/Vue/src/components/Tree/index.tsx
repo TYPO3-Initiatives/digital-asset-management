@@ -1,6 +1,7 @@
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {FileType} from '@/enums/FileType';
-import FolderTreeNode from '@/models/FolderTreeNode';
+import FolderTreeNode from '@/interfaces/FolderTreeNode';
+import {StorageInterface} from '@/interfaces/StorageInterface';
 import {Component, Vue} from 'vue-property-decorator';
 import {CreateElement, VNode} from 'vue';
 import TreeNode from '@/components/TreeNode';
@@ -13,10 +14,7 @@ export default class Tree extends Vue {
     fetchTreeData: any;
 
     @State
-    tree!: any;
-
-    @State
-    storage!: string;
+    storage!: StorageInterface;
 
     private draggableService: DraggableService;
 
@@ -31,16 +29,16 @@ export default class Tree extends Vue {
     }
 
     mounted(): void {
-        this.fetchTreeData(this.storage);
+        this.fetchTreeData(this.storage.identifier);
         this.draggableService.makeDraggable();
     }
 
     private render(h: CreateElement): VNode|null {
-        if (!this.tree) {
+        if (!this.storage.folders) {
             return null;
         }
 
-        const nodes = [this.tree].map(this.generateNodes, this);
+        const nodes = [this.storage.folders].map(this.generateNodes, this);
         return(
             <div><ul class='list-tree list-tree-root'><li>{nodes}</li></ul></div>
         );
@@ -58,8 +56,8 @@ export default class Tree extends Vue {
     private generateNode(node: FolderTreeNode): VNode {
         let treeNodeElement = <TreeNode tree={this} node={node}></TreeNode>;
         let childNodes;
-        if (node.expanded && node.hasChildren && node.children.length) {
-            childNodes = [node.children].map(this.generateNodes, this);
+        if (node.expanded && node.hasChildren && node.folders.length) {
+            childNodes = [node.folders].map(this.generateNodes, this);
         }
 
         return(
