@@ -20,6 +20,10 @@ export default class Tree extends Vue {
     @State
     treeFolders!: Array<FolderTreeNode>;
 
+    @Prop()
+    selectCallBack!: Function;
+
+    private selectedNodeIdentifier: string = '';
     private draggableService: DraggableService;
 
     constructor(props: any) {
@@ -32,45 +36,55 @@ export default class Tree extends Vue {
         this.draggableService = new DraggableService(configuration);
     }
 
+    get activeNode(): string {
+        return this.selectedNodeIdentifier;
+    }
+
     mounted(): void {
         this.draggableService.makeDraggable();
+    }
+
+    private select(identifier: string): void {
+        this.selectedNodeIdentifier = identifier;
+        this.selectCallBack(identifier);
     }
 
     private render(h: CreateElement): VNode | null {
         const nodes = [this.treeFolders].map(this.generateNodes, this);
         return(
-            <div>
-                <ul class='list-tree list-tree-root'>
-                    <li class='list-tree-control-open'>
-                        <TreeRootNode storage={this.storage}></TreeRootNode>
-                        {nodes}
-                    </li>
-                </ul>
-            </div>
+          <div>
+              <ul class='list-tree list-tree-root'>
+                  <li class='list-tree-control-open'>
+                      <TreeRootNode storage={this.storage} />
+                      {nodes}
+                  </li>
+              </ul>
+          </div>
         );
     }
 
     private generateNodes(nodeCollection: Array<FolderTreeNode>): VNode {
         const collection = nodeCollection.map(this.generateNode, this);
         return(
-            <ul class='list-tree'>
-                {collection}
-            </ul>
+          <ul class='list-tree'>
+              {collection}
+          </ul>
         );
     }
 
     private generateNode(node: FolderTreeNode): VNode {
-        let treeNodeElement = <TreeNode node={node}></TreeNode>;
+        let treeNodeElement = <TreeNode node={node} selectCallBack={this.select}
+          selectedNodeIdentifier={this.activeNode} />;
         let childNodes;
         if (node.expanded && node.hasChildren && node.folders.length) {
             childNodes = [node.folders].map(this.generateNodes, this);
         }
 
         return(
-            <li data-type={FileType.FOLDER}>
-                {treeNodeElement}
-                {childNodes}
-            </li>
+          <li data-type={FileType.FOLDER}>
+              {treeNodeElement}
+              {childNodes}
+          </li>
         );
     }
 }
