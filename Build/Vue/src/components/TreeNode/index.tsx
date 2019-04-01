@@ -1,4 +1,4 @@
-import {Mutations} from '@/enums/Mutations';
+import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import FolderTreeNode from '@/models/FolderTreeNode';
 import {CreateElement, VNode} from 'vue';
 import {Component, Prop, Vue} from 'vue-property-decorator';
@@ -6,10 +6,10 @@ import {Action} from 'vuex-class';
 
 @Component
 export default class TreeNode extends Vue {
-    @Action(Mutations.FETCH_DATA)
+    @Action(AjaxRoutes.damGetFolderItems)
     fetchData: any;
 
-    @Action(Mutations.FETCH_TREE_DATA)
+    @Action(AjaxRoutes.damGetTreeFolders)
     fetchTreeData: any;
 
     @Prop()

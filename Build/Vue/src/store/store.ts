@@ -154,19 +154,8 @@ const options: StoreOptions<RootState> = {
             const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetStoragesAndMounts] + '&identifier=' + identifier);
             commit(Mutations.FETCH_DATA, response.data);
         },
-        async [Mutations.FETCH_TREE_DATA]({commit}: any, identifier: string): Promise<any> {
-            // request [dummy data]:
-            let endpoint;
-            if (identifier === '1:/') {
-                endpoint = 'http://localhost:8080/api/tree/root.json';
-            } else if (identifier === '1:/folder_2/') {
-                endpoint = 'http://localhost:8080/api/tree/children.json';
-            } else if (identifier === '1:/folder/trash/') {
-                endpoint = 'http://localhost:8080/api/tree/trash.json';
-            } else {
-                throw 'Undefined dummy endpoint';
-            }
-            const response = await client.get(endpoint);
+        async [AjaxRoutes.damGetTreeFolders]({commit}: any, identifier: string): Promise<any> {
+            const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetTreeFolders] + '&identifier=' + identifier);
             commit(Mutations.FETCH_TREE_DATA, {identifier: identifier, folders: response.data});
         },
         async [Mutations.SET_STORAGE]({commit, dispatch}: any, identifier: string): Promise<any> {

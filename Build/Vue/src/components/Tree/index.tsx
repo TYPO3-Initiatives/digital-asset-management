@@ -1,5 +1,5 @@
+import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {FileType} from '@/enums/FileType';
-import {Mutations} from '@/enums/Mutations';
 import FolderTreeNode from '@/models/FolderTreeNode';
 import {Component, Vue} from 'vue-property-decorator';
 import {CreateElement, VNode} from 'vue';
@@ -9,7 +9,7 @@ import {DraggableService, DragConfiguration} from '@/services/DraggableService';
 
 @Component
 export default class Tree extends Vue {
-    @Action(Mutations.FETCH_TREE_DATA)
+    @Action(AjaxRoutes.damGetTreeFolders)
     fetchTreeData: any;
 
     @State
