@@ -1,5 +1,4 @@
 import Icon from '@/components/Icon';
-import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {Mutations} from '@/enums/Mutations';
 import {StorageInterface} from '@/interfaces/StorageInterface';
 import {Component, Vue} from 'vue-property-decorator';
@@ -8,9 +7,6 @@ import {Action, State} from 'vuex-class';
 
 @Component
 export default class StorageSelector extends Vue {
-    @Action(AjaxRoutes.damGetStoragesAndMounts)
-    getStorages!: Function;
-
     @Action(Mutations.SET_STORAGE)
     setStorage!: Function;
 
@@ -22,10 +18,6 @@ export default class StorageSelector extends Vue {
 
     constructor(props: any) {
         super(props);
-    }
-
-    mounted(): void {
-        this.getStorages();
     }
 
     private static toggleDropdown(e: Event): void {
