@@ -1,9 +1,8 @@
 import {Component, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import DocHeader from '@/components/DocHeader';
-import ButtonBar from '@/components/ButtonBar';
-import StorageSelector from '@/components/StorageSelector';
 import Tree from '@/components/Tree';
+import StorageSelector from '@/components/StorageSelector';
 import {State} from 'vuex-class';
 
 @Component
@@ -23,6 +22,7 @@ export default class TreePanel extends Vue {
         if (!this.shallShowTree) {
             return null;
         }
+
         return (
             <div class='typo3-filelist-treepanel'>
                 <DocHeader>

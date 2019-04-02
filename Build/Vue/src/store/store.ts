@@ -1,6 +1,7 @@
+import FolderTreeNode from '@/interfaces/FolderTreeNode';
 import Vue from 'vue';
 import Vuex, {StoreOptions} from 'vuex';
-import {RootState} from '../../types/types';
+import {RootState} from 'types/types';
 import client from '@/services/http/Typo3Client';
 import {FolderInterface} from '@/interfaces/FolderInterface';
 import {FileInterface} from '@/interfaces/FileInterface';
@@ -30,6 +31,13 @@ const options: StoreOptions<RootState> = {
         current: '',
         viewMode: ViewType.TILE,
         showTree: true,
+        storage: {
+            folders: [],
+            title: '/fileadmin',
+            identifier: '1:/',
+            icon: '/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-mount.svg',
+        },
+        treeIdentifierLocationMap: {},
     },
     mutations: {
         [Mutations.FETCH_DATA](state: RootState, items: {
@@ -47,6 +55,9 @@ const options: StoreOptions<RootState> = {
             state.itemsGrouped.folders.sort(sortItems);
             state.itemsGrouped.files.sort(sortItems);
             state.itemsGrouped.images.sort(sortItems);
+        },
+        [Mutations.SET_STORAGE](state: RootState, identifier: string): void {
+            state.storage.identifier = identifier;
         },
         [Mutations.SELECT_ITEM](state: RootState, identifier: String): void {
             if (!state.selected.includes(identifier)) {
@@ -70,6 +81,33 @@ const options: StoreOptions<RootState> = {
         },
         [Mutations.SWITCH_VIEW](state: RootState, viewMode: String): void {
             state.viewMode = viewMode;
+        },
+        [Mutations.FETCH_TREE_DATA](state: RootState, data: {identifier: string, folders: Array<FolderTreeNode>}): void {
+            const nestingStructure = state.treeIdentifierLocationMap[data.identifier] || [];
+
+            data.folders.forEach((node: FolderTreeNode, index: number): void => {
+                node.folders = [];
+
+                // Store folder identifier and nesting information into state for faster tree traversal
+                const nesting = nestingStructure.slice(0); // This clones the nesting structure
+                nesting.push(index);
+                state.treeIdentifierLocationMap[node.identifier] = nesting;
+            });
+
+            if (data.identifier.match(/^\d+:\/$/)) {
+                // Storage root requested
+                state.storage.folders = data.folders;
+            } else {
+                let node;
+                let folders = state.storage.folders;
+                for (let index of nestingStructure) {
+                    node = folders[index];
+                    folders = folders[index].folders;
+                }
+                if (typeof node !== 'undefined') {
+                    node.folders = data.folders;
+                }
+            }
         },
         [Mutations.TOGGLE_TREE](state: RootState): void {
             state.showTree = !state.showTree;
@@ -119,6 +157,15 @@ const options: StoreOptions<RootState> = {
             commit(Mutations.NAVIGATE, identifier);
             const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetStoragesAndMounts] + '&identifier=' + identifier);
             commit(Mutations.FETCH_DATA, response.data);
+        },
+        async [AjaxRoutes.damGetTreeFolders]({commit}: any, identifier: string): Promise<any> {
+            const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetTreeFolders] + '&identifier=' + identifier);
+            commit(Mutations.FETCH_TREE_DATA, {identifier: identifier, folders: response.data});
+        },
+        async [Mutations.SET_STORAGE]({commit, dispatch}: any, identifier: string): Promise<any> {
+            commit(Mutations.SET_STORAGE, identifier);
+            dispatch(AjaxRoutes.damGetFolderItems, identifier);
+            dispatch(AjaxRoutes.damGetTreeFolders, identifier);
         },
     },
 };

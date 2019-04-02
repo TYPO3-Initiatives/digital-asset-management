@@ -1,3 +1,4 @@
+import {StorageInterface} from '@/interfaces/StorageInterface';
 import {GroupedResourcesInterface} from '@/interfaces/GroupedResourcesInterface';
 
 export interface RootState {
@@ -8,6 +9,8 @@ export interface RootState {
     viewMode: String; // LIST_VIEW|TILE_VIEW
     sorting: any;
     showTree: boolean;
+    storage: StorageInterface;
+    treeIdentifierLocationMap: {[key: string]: Array<number>};
 }
 
 declare global {
