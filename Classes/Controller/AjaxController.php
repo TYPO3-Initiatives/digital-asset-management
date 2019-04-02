@@ -9,6 +9,7 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
  * LICENSE file that was distributed with this source code.
  */
 
+use PHPUnit\Util\Json;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\JsonResponse;
@@ -49,12 +50,8 @@ class AjaxController
     public function fileExistsAction(ServerRequestInterface $request): JsonResponse
     {
         $identifier = $request->getQueryParams()['identifier'];
-        try {
-            if (empty($identifier)) {
-                throw new ControllerException('Identifier needed', 1554125449);
-            }
-        } catch (ControllerException $e) {
-            return new JsonExceptionResponse($e);
+        if (empty($identifier)) {
+            return new JsonExceptionResponse(new ControllerException('Identifier needed', 1554125449));
         }
         $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         $folderIdentifier = dirname($identifier) . '/';
@@ -66,7 +63,15 @@ class AjaxController
         }
         $fileName = $folder->getStorage()->sanitizeFileName($fileIdentifier, $folder);
         if ($folder->hasFile($fileName)) {
-            return new FileExistsResponse(FileExistsResponse::FILE_EXISTS);
+            $file = $resourceFactory->getFileObjectFromCombinedIdentifier($folderIdentifier . $fileName);
+            // If file is an image or media, create image object, else file object
+            $fileExtension = strtolower($file->getExtension());
+            if (GeneralUtility::inList($GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'], $fileExtension)
+                || GeneralUtility::inList($GLOBALS['TYPO3_CONF_VARS']['GFX']['mediafile_ext'], $fileExtension)
+            ) {
+                return new JsonResponse([ new FolderItemImage($file) ]);
+            }
+            return new JsonResponse([ new FolderItemFile($file) ]);
         } else {
             return new FileExistsResponse(FileExistsResponse::FILE_DOES_NOT_EXIST);
         }
