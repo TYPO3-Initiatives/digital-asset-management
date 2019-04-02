@@ -47,6 +47,7 @@ export default class StorageSelector extends Vue {
     }
 
     private generateOption(storage: StorageInterface): VNode {
+        console.log('index.tsx@50: ', storage.identifier === this.activeStorage.identifier);
         return(
             <option
                 value={storage.identifier}

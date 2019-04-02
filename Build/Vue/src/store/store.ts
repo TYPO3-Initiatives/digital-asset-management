@@ -57,12 +57,12 @@ const options: StoreOptions<RootState> = {
         [Mutations.FETCH_STORAGES](state: RootState, data: Array<StorageInterface>): void {
             state.storages = data;
 
-            // TODO: Set active storage by value stored in UC
-            state.activeStorage = data[0];
+            if (!state.activeStorage) {
+                // TODO: Set active storage by value stored in UC
+                state.activeStorage = data[0];
+            }
         },
         [Mutations.SET_STORAGE](state: RootState, identifier: number): void {
-            state.treeFolders = [];
-            // state.storage.identifier = 0;
             for (let storage of state.storages) {
                 if (storage.identifier === identifier) {
                     state.activeStorage = storage;

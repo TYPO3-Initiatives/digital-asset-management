@@ -23,12 +23,8 @@ export default class TreePanel extends Vue {
     }
 
     private render(): VNode|null {
-        if (!this.shallShowTree) {
-            return null;
-        }
-
         return (
-            <div class='typo3-filelist-treepanel'>
+            <div class='typo3-filelist-treepanel' v-show={this.shallShowTree}>
                 <DocHeader>
                     <template slot='bottomBarLeft'><StorageSelector/></template>
                 </DocHeader>
