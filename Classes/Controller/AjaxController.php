@@ -157,6 +157,7 @@ class AjaxController
      * Query parameters
      *  'identifiers' array of identifier to copy
      *  'targetFolderIdentifier' string the target identifier. Must be a folder.
+     *  'conflictMode' string one of: "replace", "cancel", "rename", as defined in \TYPO3\CMS\Core\Resource\DuplicationBehavior
      *
      * @param ServerRequestInterface $request
      *
@@ -166,10 +167,14 @@ class AjaxController
     {
         try {
             $identifiers = $request->getQueryParams()['identifiers'];
+            $conflictMode = $request->getQueryParams()['conflictMode'] ?? '';
             $targetFolderIdentifier
                 = $request->getQueryParams()['targetFolderIdentifier'];
             if (empty($identifiers)) {
-                throw new ControllerException('Identifier needed', 1553699828);
+                throw new ControllerException('Identifiers needed', 1553699828);
+            }
+            if (empty($conflictMode) || !in_array($conflictMode, ['replace', 'cancel', 'rename'], true)) {
+                throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
             }
             if (empty($targetFolderIdentifier)) {
                 throw new ControllerException('Target folder identifier needed',
@@ -195,16 +200,16 @@ class AjaxController
                 $message = '';
                 if ($resultFolder
                     = $sourceObject->copyTo($targetFolderObject, null,
-                    DuplicationBehavior::CANCEL)
+                    $conflictMode)
                 ) {
                     $resources[$identifier] = [
                         'status' => 'COPIED',
-                        'resultIdentifier' => $resultFolder->getIdentifier()
+                        'resultIdentifier' => $resultFolder->getCombinedIdentifier()
                     ];
                 }
             } catch (InvalidTargetFolderException $e) {
                 $message = $e->getMessage();
-            } catch (ResourceException\ResourceDoesNotExistException $e) {
+            } catch (ResourceException $e) {
                 $message = $e->getMessage();
             }
             if ($message !== '') {
