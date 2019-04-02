@@ -281,8 +281,8 @@ class AjaxController
             } catch (ResourceException $e) {
                 $message = $e->getMessage();
             }
-            if ($message !== '') {
-                $resources[$identifier] = [
+            if ($message !== ''&& $resources[$identifier] === null) {
+                    $resources[$identifier] = [
                     'status' => 'FAILED',
                     'message' => $message
                 ];
