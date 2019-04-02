@@ -24,4 +24,8 @@ return [
         'path' => '/dam/renameResources',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::renameResourcesAction',
     ],
+    'damDeleteResources' => [
+        'path' => '/dam/deleteResources',
+        'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::deleteResourcesAction',
+    ],
 ];

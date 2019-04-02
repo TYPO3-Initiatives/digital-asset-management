@@ -332,6 +332,48 @@ class AjaxController
     }
 
     /**
+     * rename file or folder
+     * Query parameters
+     *  'identifier' string identifier to rename
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteResourcesAction(ServerRequestInterface $request): JsonResponse
+    {
+        try {
+            $identifier = $request->getQueryParams()['identifier'];
+            if (empty($identifier)) {
+                throw new ControllerException('Identifier needed', 1553699828);
+            }
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
+        }
+        try {
+            $resourceFactory
+                = GeneralUtility::makeInstance(ResourceFactory::class);
+            $fileOrFolder = $resourceFactory->retrieveFileOrFolderObject($identifier);
+            if ($fileOrFolder === null) {
+                $resources = [$identifier => [
+                    'status' => 'FAILED',
+                    'message' => 'Identifier is not a valid file or folder identifier'
+                ]] ;
+                return new JsonResponse($resources);
+            }
+            $resulIdentifier = $fileOrFolder->delete(true);
+        } catch (ResourceException $e) {
+            return new JsonExceptionResponse($e);
+        }
+        $resources = [$identifier => [
+            'status' => 'DELETED',
+            'message' => 'File/folder was successfully removed',
+            'resultIdentifier' => $resulIdentifier
+        ]] ;
+        return new JsonResponse($resources);
+    }
+
+    /**
      * @return BackendUserAuthentication
      */
     protected function getBackendUser(): BackendUserAuthentication
