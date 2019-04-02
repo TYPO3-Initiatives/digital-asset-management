@@ -17,14 +17,14 @@ export default class TreeNode extends Vue {
     }
 
     get browsableIdentifier(): string {
-        return this.storage.identifier + ':/'
+        return this.storage.identifier + ':/';
     }
 
     private render(h: CreateElement): VNode {
         return(
             <span class='list-tree-group' data-identifier={this.browsableIdentifier}>
                 <a href='#' data-identifier={this.browsableIdentifier} onclick={() => this.fetchData(this.browsableIdentifier)}>
-                    {this.storage.icon} {this.storage.storageName}
+                    <span domPropsInnerHTML={this.storage.icon}></span> {this.storage.storageName}
                 </a>
             </span>
         );

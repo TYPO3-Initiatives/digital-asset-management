@@ -30,7 +30,7 @@ export default class Tree extends Vue {
     }
 
     get browsableIdentifier(): string {
-        return this.activeStorage.storage.identifier + ':/'
+        return this.activeStorage.storage.identifier + ':/';
     }
 
     mounted(): void {
