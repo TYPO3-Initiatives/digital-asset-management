@@ -1,3 +1,4 @@
+import Icon from '@/components/Icon';
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {StorageInterface} from '@/interfaces/StorageInterface';
 import {CreateElement, VNode} from 'vue';
@@ -24,7 +25,7 @@ export default class TreeNode extends Vue {
         return(
             <span class='list-tree-group' data-identifier={this.browsableIdentifier}>
                 <a href='#' data-identifier={this.browsableIdentifier} onclick={() => this.fetchData(this.browsableIdentifier)}>
-                    <span domPropsInnerHTML={this.storage.icon}></span> {this.storage.storageName}
+                    <Icon markup={this.storage.icon} /> {this.storage.storageName}
                 </a>
             </span>
         );
