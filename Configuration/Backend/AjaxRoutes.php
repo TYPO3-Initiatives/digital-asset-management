@@ -20,4 +20,8 @@ return [
         'path' => '/dam/moveResources',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::moveResourcesAction',
     ],
+    'damRenameResources' => [
+        'path' => '/dam/renameResources',
+        'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::renameResourcesAction',
+    ],
 ];
