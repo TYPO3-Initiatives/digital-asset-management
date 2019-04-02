@@ -47,18 +47,14 @@ const options: StoreOptions<RootState> = {
         }): void {
             const sortItems = (a: any, b: any) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'});
 
-            if (items.folders) {
-                state.itemsGrouped.folders = items.folders.sort(sortItems);
-                state.items.push(...state.itemsGrouped.folders);
-            }
-            if (items.files) {
-                state.itemsGrouped.files = items.files.sort(sortItems);
-                state.items.push(...state.itemsGrouped.files);
-            }
-            if (items.images) {
-                state.itemsGrouped.images = items.images.sort(sortItems);
-                state.items.push(...state.itemsGrouped.images);
-            }
+            state.itemsGrouped = items;
+            state.items = [...items.files, ...items.images, ...items.folders];
+
+            // default sort order - ugly duplication
+            state.items.sort(sortItems);
+            state.itemsGrouped.folders.sort(sortItems);
+            state.itemsGrouped.files.sort(sortItems);
+            state.itemsGrouped.images.sort(sortItems);
         },
         [Mutations.SET_STORAGE](state: RootState, identifier: string): void {
             state.storage.identifier = identifier;
