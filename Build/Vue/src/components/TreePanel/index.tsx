@@ -1,3 +1,4 @@
+import {ActiveStorageInterface} from '@/interfaces/ActiveStorageInterface';
 import {Component, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import DocHeader from '@/components/DocHeader';
@@ -9,6 +10,9 @@ import {State} from 'vuex-class';
 export default class TreePanel extends Vue {
     @State
     showTree!: boolean;
+
+    @State
+    activeStorage!: ActiveStorageInterface;
 
     constructor(props: any) {
         super(props);
@@ -29,7 +33,7 @@ export default class TreePanel extends Vue {
                     <template slot='bottomBarLeft'><StorageSelector/></template>
                 </DocHeader>
                 <div class=''>
-                    <Tree/>
+                    <Tree v-show={this.activeStorage}/>
                 </div>
             </div>
         );

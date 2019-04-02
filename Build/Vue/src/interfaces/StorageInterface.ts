@@ -1,8 +1,9 @@
-import FolderTreeNode from '@/interfaces/FolderTreeNode';
-
 export interface StorageInterface {
-    folders: Array<FolderTreeNode>;
-    title: string;
-    identifier: string;
+    type: string;
+    identifier: number;
+    name: string;
+    storageName: string;
+    storageType: string;
+    storageOnline: boolean;
     icon: string;
 }

@@ -1,8 +1,8 @@
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {FileType} from '@/enums/FileType';
+import {ActiveStorageInterface} from '@/interfaces/ActiveStorageInterface';
 import FolderTreeNode from '@/interfaces/FolderTreeNode';
-import {StorageInterface} from '@/interfaces/StorageInterface';
-import {Component, Vue} from 'vue-property-decorator';
+import {Component, Prop, Vue} from 'vue-property-decorator';
 import {CreateElement, VNode} from 'vue';
 import TreeNode from '@/components/TreeNode';
 import TreeRootNode from '@/components/TreeRootNode';
@@ -15,7 +15,7 @@ export default class Tree extends Vue {
     fetchTreeData: any;
 
     @State
-    storage!: StorageInterface;
+    activeStorage!: ActiveStorageInterface;
 
     private draggableService: DraggableService;
 
@@ -30,21 +30,15 @@ export default class Tree extends Vue {
     }
 
     mounted(): void {
-        this.fetchTreeData(this.storage.identifier);
-        this.draggableService.makeDraggable();
+        this.fetchTreeData(this.activeStorage.storage.identifier + ':/');
     }
 
-    private render(h: CreateElement): VNode|null {
-        if (!this.storage.folders) {
-            return null;
-        }
-
-        const nodes = [this.storage.folders].map(this.generateNodes, this);
+    private render(h: CreateElement): VNode | null {
+        const nodes = [this.activeStorage.folders].map(this.generateNodes, this);
         return(
             <div>
                 <ul class='list-tree list-tree-root'>
                     <li class='list-tree-control-open'>
-                        <TreeRootNode></TreeRootNode>
                         {nodes}
                     </li>
                 </ul>

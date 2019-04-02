@@ -1,25 +1,51 @@
+import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {Mutations} from '@/enums/Mutations';
+import {StorageInterface} from '@/interfaces/StorageInterface';
 import {Component, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
-import {Action} from 'vuex-class';
+import {Action, State} from 'vuex-class';
 
 @Component
 export default class StorageSelector extends Vue {
+    @Action(AjaxRoutes.damGetStoragesAndMounts)
+    getStorages!: Function;
+
     @Action(Mutations.SET_STORAGE)
     setStorage!: Function;
+
+    @State
+    storages!: Array<StorageInterface>;
 
     constructor(props: any) {
         super(props);
     }
 
-    private render(): VNode {
+    mounted(): void {
+        this.getStorages();
+    }
+
+    private getBrowsableIdentifier(identifier: number): string {
+        return identifier + ':/';
+    }
+
+    private render(): VNode | null {
+        if (!this.storages.length) {
+            return null;
+        }
+
+        const options = this.storages.map(this.generateOption, this);
         return (
             <div class='storage-selector' onchange={this.updateStorage}>
                 <select class='form-control'>
-                    <option value='1:/'>fileadmin/ (auto-created)</option>
-                    <option value='2:/'>also fileadmin/ (but another ID)</option>
+                    {options}
                 </select>
             </div>
+        );
+    }
+
+    private generateOption(storage: StorageInterface): VNode {
+        return(
+            <option value={this.getBrowsableIdentifier(storage.identifier)}>{storage.name}</option>
         );
     }
 

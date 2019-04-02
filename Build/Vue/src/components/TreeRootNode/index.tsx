@@ -20,7 +20,7 @@ export default class TreeNode extends Vue {
         return(
             <span class='list-tree-group' data-identifier={this.storage.identifier}>
                 <a href='#' data-identifier={this.storage.identifier} onclick={() => this.fetchData(this.storage.identifier)}>
-                    <img src={this.storage.icon} width='16' height='16' /> {this.storage.title}
+                    <img src={this.storage.icon} width='16' height='16' /> {this.storage.storageName}
                 </a>
             </span>
         );
