@@ -347,9 +347,9 @@ class AjaxController
     }
 
     /**
-     * rename file or folder
+     * delete file or folder
      * Query parameters
-     *  'identifier' string identifier to rename
+     *  'identifier' string identifier of file or folder to delete
      *
      * @param ServerRequestInterface $request
      *
@@ -376,14 +376,19 @@ class AjaxController
                 ]] ;
                 return new JsonResponse($resources);
             }
-            $resulIdentifier = $fileOrFolder->delete(true);
+            if (!$fileOrFolder->delete(true)) {
+                $resources = [$identifier => [
+                    'status' => 'FAILED',
+                    'message' => 'Could not delete resource'
+                ]];
+                return new JsonResponse($resources);
+            }
         } catch (ResourceException $e) {
             return new JsonExceptionResponse($e);
         }
         $resources = [$identifier => [
             'status' => 'DELETED',
-            'message' => 'File/folder was successfully removed',
-            'resultIdentifier' => $resulIdentifier
+            'message' => 'File/folder was successfully removed'
         ]] ;
         return new JsonResponse($resources);
     }
