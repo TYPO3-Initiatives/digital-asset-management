@@ -1,4 +1,4 @@
-import {ActiveStorageInterface} from '@/interfaces/ActiveStorageInterface';
+import FolderTreeNode from '@/interfaces/FolderTreeNode';
 import {StorageInterface} from '@/interfaces/StorageInterface';
 import {GroupedResourcesInterface} from '@/interfaces/GroupedResourcesInterface';
 
@@ -10,7 +10,8 @@ export interface RootState {
     viewMode: String; // LIST_VIEW|TILE_VIEW
     sorting: any;
     showTree: boolean;
-    activeStorage: ActiveStorageInterface | null;
+    activeStorage: StorageInterface | null;
+    treeFolders: Array<FolderTreeNode>;
     storages: Array<StorageInterface>;
     treeIdentifierLocationMap: {[key: string]: Array<number>};
 }

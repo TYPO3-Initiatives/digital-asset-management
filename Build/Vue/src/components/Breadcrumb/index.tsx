@@ -39,6 +39,7 @@ export default class Breadcrumb extends Vue {
         });
         return (
             <div class='breadcrumb'>
+                <StorageSelector/>
                 {items}
             </div>
         );

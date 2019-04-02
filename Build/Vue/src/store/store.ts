@@ -33,6 +33,7 @@ const options: StoreOptions<RootState> = {
         viewMode: ViewType.TILE,
         showTree: true,
         activeStorage: null,
+        treeFolders: [],
         storages: [],
         treeIdentifierLocationMap: {},
     },
@@ -57,13 +58,16 @@ const options: StoreOptions<RootState> = {
             state.storages = data;
 
             // TODO: Set active storage by value stored in UC
-            state.activeStorage = {
-                folders: [],
-                storage: data[0],
-            };
+            state.activeStorage = data[0];
         },
-        [Mutations.SET_STORAGE](state: RootState, identifier: string): void {
+        [Mutations.SET_STORAGE](state: RootState, identifier: number): void {
+            state.treeFolders = [];
             // state.storage.identifier = 0;
+            for (let storage of state.storages) {
+                if (storage.identifier === identifier) {
+                    state.activeStorage = storage;
+                }
+            }
         },
         [Mutations.SELECT_ITEM](state: RootState, identifier: String): void {
             if (!state.selected.includes(identifier)) {
@@ -106,10 +110,10 @@ const options: StoreOptions<RootState> = {
 
             if (data.identifier.match(/^\d+:\/$/)) {
                 // Storage root requested
-                state.activeStorage.folders = data.folders;
+                state.treeFolders = data.folders;
             } else {
                 let node;
-                let folders = state.activeStorage.folders;
+                let folders = state.treeFolders;
                 for (let index of nestingStructure) {
                     node = folders[index];
                     folders = folders[index].folders;
@@ -176,10 +180,10 @@ const options: StoreOptions<RootState> = {
             const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetStoragesAndMounts]);
             commit(Mutations.FETCH_STORAGES, response.data);
         },
-        async [Mutations.SET_STORAGE]({commit, dispatch}: any, identifier: string): Promise<any> {
-            commit(Mutations.SET_STORAGE, identifier);
-            dispatch(AjaxRoutes.damGetFolderItems, identifier);
-            dispatch(AjaxRoutes.damGetTreeFolders, identifier);
+        async [Mutations.SET_STORAGE]({commit, dispatch}: any, data: {id: number, browsableIdentifier: string}): Promise<any> {
+            commit(Mutations.SET_STORAGE, data.id);
+            dispatch(AjaxRoutes.damGetTreeFolders, data.browsableIdentifier);
+            dispatch(AjaxRoutes.damGetFolderItems, data.browsableIdentifier);
         },
     },
 };

@@ -16,6 +16,9 @@ export default class StorageSelector extends Vue {
     @State
     storages!: Array<StorageInterface>;
 
+    @State
+    activeStorage!: StorageInterface;
+
     constructor(props: any) {
         super(props);
     }
@@ -45,12 +48,20 @@ export default class StorageSelector extends Vue {
 
     private generateOption(storage: StorageInterface): VNode {
         return(
-            <option value={this.getBrowsableIdentifier(storage.identifier)}>{storage.name}</option>
+            <option
+                value={storage.identifier}
+                selected={storage.identifier === this.activeStorage.identifier}
+            >
+                {storage.name}
+            </option>
         );
     }
 
     private updateStorage(e: Event): void {
-        const selectedStorage = (e.target as HTMLSelectElement).selectedOptions[0].value;
-        this.setStorage(selectedStorage);
+        const selectedStorage = parseInt((e.target as HTMLSelectElement).selectedOptions[0].value, 10);
+        this.setStorage({
+            id: selectedStorage,
+            browsableIdentifier: this.getBrowsableIdentifier(selectedStorage),
+        });
     }
 }
