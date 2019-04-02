@@ -9,7 +9,6 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
  * LICENSE file that was distributed with this source code.
  */
 
-use PHPUnit\Util\Json;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\JsonResponse;
