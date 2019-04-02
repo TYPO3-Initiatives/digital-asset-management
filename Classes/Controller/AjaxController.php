@@ -47,6 +47,24 @@ class AjaxController
      * @param ServerRequestInterface $request
      * @return JsonResponse
      */
+    public function createFolderAction(ServerRequestInterface $request): JsonResponse
+    {
+        $identifier = $request->getQueryParams()['identifier'] ?? '';
+        if (empty($identifier)) {
+            return new JsonExceptionResponse(new ControllerException('Identifier needed', 1554204780));
+        }
+        try {
+            $folder = $this->createFolderRecursive($identifier);
+            return new JsonResponse([ new FolderItemFolder($folder) ]);
+        } catch (ResourceException $e) {
+            return new JsonExceptionResponse($e);
+        }
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return JsonResponse
+     */
     public function fileUploadAction(ServerRequestInterface $request): JsonResponse
     {
         $identifier = $request->getQueryParams()['identifier'] ?? '';
