@@ -4,6 +4,10 @@ return [
         'path' => '/dam/fileExists',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::fileExistsAction',
     ],
+    'damFileUpload' => [
+        'path' => '/dam/fileUpload',
+        'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::fileUploadAction',
+    ],
     'damGetFolderItems' => [
         'path' => '/dam/getFolderItems',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::getFolderItemsAction',
