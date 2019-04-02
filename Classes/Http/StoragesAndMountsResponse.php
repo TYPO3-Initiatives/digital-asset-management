@@ -28,6 +28,6 @@ class StoragesAndMountsResponse extends JsonResponse
      */
     public function __construct(array $entities)
     {
-        parent::__construct($entities, 200);
+        parent::__construct($entities);
     }
 }

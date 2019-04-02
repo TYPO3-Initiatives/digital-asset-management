@@ -10,9 +10,9 @@ namespace TYPO3\CMS\DigitalAssetManagement\Http;
  */
 
 use TYPO3\CMS\Core\Http\JsonResponse;
-use TYPO3\CMS\DigitalAssetManagement\Entity\FileMount;
+use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemFile;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemFolder;
-use TYPO3\CMS\DigitalAssetManagement\Entity\Storage;
+use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemImage;
 
 /**
  * A 200 response object returned by controller
@@ -37,6 +37,6 @@ class FolderItemsResponse extends JsonResponse
             'files' => $files,
             'images' => $images
         ];
-        parent::__construct($data, 200);
+        parent::__construct($data);
     }
 }
