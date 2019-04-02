@@ -1,3 +1,4 @@
+import Icon from '@/components/Icon';
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {Mutations} from '@/enums/Mutations';
 import {StorageInterface} from '@/interfaces/StorageInterface';
@@ -27,7 +28,24 @@ export default class StorageSelector extends Vue {
         this.getStorages();
     }
 
-    private getBrowsableIdentifier(identifier: number): string {
+    private static toggleDropdown(e: Event): void {
+        const me = (e.target as HTMLElement);
+        const dropdown = me.closest('.component-dropdown');
+        if (dropdown === null) {
+            return;
+        }
+
+        let isActive = dropdown.classList.contains('component-dropdown-active');
+        dropdown.classList.toggle('component-dropdown-active', !isActive);
+        dropdown.classList.toggle('component-dropdown-inactive', isActive);
+
+        const dropdownToggle = dropdown.querySelector('.component-dropdown-toggle');
+        if (dropdownToggle !== null) {
+            dropdownToggle.setAttribute('aria-expanded', (!isActive).toString());
+        }
+    }
+
+    private static getBrowsableIdentifier(identifier: number): string {
         return identifier + ':/';
     }
 
@@ -38,31 +56,68 @@ export default class StorageSelector extends Vue {
 
         const options = this.storages.map(this.generateOption, this);
         return (
-            <div class='storage-selector' onchange={this.updateStorage}>
-                <select class='form-control'>
-                    {options}
-                </select>
-            </div>
+            <span class='component-dropdown component-dropdown-inactive'>
+                <button
+                    type='button'
+                    title={TYPO3.lang['StorageSelector.title']}
+                    aria-label={TYPO3.lang['StorageSelector.label']}
+                    class='component-dropdown-toggle'
+                    aria-haspopup='true'
+                    aria-expanded='false'
+                    onclick={StorageSelector.toggleDropdown}
+                >
+                    <span class='component-dropdown-toggle-icon' role='presentation'>
+                        <Icon markup={this.activeStorage.icon} />
+                    </span>
+                    <span class='component-dropdown-toggle-text'>
+                        {this.activeStorage.name}
+                    </span>
+                    <span class='component-dropdown-toggle-icon' role='presentation'>
+                        <i class='fa fa-caret-down' />
+                        {/*TODO: We need the icon here <svg>...</svg>*/}
+                    </span>
+                </button>
+                <div class='component-dropdown-container'>
+                    <ul class='component-dropdown-menu' role='menu'>
+                        {options}
+                    </ul>
+                </div>
+            </span>
         );
     }
 
     private generateOption(storage: StorageInterface): VNode {
-        console.log('index.tsx@50: ', storage.identifier === this.activeStorage.identifier);
         return(
-            <option
-                value={storage.identifier}
-                selected={storage.identifier === this.activeStorage.identifier}
-            >
-                {storage.name}
-            </option>
+            <li class='component-dropdown-menu-item'>
+                <a
+                    class='component-dropdown-menu-link'
+                    title='{storage.storageName}'
+                    href='#'
+                    data-identifier={storage.identifier}
+                    onclick={this.updateStorage}
+                >
+                    <span class='component-dropdown-menu-link-icon' role='presentation'>
+                        <Icon markup={storage.icon} />
+                    </span>
+                    <span class='component-dropdown-menu-link-text'>{storage.storageName}</span>
+                </a>
+            </li>
         );
     }
 
     private updateStorage(e: Event): void {
-        const selectedStorage = parseInt((e.target as HTMLSelectElement).selectedOptions[0].value, 10);
-        this.setStorage({
-            id: selectedStorage,
-            browsableIdentifier: this.getBrowsableIdentifier(selectedStorage),
-        });
+        const me = (e.target as HTMLElement);
+        const link = me.closest('a');
+        if (link === null || typeof link.dataset.identifier === 'undefined') {
+            return;
+        }
+
+        const storageId = parseInt(link.dataset.identifier, 10);
+        if (storageId !== this.activeStorage.identifier) {
+            this.setStorage({
+                id: storageId,
+                browsableIdentifier: StorageSelector.getBrowsableIdentifier(storageId),
+            });
+        }
     }
 }
