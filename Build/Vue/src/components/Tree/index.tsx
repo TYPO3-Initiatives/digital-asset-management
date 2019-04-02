@@ -2,7 +2,7 @@ import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {FileType} from '@/enums/FileType';
 import {ActiveStorageInterface} from '@/interfaces/ActiveStorageInterface';
 import FolderTreeNode from '@/interfaces/FolderTreeNode';
-import {Component, Prop, Vue} from 'vue-property-decorator';
+import {Component, Vue} from 'vue-property-decorator';
 import {CreateElement, VNode} from 'vue';
 import TreeNode from '@/components/TreeNode';
 import TreeRootNode from '@/components/TreeRootNode';
@@ -29,8 +29,13 @@ export default class Tree extends Vue {
         this.draggableService = new DraggableService(configuration);
     }
 
+    get browsableIdentifier(): string {
+        return this.activeStorage.storage.identifier + ':/'
+    }
+
     mounted(): void {
-        this.fetchTreeData(this.activeStorage.storage.identifier + ':/');
+        this.draggableService.makeDraggable();
+        this.fetchTreeData(this.browsableIdentifier);
     }
 
     private render(h: CreateElement): VNode | null {
@@ -39,6 +44,7 @@ export default class Tree extends Vue {
             <div>
                 <ul class='list-tree list-tree-root'>
                     <li class='list-tree-control-open'>
+                        <TreeRootNode storage={this.activeStorage.storage}></TreeRootNode>
                         {nodes}
                     </li>
                 </ul>

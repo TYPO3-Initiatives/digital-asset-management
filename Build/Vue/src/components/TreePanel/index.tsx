@@ -33,7 +33,7 @@ export default class TreePanel extends Vue {
                     <template slot='bottomBarLeft'><StorageSelector/></template>
                 </DocHeader>
                 <div class=''>
-                    <Tree v-show={this.activeStorage}/>
+                    {this.activeStorage ? <Tree /> : ''}
                 </div>
             </div>
         );
