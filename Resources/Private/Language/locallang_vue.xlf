@@ -3,6 +3,7 @@
   <file t3:id="65436677" source-language="en" datatype="plaintext" original="messages" date="2018-04-12T22:22:32Z" product-name="backend">
     <header/>
     <body>
+      <!-- List -->
       <trans-unit id="List.table.header.name">
         <source>Name</source>
       </trans-unit>
@@ -24,11 +25,54 @@
       <trans-unit id="List.table.header.permissions">
         <source>RW</source>
       </trans-unit>
+      <trans-unit id="List.table.header.sort_info">
+        <source>sort by {field} in {order} order</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.ascending">
+        <source>ascending</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.descending">
+        <source>descending</source>
+      </trans-unit>
+
+      <!-- StorageSelector -->
       <trans-unit id="StorageSelector.title">
         <source>Select a file storage to browse the assets</source>
       </trans-unit>
       <trans-unit id="StorageSelector.label">
         <source>Select a file storage</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.none">
+        <source>none</source>
+      </trans-unit>
+
+      <!-- ListItem -->
+      <trans-unit id="ListItem.label.open">
+        <source>Open</source>
+      </trans-unit>
+
+      <!-- AllSelector -->
+      <trans-unit id="AllSelector.label.select">
+        <source>select all elements</source>
+      </trans-unit>
+      <trans-unit id="AllSelector.label.deselect">
+        <source>deselect all elements</source>
+      </trans-unit>
+
+      <!-- Breadcrumb -->
+      <trans-unit id="Breadcrumb.current_folder_description">
+        <source>Breadcrumb, you are currently in </source>
+      </trans-unit>
+      <trans-unit id="current_folder_description_glue_word">
+        <source>within</source>
+      </trans-unit>
+
+      <!-- ItemSelector -->
+      <trans-unit id="ItemSelector.label.select">
+        <source>select</source>
+      </trans-unit>
+      <trans-unit id="ItemSelector.label.deselect">
+        <source>deselect</source>
       </trans-unit>
     </body>
   </file>

@@ -36,53 +36,79 @@ export default class ListItem extends Vue {
     }
 
     private render(): VNode {
-        let classes = 'list-item ';
-        if (this.isSelected) {
-            classes += ' selected';
-        }
-
         const columns: Array<VNode> = [];
         for (let field in this.visibleColumns) {
             if (this.visibleColumns.hasOwnProperty(field)) {
                 let fieldName = this.visibleColumns[field];
                 let val: any = this.item[fieldName] || '';
-                if (fieldName === 'name') {
-                    if (this.item.type === FileType.FOLDER) {
-                        const clickFunction = (e: Event) => {
-                            e.stopPropagation();
-                            this.openFolder(this.item.identifier);
-                        };
-                        columns.push(
-                          <td>
-                              <img src={this.item.icon} height='16' />
-                              <a href='#' onClick={clickFunction}>{val}</a>
-                          </td>);
-                    } else {
-                        columns.push(
-                          <td>
-                              <img src={this.item.icon} height='16' />
-                              <a href={this.item.editMetaUrl}>{val}</a>
-                          </td>);
-                    }
-                } else if (fieldName === 'references' && val > 0) {
-                    const clickFunction = (e: Event) => {
-                        e.stopPropagation();
-                        top.TYPO3.InfoWindow.showItem('_FILE', this.identifier);
-                    };
-                    columns.push(<td><a href='#' onClick={clickFunction}>{val}</a></td>);
-                } else if (fieldName === 'permissions') {
-                    columns.push(<td>{val.isReadable ? 'R' : ''}{val.isWritable ? 'W' : ''}</td>);
-                } else {
-                    columns.push(<td>{val}</td>);
-                }
+                columns.push(this.renderFieldColumn(fieldName, val));
             }
         }
 
         return (
-            <tr class={classes} data-identifier={this.identifier}>
-                <th><ItemSelector identifier={this.identifier}/></th>
+            <tr data-uid={this.identifier}>
+                <td data-type='checkbox' data-label={'Select ' + this.item.name}>
+                    <ItemSelector identifier={this.identifier}/>
+                </td>
                 {columns}
             </tr>
         );
+    }
+
+    private renderFieldColumn(fieldName: string, val: any): VNode {
+        if (fieldName === 'name') {
+            if (this.item.type === FileType.FOLDER) {
+                const clickFunction = (e: Event) => {
+                    e.stopPropagation();
+                    this.openFolder(this.item.identifier);
+                };
+                return (
+                  <th scope='row' data-type='title' data-value={this.item.name} data-property='name' data-label='Filename'>
+                      <a class='component-datatable-link' href='#'
+                        title={TYPO3.lang['ListItem.label.open'] + ' ' + this.item.name} onClick={clickFunction}>
+                          <span class='component-datatable-link-icon' role='presentation'>
+                              <img src={this.item.icon} height='16' />
+                          </span>
+                          <span class='component-datatable-link-text'>{val}</span>
+                      </a>
+                  </th>
+                );
+            } else {
+                return (
+                  <th scope='row' data-type='title' data-value={this.item.name} data-property='name' data-label='Filename'>
+                      <a class='component-datatable-link' href={this.item.editMetaUrl}
+                        title={TYPO3.lang['ListItem.label.open'] + ' ' + this.item.name}>
+                          <span class='component-datatable-link-icon' role='presentation'>
+                              <img src={this.item.icon} height='16'/>
+                          </span>
+                          <span class='component-datatable-link-text'>{val}</span>
+                      </a>
+                  </th>
+                );
+            }
+        } else if (fieldName === 'references' && val > 0) {
+            const clickFunction = (e: Event) => {
+                e.stopPropagation();
+                top.TYPO3.InfoWindow.showItem('_FILE', this.identifier);
+            };
+            return (
+              <td data-type='number' data-value={val} data-property={fieldName} data-label={fieldName}>
+                  <a href='#' onclick={clickFunction}>{val}</a>
+              </td>
+            );
+        } else if (fieldName === 'permissions') {
+            const sortValue = (val.isReadable ? 1 : 0) + (val.isWritable ? 2 : 0);
+            return (
+              <td data-type='string' data-value={sortValue} data-property={fieldName} data-label={fieldName}>
+                  {val.isReadable ? 'R' : ''}{val.isWritable ? 'W' : ''}
+              </td>
+            );
+        } else {
+            return (
+              <td data-type='string' data-value={val} data-property={fieldName} data-label={fieldName}>
+                  {val}
+              </td>
+            );
+        }
     }
 }
