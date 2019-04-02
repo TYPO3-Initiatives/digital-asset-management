@@ -12,7 +12,6 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\JsonResponse;
-use TYPO3\CMS\Core\Resource\DuplicationBehavior;
 use TYPO3\CMS\Core\Resource\Exception as ResourceException;
 use TYPO3\CMS\Core\Resource\Exception\InvalidTargetFolderException;
 use TYPO3\CMS\Core\Resource\Folder;
@@ -322,44 +321,44 @@ class AjaxController
         } catch (ControllerException $e) {
             return new JsonExceptionResponse($e);
         }
+        $resources = [];
+        $message = '';
         try {
             $resourceFactory
                 = GeneralUtility::makeInstance(ResourceFactory::class);
             $fileOrFolder
                 = $resourceFactory->retrieveFileOrFolderObject($identifier);
-        } catch (ResourceException\ResourceDoesNotExistException $e) {
-            $resources = [
-                $identifier => [
-                    'status' => 'FAILED',
-                    'message' => 'Identifier is not a valid file or folder identifier'
-                ]
-            ];
-            return new JsonResponse($resources);
+        } catch (ResourceException $e) {
+            $message = $e->getMessage();
         }
         try {
-            if ($fileOrFolder !== null) {
+            if ($fileOrFolder === null) {
+                throw new ResourceException\ResourceDoesNotExistException('Resource does not exist');
+            } else {
                 $resultFileOrFolder = $fileOrFolder->rename($targetName,
                     $conflictMode);
-                $resources = [
-                    $identifier => [
-                        'status' => 'RENAMED',
-                        'message' => 'File/folder was successfully renamed',
-                        'resultIdentifier' => $resultFileOrFolder->getCombinedIdentifier()
-                    ]
+                $resources[$identifier] = [
+                    'status' => 'RENAMED',
+                    'message' => 'File/folder was successfully renamed',
+                    'resultIdentifier' => $resultFileOrFolder->getCombinedIdentifier()
                 ];
-                return new JsonResponse($resources);
             }
-            throw new ResourceException('Invalid file or folder identifier',
-                1554210572);
         } catch (ResourceException $e) {
-            return new JsonExceptionResponse($e);
+            $message = $e->getMessage();
         }
+        if ($message !== '') {
+            $resources[$identifier] = [
+                'status' => 'FAILED',
+                'message' => $message
+            ];
+        }
+        return new JsonResponse($resources);
     }
 
     /**
      * delete file or folder
      * Query parameters
-     *  'identifier' string identifier of file or folder to delete
+     *  'identifiers' array of strings identifier of file or folder to delete
      *
      * @param ServerRequestInterface $request
      *
@@ -368,39 +367,36 @@ class AjaxController
     public function deleteResourcesAction(ServerRequestInterface $request): JsonResponse
     {
         try {
-            $identifier = $request->getQueryParams()['identifier'];
-            if (empty($identifier)) {
-                throw new ControllerException('Identifier needed', 1553699828);
+            $identifiers = $request->getQueryParams()['identifiers'];
+            if (empty($identifiers)) {
+                throw new ControllerException('Identifiers needed', 1553699828);
             }
         } catch (ControllerException $e) {
             return new JsonExceptionResponse($e);
         }
-        try {
-            $resourceFactory
-                = GeneralUtility::makeInstance(ResourceFactory::class);
-            $fileOrFolder = $resourceFactory->retrieveFileOrFolderObject($identifier);
-            if ($fileOrFolder === null) {
-                $resources = [$identifier => [
-                    'status' => 'FAILED',
-                    'message' => 'Identifier is not a valid file or folder identifier'
-                ]] ;
-                return new JsonResponse($resources);
+        $resourceFactory
+            = GeneralUtility::makeInstance(ResourceFactory::class);
+        $resources = [];
+        foreach ($identifiers as $identifier) {
+            try {
+                $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+                if ($success = $sourceObject->delete(true)) {
+                    $resources[$identifier] = [
+                        'status' => 'DELETED'
+                    ];
+                } else {
+                    throw new ResourceException('Resource could not be deleted');
+                }
+            } catch (ResourceException $e) {
+                if ($resources[$identifier] === null) {
+                    $resources[$identifier] = [
+                        'status' => 'FAILED',
+                        'message' => $e->getMessage()
+                    ];
+                }
             }
-            if (!$fileOrFolder->delete(true)) {
-                $resources = [$identifier => [
-                    'status' => 'FAILED',
-                    'message' => 'Could not delete resource'
-                ]];
-                return new JsonResponse($resources);
-            }
-        } catch (ResourceException $e) {
-            return new JsonExceptionResponse($e);
         }
-        $resources = [$identifier => [
-            'status' => 'DELETED',
-            'message' => 'File/folder was successfully removed'
-        ]] ;
-        return new JsonResponse($resources);
+        return new JsonResponse(['resources' => $resources]);
     }
 
     /**
