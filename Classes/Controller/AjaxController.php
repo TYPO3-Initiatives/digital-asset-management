@@ -287,6 +287,7 @@ class AjaxController
      * Query parameters
      *  'identifier' string identifier to rename
      *  'targetName' string The new name of file or folder.
+     *  'conflictMode' string one of: "replace", "cancel", "rename"
      *
      * @param ServerRequestInterface $request
      *
@@ -297,8 +298,12 @@ class AjaxController
         try {
             $identifier = $request->getQueryParams()['identifier'];
             $targetName = $request->getQueryParams()['targetName'];
+            $conflictMode = $request->getQueryParams()['conflictMode'] ?? '';
             if (empty($identifier)) {
                 throw new ControllerException('Identifier needed', 1553699828);
+            }
+            if (empty($conflictMode) || !in_array($conflictMode, ['replace', 'cancel', 'rename'], true)) {
+                throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
             }
             if (empty($targetName)) {
                 throw new ControllerException('Target name needed',
@@ -310,25 +315,35 @@ class AjaxController
         try {
             $resourceFactory
                 = GeneralUtility::makeInstance(ResourceFactory::class);
-            $fileOrFolder = $resourceFactory->retrieveFileOrFolderObject($identifier);
-            if ($fileOrFolder === null) {
-                $resources = [$identifier => [
+            $fileOrFolder
+                = $resourceFactory->retrieveFileOrFolderObject($identifier);
+        } catch (ResourceException\ResourceDoesNotExistException $e) {
+            $resources = [
+                $identifier => [
                     'status' => 'FAILED',
                     'message' => 'Identifier is not a valid file or folder identifier'
-                ]] ;
+                ]
+            ];
+            return new JsonResponse($resources);
+        }
+        try {
+            if ($fileOrFolder !== null) {
+                $resultFileOrFolder = $fileOrFolder->rename($targetName,
+                    $conflictMode);
+                $resources = [
+                    $identifier => [
+                        'status' => 'RENAMED',
+                        'message' => 'File/folder was successfully renamed',
+                        'resultIdentifier' => $resultFileOrFolder->getCombinedIdentifier()
+                    ]
+                ];
                 return new JsonResponse($resources);
             }
-            // Sanitizing stuff is done in API below
-            $resulIdentifier = $fileOrFolder->rename($targetName, DuplicationBehavior::CANCEL);
+            throw new ResourceException('Invalid file or folder identifier',
+                1554210572);
         } catch (ResourceException $e) {
             return new JsonExceptionResponse($e);
         }
-        $resources = [$identifier => [
-            'status' => 'RENAMED',
-            'message' => 'File/folder was successfully renamed',
-            'resultIdentifier' => $resulIdentifier
-        ]] ;
-        return new JsonResponse($resources);
     }
 
     /**
