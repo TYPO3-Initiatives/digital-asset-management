@@ -1,6 +1,6 @@
 import FolderTreeNode from '@/interfaces/FolderTreeNode';
 import {StorageInterface} from '@/interfaces/StorageInterface';
-import Vue from 'vue';
+import Vue, {VNode} from 'vue';
 import Vuex, {StoreOptions} from 'vuex';
 import {RootState} from 'types/types';
 import client from '@/services/http/Typo3Client';
@@ -12,6 +12,7 @@ import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {SortingFields, SortingOrder} from '@/enums/Sorting';
 import {ResourceInterface} from '@/interfaces/ResourceInterface';
 import {Mutations} from '@/enums/Mutations';
+import {Action} from "@/enums/FileOverrideActions";
 
 Vue.use(Vuex);
 // https://codeburst.io/vuex-and-typescript-3427ba78cfa8
@@ -36,6 +37,7 @@ const options: StoreOptions<RootState> = {
         treeFolders: [],
         storages: [],
         treeIdentifierLocationMap: {},
+        modalContent: null
     },
     mutations: {
         [Mutations.FETCH_DATA](state: RootState, items: {
@@ -159,6 +161,9 @@ const options: StoreOptions<RootState> = {
                 state.itemsGrouped.images.reverse();
             }
         },
+        [Mutations.SET_MODAL_CONTENT](state: RootState, modalContent: VNode): void {
+            state.modalContent = modalContent;
+        }
     },
     actions: {
         async [Mutations.FETCH_DATA]({commit}: any, identifier: String): Promise<any> {
