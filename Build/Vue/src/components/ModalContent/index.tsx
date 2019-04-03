@@ -6,13 +6,13 @@ import {State} from "vuex-class";
 export default class ModalContent extends Vue {
 
     @State
-    modalContent: VNode;
+    modalContent!: VNode;
 
     get contentForModal(): VNode {
         return this.modalContent;
     }
 
     private render(): VNode {
-        return <div id='vue-modalContent'>{this.contentForModal}</div>
+        return <div id='vue-modalContent'>{this.contentForModal}</div>;
     }
 }
