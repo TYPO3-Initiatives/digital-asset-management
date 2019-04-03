@@ -1,5 +1,13 @@
 <?php
 return [
+    'damSetState' => [
+        'path' => '/dam/setState',
+        'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::setStateAction',
+    ],
+    'damGetState' => [
+        'path' => '/dam/getState',
+        'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::getStateAction',
+    ],
     'damCreateFolder' => [
         'path' => '/dam/createFolder',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::createFolderAction',
