@@ -114,14 +114,15 @@ class FolderItemImage implements \JsonSerializable
         );
         $this->translations = [];
         $this->references = (int)BackendUtility::referenceCount('sys_file', $image->getUid());
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $urlParameters = [
             'edit' => [
                 'sys_file_metadata' => [
                     $image->getMetaData()['uid'] => 'edit',
                 ]
             ],
+            'returnUrl' => (string)$uriBuilder->buildUriFromRoute('file_DigitalAssetManagement'),
         ];
-        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $this->editMetaUrl = (string)$uriBuilder->buildUriFromRoute('record_edit', $urlParameters);
         // @todo: This use an internal class of ext:filelist
         $thumbnailConfiguration = GeneralUtility::makeInstance(ThumbnailConfiguration::class);
