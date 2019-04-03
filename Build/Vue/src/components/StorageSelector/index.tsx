@@ -59,14 +59,13 @@ export default class StorageSelector extends Vue {
                     onclick={StorageSelector.toggleDropdown}
                 >
                     <span class='component-dropdown-toggle-icon' role='presentation'>
-                        <Icon markup={this.activeStorage.icon} />
+                        <Icon identifier={this.activeStorage.icon} />
                     </span>
                     <span class='component-dropdown-toggle-text'>
                         {this.activeStorage.name}
                     </span>
                     <span class='component-dropdown-toggle-icon' role='presentation'>
-                        <i class='fa fa-caret-down' />
-                        {/*TODO: We need the icon here <svg>...</svg>*/}
+                        <Icon identifier='apps-pagetree-expand' />
                     </span>
                 </button>
                 <div class='component-dropdown-container'>
@@ -89,7 +88,7 @@ export default class StorageSelector extends Vue {
                     onclick={this.updateStorage}
                 >
                     <span class='component-dropdown-menu-link-icon' role='presentation'>
-                        <Icon markup={storage.icon} />
+                        <Icon identifier={storage.icon} />
                     </span>
                     <span class='component-dropdown-menu-link-text'>{storage.storageName}</span>
                 </a>

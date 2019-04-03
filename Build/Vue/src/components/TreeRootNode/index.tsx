@@ -25,7 +25,7 @@ export default class TreeNode extends Vue {
         return(
             <span class='list-tree-group' data-identifier={this.browsableIdentifier}>
                 <a href='#' data-identifier={this.browsableIdentifier} onclick={() => this.fetchData(this.browsableIdentifier)}>
-                    <Icon markup={this.storage.icon} /> {this.storage.storageName}
+                    <Icon identifier={this.storage.icon} /> {this.storage.storageName}
                 </a>
             </span>
         );

@@ -17,7 +17,9 @@ module.exports = {
           amd: 'Vue',
           root: 'Vue' // indicates global variable
         },
+      }, {
+        'TYPO3/CMS/Backend/Icons': 'TYPO3/CMS/Backend/Icons',
       }
-    ]
+    ],
   }
 };

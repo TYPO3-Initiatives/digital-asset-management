@@ -17,11 +17,8 @@ export interface RootState {
 }
 
 declare global {
+    const TYPO3: any;
     interface Window { TYPO3: any; }
 }
 
 window.TYPO3 = window.TYPO3 || {};
-
-declare global {
-    const TYPO3: any;
-}

@@ -9,10 +9,7 @@ namespace TYPO3\CMS\DigitalAssetManagement\Entity;
  * LICENSE file that was distributed with this source code.
  */
 
-use TYPO3\CMS\Core\Imaging\Icon;
-use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Immutable file mount object, used by getStoragesAndMountsAction() for non-admin users.
@@ -68,7 +65,7 @@ class FileMount implements \JsonSerializable
         $this->storageName = $storage->getName();
         $this->storageType = $storage->getDriverType();
         $this->storageOnline = $storage->isOnline();
-        $this->icon = GeneralUtility::makeInstance(IconFactory::class)->getIcon('apps-filetree-mount', Icon::SIZE_SMALL)->render('inline');
+        $this->icon = 'apps-filetree-mount';
     }
 
     public function jsonSerialize()
