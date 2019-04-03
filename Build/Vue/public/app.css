@@ -28,11 +28,9 @@
     background: #e1e1e1;
     padding: 5px;
 }
-
 .module-docheader-bar-column-left {
     width: 50%;
 }
-
 .module-docheader-bar-column-right {
     width: 50%;
     text-align: right;
@@ -90,6 +88,35 @@
     content: " / ";
     color: #999;
 }
+
+.hot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #0c5460;
+    opacity: 0.8;
+}
+
+
+.dropZone {
+    height: 100%;
+}
+.dragMessage {
+    display: none;
+}
+
+.hot .dragMessage {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 30px;
+    color: white;
+}
+
 
 .tree-dropzone-blocked {
     background-color: tomato;

@@ -3,5 +3,5 @@ export enum AjaxRoutes {
   damGetStoragesAndMounts = 'damGetStoragesAndMounts',
   damGetTreeFolders = 'damGetTreeFolders',
   damFileExists = 'damFileExists',
-  damFileUpload = 'damFileUpload'
+  damFileUpload = 'damFileUpload',
 }

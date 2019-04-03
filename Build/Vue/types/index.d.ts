@@ -1,5 +1,6 @@
 import {Vue} from 'vue/types/vue';
-import _ from "vue-upload-component";
+import _ from 'vue-upload-component';
+import {Action} from '@/enums/FileOverrideActions';
 
 export interface UploadedFile {
     file: File;
@@ -22,9 +23,13 @@ export interface UploadedFile {
     iframe: Element;
     data: {
         identifier: string,
+        conflictMode: string;
     };
     customAction: Function | null;
     callback: Function;
+    conflictMode: Action;
+    targetFolder: string;
+    fileExists: boolean;
 }
 
 export interface FileUploadComponent extends _ {
@@ -34,9 +39,4 @@ export interface FileUploadComponent extends _ {
     uploadPut: Function;
     uploadHtml5: Function;
     uploadHtml4: Function;
-    readonly files: Array<UploadedFile>;
-    readonly features: { html5?: boolean; directory?: boolean; drag?: boolean };
-    active: boolean;
-    readonly dropActive: true;
-    readonly uploaded: true;
 }

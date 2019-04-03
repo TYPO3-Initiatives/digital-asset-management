@@ -37,7 +37,7 @@ const options: StoreOptions<RootState> = {
         treeFolders: [],
         storages: [],
         treeIdentifierLocationMap: {},
-        modalContent: null
+        modalContent: null,
     },
     mutations: {
         [Mutations.FETCH_DATA](state: RootState, items: {
@@ -163,7 +163,10 @@ const options: StoreOptions<RootState> = {
         },
         [Mutations.SET_MODAL_CONTENT](state: RootState, modalContent: VNode): void {
             state.modalContent = modalContent;
-        }
+        },
+        [Mutations.CLEAR_MODAL_CONTENT](state: RootState): void {
+            state.modalContent = null;
+        },
     },
     actions: {
         async [Mutations.FETCH_DATA]({commit}: any, identifier: String): Promise<any> {

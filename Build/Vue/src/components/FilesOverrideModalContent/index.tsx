@@ -4,6 +4,7 @@ import Component from 'vue-class-component';
 import {Action} from '@/enums/FileOverrideActions';
 import FormatterService from '@/services/FormatterService';
 import {UploadedFile} from '../../../types';
+import moment from 'moment';
 
 @Component
 export default class FilesOverrideModalContent extends Vue {
@@ -19,7 +20,7 @@ export default class FilesOverrideModalContent extends Vue {
 
     get all(): Action | null {
         return this.actionForAll;
-    };
+    }
 
     private render(): VNode {
         return (
@@ -65,7 +66,7 @@ export default class FilesOverrideModalContent extends Vue {
                                 </td>
                                 <td>
                                     {file.newFile.name} ({FormatterService.fileSizeAsString(file.newFile.file.size)}) <br/>
-                                    {/*@todo moment js foo*/file.newFile.file.lastModified}
+                                    {moment(file.newFile.file.lastModified, 'x').format('YYYY-MM-DD HH:mm')}
                                 </td>
                                 <td>
                                     {this.getActionSelector(file)}
