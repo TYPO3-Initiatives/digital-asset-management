@@ -1,4 +1,4 @@
-export enum Action {
+export enum FileOverrideAction {
     OVERRIDE = 'replace',
     RENAME = 'rename',
     SKIP = 'cancel',

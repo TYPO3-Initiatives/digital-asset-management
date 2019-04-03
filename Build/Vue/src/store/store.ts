@@ -12,7 +12,6 @@ import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {SortingFields, SortingOrder} from '@/enums/Sorting';
 import {ResourceInterface} from '@/interfaces/ResourceInterface';
 import {Mutations} from '@/enums/Mutations';
-import {Action} from "@/enums/FileOverrideActions";
 
 Vue.use(Vuex);
 // https://codeburst.io/vuex-and-typescript-3427ba78cfa8

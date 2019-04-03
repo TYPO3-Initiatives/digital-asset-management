@@ -3,20 +3,28 @@ import {VNode} from 'vue';
 import FileUpload from 'vue-upload-component';
 import client from '@/services/http/Typo3Client';
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
-import {Mutation, State} from 'vuex-class';
+import {Action, Mutation, State} from 'vuex-class';
 import {Mutations} from '@/enums/Mutations';
-import {Action} from '@/enums/FileOverrideActions';
+import {FileOverrideAction} from '@/enums/FileOverrideAction';
 import Modal from 'TYPO3/CMS/Backend/Modal';
 import FilesOverrideModalContent from '@/components/FilesOverrideModalContent';
 import {FileUploadComponent, UploadedFile} from '../../../types';
 import {SeverityEnum} from '@/enums/Severity';
 import FormatterService from '@/services/FormatterService';
+import {FileExistResponseCode} from '@/enums/FileExistResponseCode';
+import {AxiosResponse} from 'axios';
 
 @Component
 export default class DropZone extends Vue {
 
     dragging: boolean = false;
     files: Array<any> = [];
+
+    @Action(AjaxRoutes.damGetTreeFolders)
+    fetchTreeData: any;
+
+    @Action(AjaxRoutes.damGetFolderItems)
+    fetchData: any;
 
     @State
     current!: String;
@@ -29,6 +37,21 @@ export default class DropZone extends Vue {
 
     get targetFolder(): String {
         return this.current;
+    }
+
+    get uploadFinished(): boolean {
+        return this.files.length > 0 && this.files.filter((file: UploadedFile) => {
+            return !file.success;
+        }).length === 0;
+    }
+
+    beforeUpdate(): void {
+        if (this.uploadFinished) {
+            (this.$refs.upload as FileUpload).clear();
+            // trigger re-rendering of all current data dependent components
+            this.fetchTreeData(this.current);
+            this.fetchData(this.current);
+        }
     }
 
     private render(): VNode {
@@ -46,14 +69,24 @@ export default class DropZone extends Vue {
     }
 
     private upload = async (file: UploadedFile, fileUpload: FileUploadComponent) => {
-        if (file.conflictMode === Action.SKIP) {
+        // do not upload skipped files
+        if (file.fileExists && file.conflictMode === FileOverrideAction.SKIP) {
             file.success = true;
+            file.statusMessage = '';
             return Promise.resolve('Skipped.');
         }
+        file.statusMessage = 'Starting Upload';
+        // data attributes are automatically converted into request parameters
         file.data.identifier = file.targetFolder + file.name;
         file.data.conflictMode = file.conflictMode;
+
+        // reset custom action to fall back to original component handling
         file.customAction = null;
         file.putAction = TYPO3.settings.ajaxUrls[AjaxRoutes.damFileUpload];
+
+        // whilst currently not used besides the putAction this provides compatibility to the configuration options
+        // of the original component
+        file.statusMessage = 'Uploading';
         if (fileUpload.features.html5) {
             if (fileUpload.shouldUseChunkUpload(file)) {
                 return await fileUpload.uploadChunk(file);
@@ -71,6 +104,70 @@ export default class DropZone extends Vue {
         return Promise.reject('No action configured');
     }
 
+    private async onInputFiles(files: Array<UploadedFile>): Promise<any> {
+        this.files.forEach((file: UploadedFile, index) => {
+            // method gets called on all state changes of files - therefor only set vars if not yet set
+            if (this.files[index].targetFolder === undefined) {
+                this.files[index].targetFolder = this.targetFolder;
+            }
+            if (this.files[index].conflictMode === undefined) {
+                // set conflict mode default
+                files[index].conflictMode = FileOverrideAction.SKIP;
+            }
+        });
+    }
+
+    private async checkFileConflicts(files: Array<UploadedFile>): Promise<Array<any>> {
+        let promises: Array<Promise<any>> = [];
+        let conflictedFiles: Array<any> = [];
+
+        function hasBeenChecked(i: number): boolean {
+            return files[i].fileExists !== undefined;
+        }
+
+        function hasFileConflict(response: AxiosResponse<any>): boolean {
+            return response.data.state !== FileExistResponseCode.FILE_DOES_NOT_EXIST &&
+                response.data.state !== FileExistResponseCode.PARENT_FOLDER_DOES_NOT_EXIST;
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            if (!hasBeenChecked(i)) {
+                this.files[i].fileExists = false;
+                this.files[i].statusMessage = 'Initializing';
+                const url = `${TYPO3.settings.ajaxUrls[AjaxRoutes.damFileExists]}&identifier=${this.targetFolder}${files[i].name}`;
+                promises.push(client.get(url).then((response) => {
+                    // set progress to give user feedback that something is indeed happening
+                    this.files[i].statusMessage = 'Preflight Checks Running';
+                    if (hasFileConflict(response)) {
+                        let originalFile = response.data[0];
+                        this.files[i].fileExists = true;
+                        conflictedFiles.push(
+                            {
+                                originalFile,
+                                newFile: files[i],
+                                callback: this.setConflictMode,
+                            },
+                        );
+                    }
+                }));
+                // max. 5 parallel requests to avoid crashing the server (especially on folder upload)
+                if (i % 5 === 0 || i === files.length - 1) {
+                    await Promise.all(promises);
+                }
+            }
+        }
+        return conflictedFiles;
+    }
+
+    private setConflictMode(file: { newFile: UploadedFile }, conflictMode: FileOverrideAction): void {
+        this.files.forEach((stateFile: UploadedFile, index) => {
+            if (file.newFile.id === stateFile.id) {
+                this.files[index].fileExists = true;
+                this.files[index].conflictMode = conflictMode;
+            }
+        });
+    }
+
     private renderDropArea(): VNode | null {
         return (
             <div class={{'hot': this.dragging}}>
@@ -80,57 +177,6 @@ export default class DropZone extends Vue {
                 </FileUpload>
             </div>
         );
-    }
-
-    private async onInputFiles(files: Array<UploadedFile>): Promise<any> {
-        this.files.forEach((file: UploadedFile, index) => {
-            // method gets called on all state changes of files - therefor only set vars if not yet set
-            if (this.files[index].targetFolder === undefined) {
-                this.files[index].targetFolder = this.targetFolder;
-            }
-            if (this.files[index].conflictMode === undefined) {
-                // set conflict mode default
-                files[index].conflictMode = Action.SKIP;
-            }
-        });
-    }
-
-    private async checkFileConflicts(files: Array<UploadedFile>): Promise<Array<any>> {
-        let promises: Array<Promise<any>> = [];
-        let responses: Array<any> = [];
-        for (let i = 0; i < files.length; i++) {
-            if (files[i].fileExists === undefined) {
-                this.files[i].fileExists = false;
-                const url = `${TYPO3.settings.ajaxUrls[AjaxRoutes.damFileExists]}&identifier=${this.targetFolder}${files[i].name}`;
-                promises.push(client.get(url).then((response) => {
-                    if (response.data.state !== 0 && response.data.state !== 1) {
-                        let originalFile = response.data[0];
-                        this.files[i].fileExists = true;
-                        this.files[i].progress = '5.00';
-                        responses.push(
-                            {
-                                originalFile,
-                                newFile: files[i],
-                                callback: this.setConflictMode,
-                            },
-                        );
-                    }
-                }));
-                if (i % 5 === 0 || i === files.length - 1) {
-                    await Promise.all(promises);
-                }
-            }
-        }
-        return responses;
-    }
-
-    private setConflictMode(file: { newFile: UploadedFile }, conflictMode: Action): Promise<void> {
-        this.files.forEach((stateFile: UploadedFile, index) => {
-            if (file.newFile.id === stateFile.id) {
-                this.files[index].fileExists = true;
-                this.files[index].conflictMode = conflictMode;
-            }
-        });
     }
 
     private renderUploadTable(): VNode | null {
@@ -161,30 +207,33 @@ export default class DropZone extends Vue {
     private renderRow(file: UploadedFile, index: Number): VNode {
         let progress = null;
         let success = '';
+        let errorMessage = null;
         if (file.error) {
-            success = 'error';
+            file.statusMessage = 'Upload failed.';
+            errorMessage = file.response.errorMessage ? file.response.errorMessage : file.error;
+            success = 'danger';
         } else if (file.success) {
+            file.statusMessage = 'Upload succeeded.';
             success = 'success';
         } else if (file.active) {
-            success = 'active';
+            success = 'info';
         }
         let conflictHandling = '';
-        // 5.00 is "fileExistenceCheck done"
-        if (file.fileExists && (file.active || (file.progress !== '5.00' && file.progress !== '0.00'))) {
+        if (file.fileExists && (file.active || (file.progress !== '0.00'))) {
             switch (file.conflictMode) {
-                case Action.SKIP:
+                case FileOverrideAction.SKIP:
                     conflictHandling = TYPO3.lang['file_upload.actions.skip'];
                     break;
-                case Action.OVERRIDE:
+                case FileOverrideAction.OVERRIDE:
                     conflictHandling = TYPO3.lang['file_upload.actions.override'];
                     break;
-                case Action.RENAME:
+                case FileOverrideAction.RENAME:
                     conflictHandling = TYPO3.lang['file_upload.actions.rename'];
                     break;
                 default:
             }
         }
-        if (file.active || file.progress !== '0.00') {
+        if (file.active || (file.progress !== '0.00' && file.progress !== '100.00')) {
             progress = <div class='progress'>
                 <div
                     class={{
@@ -206,7 +255,7 @@ export default class DropZone extends Vue {
                     </div>
                 </td>
                 <td>{FormatterService.fileSizeAsString(file.size)}</td>
-                <td>{progress} <br />{conflictHandling}</td>
+                <td>{file.statusMessage}{progress}{errorMessage} <br/>{conflictHandling}</td>
             </tr>
         );
     }
@@ -225,7 +274,7 @@ export default class DropZone extends Vue {
                 Clear
             </button>);
             buttons.push(<button type='button' class='btn btn-success' onclick={async (e: Event) => {
-                await this.preFlightChecks();
+                await this.uploadFiles();
             }}>
                 <i class='fa fa-arrow-up' aria-hidden='true'></i>
                 Start Upload
@@ -234,15 +283,25 @@ export default class DropZone extends Vue {
         return buttons;
     }
 
-    private async preFlightChecks(): Promise<any> {
-        const responses = await this.checkFileConflicts(this.files);
-        if (responses.length > 0) {
-            // @ts-ignore - I don't get it.
-            let modalContent = <FilesOverrideModalContent files={responses}/>;
-            this.setModalContent(modalContent);
-            const modal = Modal.confirm(
-                TYPO3.lang['file_upload.existingfiles.title'], jQuery('#vue-modalContent'), SeverityEnum.warning,
-                [
+    private async uploadFiles(): Promise<any> {
+        const filesWithConflicts = await this.checkFileConflicts(this.files);
+        if (filesWithConflicts.length > 0) {
+            this.renderOverrideFilesModal(filesWithConflicts);
+        } else {
+            this.startUpload();
+        }
+    }
+
+    private renderOverrideFilesModal(filesWithConflicts: Array<UploadedFile>): void {
+        let modalContent = <FilesOverrideModalContent files={filesWithConflicts}/>;
+        this.setModalContent(modalContent);
+        let modal = Modal.advanced(
+            {
+                title: TYPO3.lang['file_upload.existingfiles.title'],
+                content: jQuery('#vue-modalContent'),
+                severity: SeverityEnum.warning,
+                size: Modal.sizes.large,
+                buttons: [
                     {
                         text: TYPO3.lang['file_upload.button.cancel'] || 'Cancel',
                         active: true,
@@ -255,19 +314,28 @@ export default class DropZone extends Vue {
                         name: 'ok',
                     },
                 ],
-                ['modal-inner-scroll'],
-            );
-            modal.on('confirm.button.cancel', () => {
-                (this.$refs.upload as FileUpload).clear();
-                this.clearModalContent();
-                Modal.dismiss();
-            });
-            modal.on('confirm.button.ok', () => {
-                this.clearModalContent();
-                Modal.dismiss();
-                this.startUpload();
-            });
-        }
+                additionalCssClasses: ['modal-inner-scroll'],
+                callback: (currentModal: JQuery): void => {
+                    currentModal.on('button.clicked', (e: JQueryEventObject): void => {
+                        if (e.target.getAttribute('name') === 'cancel') {
+                            $(e.currentTarget).trigger('confirm.button.cancel');
+                        } else if (e.target.getAttribute('name') === 'ok') {
+                            $(e.currentTarget).trigger('confirm.button.ok');
+                        }
+                    });
+                },
+            },
+        );
+        modal.on('confirm.button.cancel', () => {
+            (this.$refs.upload as FileUpload).clear();
+            this.clearModalContent();
+            Modal.dismiss();
+        });
+        modal.on('confirm.button.ok', () => {
+            this.clearModalContent();
+            Modal.dismiss();
+            this.startUpload();
+        });
     }
 
     private startUpload(): void {

@@ -1,6 +1,5 @@
-import {Vue} from 'vue/types/vue';
 import _ from 'vue-upload-component';
-import {Action} from '@/enums/FileOverrideActions';
+import {FileOverrideAction} from '@/enums/FileOverrideAction';
 
 export interface UploadedFile {
     file: File;
@@ -16,7 +15,9 @@ export interface UploadedFile {
     postAction: string;
     headers: object;
     timeout: number;
-    response: object | string;
+    response: {
+        errorMessage: string;
+    };
     progress: string;
     speed: number;
     xhr: XMLHttpRequest;
@@ -27,9 +28,10 @@ export interface UploadedFile {
     };
     customAction: Function | null;
     callback: Function;
-    conflictMode: Action;
+    conflictMode: FileOverrideAction;
     targetFolder: string;
     fileExists: boolean;
+    statusMessage: string;
 }
 
 export interface FileUploadComponent extends _ {

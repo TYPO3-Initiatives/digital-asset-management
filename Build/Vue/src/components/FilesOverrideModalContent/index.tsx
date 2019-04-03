@@ -1,7 +1,7 @@
 import {VNode} from 'vue';
 import {Prop, Vue} from 'vue-property-decorator';
 import Component from 'vue-class-component';
-import {Action} from '@/enums/FileOverrideActions';
+import {FileOverrideAction} from '@/enums/FileOverrideAction';
 import FormatterService from '@/services/FormatterService';
 import {UploadedFile} from '../../../types';
 import moment from 'moment';
@@ -16,10 +16,14 @@ export default class FilesOverrideModalContent extends Vue {
         return this.files;
     }
 
-    actionForAll: Action | null = null;
+    actionForAll: FileOverrideAction | null = null;
 
-    get all(): Action | null {
+    get all(): FileOverrideAction | null {
         return this.actionForAll;
+    }
+
+    constructor(props: any) {
+        super(props);
     }
 
     private render(): VNode {
@@ -31,16 +35,16 @@ export default class FilesOverrideModalContent extends Vue {
                             (event: Event) => {
                                 this.files.map((file: UploadedFile) => {
                                     file.callback(file, (event.currentTarget as HTMLSelectElement).value);
-                                    this.actionForAll = (event.currentTarget as HTMLSelectElement).value as Action;
+                                    this.actionForAll = (event.currentTarget as HTMLSelectElement).value as FileOverrideAction;
                                 });
                             }
                         }>
                             <option value=''>Choose for all</option>
-                            <option value={Action.SKIP}>{TYPO3.lang['file_upload.actions.all.skip']}</option>
+                            <option value={FileOverrideAction.SKIP}>{TYPO3.lang['file_upload.actions.all.skip']}</option>
                             <option
-                                value={Action.RENAME}>{TYPO3.lang['file_upload.actions.all.rename']}</option>
+                                value={FileOverrideAction.RENAME}>{TYPO3.lang['file_upload.actions.all.rename']}</option>
                             <option
-                                value={Action.OVERRIDE}>{TYPO3.lang['file_upload.actions.all.override']}</option>
+                                value={FileOverrideAction.OVERRIDE}>{TYPO3.lang['file_upload.actions.all.override']}</option>
                         </select>
                     </label>
                 </div>
@@ -84,13 +88,13 @@ export default class FilesOverrideModalContent extends Vue {
         if (this.all) {
             let label = '';
             switch (this.all) {
-                case Action.SKIP:
+                case FileOverrideAction.SKIP:
                     label = TYPO3.lang['file_upload.actions.skip'];
                     break;
-                case Action.OVERRIDE:
+                case FileOverrideAction.OVERRIDE:
                     label = TYPO3.lang['file_upload.actions.override'];
                     break;
-                case Action.RENAME:
+                case FileOverrideAction.RENAME:
                     label = TYPO3.lang['file_upload.actions.rename'];
                     break;
                 default:
@@ -103,11 +107,11 @@ export default class FilesOverrideModalContent extends Vue {
                         file.callback(file, (event.currentTarget as HTMLSelectElement).value);
                     }
                 }>
-                    <option value={Action.SKIP}>{TYPO3.lang['file_upload.actions.skip']}</option>
+                    <option value={FileOverrideAction.SKIP}>{TYPO3.lang['file_upload.actions.skip']}</option>
                     <option
-                        value={Action.RENAME}>{TYPO3.lang['file_upload.actions.rename']}</option>
+                        value={FileOverrideAction.RENAME}>{TYPO3.lang['file_upload.actions.rename']}</option>
                     <option
-                        value={Action.OVERRIDE}>{TYPO3.lang['file_upload.actions.override']}</option>
+                        value={FileOverrideAction.OVERRIDE}>{TYPO3.lang['file_upload.actions.override']}</option>
                 </select>
             );
         }

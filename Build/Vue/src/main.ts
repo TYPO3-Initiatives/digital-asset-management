@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import App from './App';
 import store from './store/store';
-import ModalContent from "@/components/ModalContent";
+import ModalContent from '@/components/ModalContent';
 
 
 Vue.config.productionTip = false;
@@ -14,5 +14,5 @@ new Vue({
 
 new Vue({
   store,
-  render: (h) => h(ModalContent)
+  render: (h) => h(ModalContent),
 }).$mount('#vue-modalContent');

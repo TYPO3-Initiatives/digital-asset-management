@@ -1,6 +1,6 @@
 import {Component, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
-import {State} from "vuex-class";
+import {State} from 'vuex-class';
 
 @Component
 export default class ModalContent extends Vue {

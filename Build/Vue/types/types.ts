@@ -1,7 +1,7 @@
 import FolderTreeNode from '@/interfaces/FolderTreeNode';
 import {StorageInterface} from '@/interfaces/StorageInterface';
 import {GroupedResourcesInterface} from '@/interfaces/GroupedResourcesInterface';
-import {VNode} from "vue";
+import {VNode} from 'vue';
 
 export interface RootState {
     selected: Array<String>; // Array<String == FileIdentifier>
