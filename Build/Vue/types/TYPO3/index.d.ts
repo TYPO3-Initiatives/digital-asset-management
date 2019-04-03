@@ -1,4 +1,5 @@
 declare module 'TYPO3/CMS/Backend/Icons';
+declare module 'TYPO3/CMS/Backend/Modal';
 
 // type definition for global namespace object
 interface Window {

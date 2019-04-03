@@ -1,10 +1,13 @@
+import {NoStoragesModal} from '@/components/NoStoragesModal';
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
+import {Mutations} from '@/enums/Mutations';
 import {StorageInterface} from '@/interfaces/StorageInterface';
 import {Component, Vue} from 'vue-property-decorator';
-import {CreateElement, VNode} from 'vue';
+import {VNode} from 'vue';
 import TreePanel from '@/components/TreePanel';
 import ContentPanel from '@/components/ContentPanel';
-import {Action, State} from 'vuex-class';
+import {Action, Mutation, State} from 'vuex-class';
+import Modal from 'TYPO3/CMS/Backend/Modal';
 
 @Component
 export default class App extends Vue {
@@ -14,6 +17,12 @@ export default class App extends Vue {
     @Action(AjaxRoutes.damGetFolderItems)
     fetchData: any;
 
+    @Mutation(Mutations.SET_MODAL_CONTENT)
+    setModalContent!: Function;
+
+    @State
+    storages!: Array<StorageInterface>;
+
     @State
     activeStorage!: StorageInterface;
 
@@ -21,9 +30,29 @@ export default class App extends Vue {
         this.getStorages();
     }
 
-    private render(h: CreateElement): VNode | null {
-        if (!this.activeStorage) {
+    private render(): VNode | null {
+        if (this.storages === null) {
             return null;
+        }
+
+        if (!this.storages.length) {
+            this.setModalContent(<NoStoragesModal />);
+
+            this.$nextTick(() => {
+                const content = (document.querySelector('#vue-modalContent') as HTMLDivElement);
+                Modal.advanced({
+                    title: 'XX',
+                    size: Modal.sizes.small,
+                    content: content,
+                }).on('hidden.bs.modal', (): void => {
+                    ((document.querySelector('#app') as HTMLDivElement).parentNode as HTMLElement).appendChild(content);
+                });
+            });
+
+            return (
+                <div id='app' class='module'>
+                </div>
+            );
         }
 
         return (

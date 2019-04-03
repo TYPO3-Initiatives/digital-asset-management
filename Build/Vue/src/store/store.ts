@@ -1,6 +1,6 @@
 import FolderTreeNode from '@/interfaces/FolderTreeNode';
 import {StorageInterface} from '@/interfaces/StorageInterface';
-import Vue from 'vue';
+import Vue, {VNode} from 'vue';
 import Vuex, {StoreOptions} from 'vuex';
 import {RootState} from 'types/types';
 import client from '@/services/http/Typo3Client';
@@ -30,11 +30,12 @@ const options: StoreOptions<RootState> = {
         },
         items: [],
         current: '',
+        modalContent: null,
         viewMode: ViewType.TILE,
         showTree: true,
         activeStorage: null,
         treeFolders: [],
-        storages: [],
+        storages: null,
         treeIdentifierLocationMap: {},
     },
     mutations: {
@@ -57,7 +58,7 @@ const options: StoreOptions<RootState> = {
         [Mutations.FETCH_STORAGES](state: RootState, data: Array<StorageInterface>): void {
             state.storages = data;
 
-            if (!state.activeStorage) {
+            if (data.length && !state.activeStorage) {
                 // TODO: Set active storage by value stored in UC
                 state.activeStorage = data[0];
             }
@@ -65,9 +66,11 @@ const options: StoreOptions<RootState> = {
         [Mutations.SET_STORAGE](state: RootState, identifier: number): void {
             state.treeFolders = [];
 
-            for (let storage of state.storages) {
-                if (storage.identifier === identifier) {
-                    state.activeStorage = storage;
+            if (state.storages !== null) {
+                for (let storage of state.storages) {
+                    if (storage.identifier === identifier) {
+                        state.activeStorage = storage;
+                    }
                 }
             }
         },
@@ -128,6 +131,9 @@ const options: StoreOptions<RootState> = {
         [Mutations.TOGGLE_TREE](state: RootState): void {
             state.showTree = !state.showTree;
         },
+        [Mutations.SET_MODAL_CONTENT](state: RootState, modalContent: VNode): void {
+            state.modalContent = modalContent;
+        },
         [Mutations.CHANGE_SORTING](state: RootState, sorting: SortingFields): void {
             const stringSort = (a: ResourceInterface, b: ResourceInterface) => a[sorting].localeCompare(
                 b[sorting],
@@ -170,17 +176,12 @@ const options: StoreOptions<RootState> = {
             commit(Mutations.FETCH_DATA, response.data);
         },
         async [AjaxRoutes.damGetStoragesAndMounts]({commit}: any, identifier: String): Promise<any> {
-            commit(Mutations.NAVIGATE, identifier);
-            const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetStoragesAndMounts] + '&identifier=' + identifier);
-            commit(Mutations.FETCH_DATA, response.data);
+            const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetStoragesAndMounts]);
+            commit(Mutations.FETCH_STORAGES, response.data);
         },
         async [AjaxRoutes.damGetTreeFolders]({commit}: any, identifier: string): Promise<any> {
             const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetTreeFolders] + '&identifier=' + identifier);
             commit(Mutations.FETCH_TREE_DATA, {identifier: identifier, folders: response.data});
-        },
-        async [AjaxRoutes.damGetStoragesAndMounts]({commit}: any): Promise<any> {
-            const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetStoragesAndMounts]);
-            commit(Mutations.FETCH_STORAGES, response.data);
         },
         async [Mutations.SET_STORAGE]({commit, dispatch}: any, data: {id: number, browsableIdentifier: string}): Promise<any> {
             commit(Mutations.SET_STORAGE, data.id);

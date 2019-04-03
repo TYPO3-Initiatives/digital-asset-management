@@ -237,7 +237,7 @@ class AjaxController
                 }
             }
         }
-        return new StoragesAndMountsResponse($entities);
+        return new StoragesAndMountsResponse([]);
     }
 
     /**
