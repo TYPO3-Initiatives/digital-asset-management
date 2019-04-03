@@ -14,6 +14,7 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Resource\DuplicationBehavior;
 use TYPO3\CMS\Core\Resource\Exception as ResourceException;
+use TYPO3\CMS\Core\Resource\Exception\InvalidTargetFolderException;
 use TYPO3\CMS\Core\Resource\Exception\ResourceDoesNotExistException;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -244,6 +245,10 @@ class AjaxController
      * Result is sorted by name
      *
      * Return structure is an array of TreeItemFolder objects.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return JsonResponse
      */
     public function getTreeFoldersAction(ServerRequestInterface $request): JsonResponse
     {
@@ -268,6 +273,254 @@ class AjaxController
         } catch (ControllerException $e) {
             return new JsonExceptionResponse($e);
         }
+    }
+
+    /**
+     * Copy files or folders
+     * Query parameters
+     *  'identifiers' array of identifier to copy
+     *  'targetFolderIdentifier' string the target identifier. Must be a folder.
+     *  'conflictMode' string one of: "replace", "cancel", "rename", as defined in \TYPO3\CMS\Core\Resource\DuplicationBehavior
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return JsonResponse
+     */
+    public function copyResourcesAction(ServerRequestInterface $request): JsonResponse
+    {
+        try {
+            $identifiers = $request->getQueryParams()['identifiers'];
+            $conflictMode = $request->getQueryParams()['conflictMode'] ?? '';
+            $targetFolderIdentifier
+                = $request->getQueryParams()['targetFolderIdentifier'];
+            if (empty($identifiers)) {
+                throw new ControllerException('Identifiers needed', 1553699828);
+            }
+            if (empty($conflictMode) || !in_array($conflictMode, ['replace', 'cancel', 'rename'], true)) {
+                throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
+            }
+            if (empty($targetFolderIdentifier)) {
+                throw new ControllerException('Target folder identifier needed',
+                    1554122023);
+            }
+            $resourceFactory
+                = GeneralUtility::makeInstance(ResourceFactory::class);
+            $targetFolderObject
+                = $resourceFactory->getObjectFromCombinedIdentifier($targetFolderIdentifier);
+            if (!$targetFolderObject instanceof Folder) {
+                throw new ControllerException('Target identifier is not a folder',
+                    1553701684);
+            }
+        } catch (ResourceException $e) {
+            return new JsonExceptionResponse($e);
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
+        }
+        $resources = [];
+        foreach ($identifiers as $identifier) {
+            try {
+                $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+                $message = '';
+                if ($resultFolder
+                    = $sourceObject->copyTo($targetFolderObject, null,
+                    $conflictMode)
+                ) {
+                    $resources[$identifier] = [
+                        'status' => 'COPIED',
+                        'resultIdentifier' => $resultFolder->getCombinedIdentifier()
+                    ];
+                }
+            } catch (InvalidTargetFolderException $e) {
+                $message = $e->getMessage();
+            } catch (ResourceException $e) {
+                $message = $e->getMessage();
+            }
+            if ($message !== '') {
+                $resources[$identifier] = [
+                    'status' => 'FAILED',
+                    'message' => $message
+                ];
+            }
+        }
+        return new JsonResponse(['resources' => $resources]);
+    }
+
+    /**
+     * Move files or folders
+     * Query parameters
+     *  'identifiers' array of identifier to move
+     *  'targetFolderIdentifier' string the target identifier. Must be a folder.
+     *  'conflictMode' string one of: "replace", "cancel", "rename", as defined in \TYPO3\CMS\Core\Resource\DuplicationBehavior
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return JsonResponse
+     */
+    public function moveResourcesAction(ServerRequestInterface $request): JsonResponse
+    {
+        try {
+            $identifiers = $request->getQueryParams()['identifiers'];
+            $conflictMode = $request->getQueryParams()['conflictMode'] ?? '';
+            $targetFolderIdentifier
+                = $request->getQueryParams()['targetFolderIdentifier'];
+            if (empty($identifiers)) {
+                throw new ControllerException('Identifier needed', 1553699828);
+            }
+            if (empty($conflictMode) || !in_array($conflictMode, ['replace', 'cancel', 'rename'], true)) {
+                throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
+            }
+            if (empty($targetFolderIdentifier)) {
+                throw new ControllerException('Target folder identifier needed',
+                    1554122023);
+            }
+            $resourceFactory
+                = GeneralUtility::makeInstance(ResourceFactory::class);
+            $targetFolderObject
+                = $resourceFactory->getObjectFromCombinedIdentifier($targetFolderIdentifier);
+            if (!$targetFolderObject instanceof Folder) {
+                throw new ControllerException('Target identifier is not a folder',
+                    1553701684);
+            }
+        } catch (ResourceException $e) {
+            return new JsonExceptionResponse($e);
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
+        }
+        $resources = [];
+        foreach ($identifiers as $identifier) {
+            try {
+                $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+                $message = '';
+                if ($resultFolder
+                    = $sourceObject->moveTo($targetFolderObject, null,
+                    $conflictMode)
+                ) {
+                    $resources[$identifier] = [
+                        'status' => 'MOVED',
+                        'resultIdentifier' => $resultFolder->getCombinedIdentifier()
+                    ];
+                }
+            } catch (InvalidTargetFolderException $e) {
+                $message = $e->getMessage();
+            } catch (ResourceException $e) {
+                $message = $e->getMessage();
+            }
+            if ($message !== ''&& $resources[$identifier] === null) {
+                    $resources[$identifier] = [
+                    'status' => 'FAILED',
+                    'message' => $message
+                ];
+            }
+        }
+        return new JsonResponse(['resources' => $resources]);
+    }
+
+    /**
+     * rename file or folder
+     * Query parameters
+     *  'identifier' string identifier to rename
+     *  'targetName' string The new name of file or folder.
+     *  'conflictMode' string one of: "replace", "cancel", "rename"
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return JsonResponse
+     */
+    public function renameResourcesAction(ServerRequestInterface $request): JsonResponse
+    {
+        try {
+            $identifier = $request->getQueryParams()['identifier'];
+            $targetName = $request->getQueryParams()['targetName'];
+            $conflictMode = $request->getQueryParams()['conflictMode'] ?? '';
+            if (empty($identifier)) {
+                throw new ControllerException('Identifier needed', 1553699828);
+            }
+            if (empty($conflictMode) || !in_array($conflictMode, ['replace', 'cancel', 'rename'], true)) {
+                throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
+            }
+            if (empty($targetName)) {
+                throw new ControllerException('Target name needed',
+                    1554193259);
+            }
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
+        }
+        $resources = [];
+        $message = '';
+        try {
+            $resourceFactory
+                = GeneralUtility::makeInstance(ResourceFactory::class);
+            $fileOrFolder
+                = $resourceFactory->retrieveFileOrFolderObject($identifier);
+        } catch (ResourceException $e) {
+            $message = $e->getMessage();
+        }
+        try {
+            if ($fileOrFolder === null) {
+                throw new ResourceException\ResourceDoesNotExistException('Resource does not exist');
+            } else {
+                $resultFileOrFolder = $fileOrFolder->rename($targetName,
+                    $conflictMode);
+                $resources[$identifier] = [
+                    'status' => 'RENAMED',
+                    'message' => 'File/folder was successfully renamed',
+                    'resultIdentifier' => $resultFileOrFolder->getCombinedIdentifier()
+                ];
+            }
+        } catch (ResourceException $e) {
+            $message = $e->getMessage();
+        }
+        if ($message !== '') {
+            $resources[$identifier] = [
+                'status' => 'FAILED',
+                'message' => $message
+            ];
+        }
+        return new JsonResponse($resources);
+    }
+
+    /**
+     * delete file or folder
+     * Query parameters
+     *  'identifiers' array of strings identifier of file or folder to delete
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteResourcesAction(ServerRequestInterface $request): JsonResponse
+    {
+        try {
+            $identifiers = $request->getQueryParams()['identifiers'];
+            if (empty($identifiers)) {
+                throw new ControllerException('Identifiers needed', 1553699828);
+            }
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
+        }
+        $resourceFactory
+            = GeneralUtility::makeInstance(ResourceFactory::class);
+        $resources = [];
+        foreach ($identifiers as $identifier) {
+            try {
+                $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+                if ($success = $sourceObject->delete(true)) {
+                    $resources[$identifier] = [
+                        'status' => 'DELETED'
+                    ];
+                } else {
+                    throw new ResourceException('Resource could not be deleted');
+                }
+            } catch (ResourceException $e) {
+                if ($resources[$identifier] === null) {
+                    $resources[$identifier] = [
+                        'status' => 'FAILED',
+                        'message' => $e->getMessage()
+                    ];
+                }
+            }
+        }
+        return new JsonResponse(['resources' => $resources]);
     }
 
     /**
