@@ -20,6 +20,7 @@ use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FileMount;
+use TYPO3\CMS\DigitalAssetManagement\Entity\FileOperationResult;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemFile;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemFolder;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemImage;
@@ -27,6 +28,7 @@ use TYPO3\CMS\DigitalAssetManagement\Entity\Storage;
 use TYPO3\CMS\DigitalAssetManagement\Entity\TreeItemFolder;
 use TYPO3\CMS\DigitalAssetManagement\Exception\ControllerException;
 use TYPO3\CMS\DigitalAssetManagement\Http\FileExistsResponse;
+use TYPO3\CMS\DigitalAssetManagement\Http\FileOperationResponse;
 use TYPO3\CMS\DigitalAssetManagement\Http\FolderItemsResponse;
 use TYPO3\CMS\DigitalAssetManagement\Http\JsonExceptionResponse;
 use TYPO3\CMS\DigitalAssetManagement\Http\StoragesAndMountsResponse;
@@ -318,31 +320,36 @@ class AjaxController
         }
         $resources = [];
         foreach ($identifiers as $identifier) {
+            $state = FileOperationResult::FAILED;
+            $message = '';
+            $resultEntity = null;
             try {
-                $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
-                $message = '';
-                if ($resultFolder
+                $sourceObject
+                    = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+                if ($resultObject
                     = $sourceObject->copyTo($targetFolderObject, null,
                     $conflictMode)
                 ) {
-                    $resources[$identifier] = [
-                        'status' => 'COPIED',
-                        'resultIdentifier' => $resultFolder->getCombinedIdentifier()
-                    ];
+                    if ($resultObject instanceof Folder) {
+                        $resultEntity = new FolderItemFolder($resultObject);
+                    } else {
+                        $resultEntity = new FolderItemFile($resultObject);
+                    }
+                    $state = FileOperationResult::COPIED;
                 }
             } catch (InvalidTargetFolderException $e) {
                 $message = $e->getMessage();
             } catch (ResourceException $e) {
                 $message = $e->getMessage();
             }
-            if ($message !== '') {
-                $resources[$identifier] = [
-                    'status' => 'FAILED',
-                    'message' => $message
-                ];
-            }
+            $resources[] = new FileOperationResult(
+                $identifier,
+                $state,
+                $message,
+                $resultEntity
+            );
         }
-        return new JsonResponse(['resources' => $resources]);
+        return new FileOperationResponse($resources);
     }
 
     /**
@@ -364,7 +371,7 @@ class AjaxController
             $targetFolderIdentifier
                 = $request->getQueryParams()['targetFolderIdentifier'];
             if (empty($identifiers)) {
-                throw new ControllerException('Identifier needed', 1553699828);
+                throw new ControllerException('Identifiers needed', 1553699828);
             }
             if (empty($conflictMode) || !in_array($conflictMode, ['replace', 'cancel', 'rename'], true)) {
                 throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
@@ -388,31 +395,35 @@ class AjaxController
         }
         $resources = [];
         foreach ($identifiers as $identifier) {
+            $state = FileOperationResult::FAILED;
+            $message = '';
+            $resultEntity = null;
             try {
                 $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
-                $message = '';
-                if ($resultFolder
+                if ($resultObject
                     = $sourceObject->moveTo($targetFolderObject, null,
                     $conflictMode)
                 ) {
-                    $resources[$identifier] = [
-                        'status' => 'MOVED',
-                        'resultIdentifier' => $resultFolder->getCombinedIdentifier()
-                    ];
+                    if ($resultObject instanceof Folder) {
+                        $resultEntity = new FolderItemFolder($resultObject);
+                    } else {
+                        $resultEntity = new FolderItemFile($resultObject);
+                    }
+                    $state = FileOperationResult::MOVED;
                 }
             } catch (InvalidTargetFolderException $e) {
                 $message = $e->getMessage();
             } catch (ResourceException $e) {
                 $message = $e->getMessage();
             }
-            if ($message !== ''&& $resources[$identifier] === null) {
-                    $resources[$identifier] = [
-                    'status' => 'FAILED',
-                    'message' => $message
-                ];
-            }
+            $resources[] = new FileOperationResult(
+                $identifier,
+                $state,
+                $message,
+                $resultEntity
+            );
         }
-        return new JsonResponse(['resources' => $resources]);
+        return new FileOperationResponse($resources);
     }
 
     /**
@@ -435,47 +446,52 @@ class AjaxController
             if (empty($identifier)) {
                 throw new ControllerException('Identifier needed', 1553699828);
             }
-            if (empty($conflictMode) || !in_array($conflictMode, ['replace', 'cancel', 'rename'], true)) {
+            if (empty($conflictMode)
+                || !in_array($conflictMode, ['replace', 'cancel', 'rename'],
+                    true)
+            ) {
                 throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
             }
             if (empty($targetName)) {
                 throw new ControllerException('Target name needed',
                     1554193259);
             }
-        } catch (ControllerException $e) {
-            return new JsonExceptionResponse($e);
-        }
-        $resources = [];
-        $message = '';
-        try {
             $resourceFactory
                 = GeneralUtility::makeInstance(ResourceFactory::class);
             $fileOrFolder
                 = $resourceFactory->retrieveFileOrFolderObject($identifier);
         } catch (ResourceException $e) {
-            $message = $e->getMessage();
+            return new JsonExceptionResponse($e);
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
         }
+        $resources = [];
+        $state = FileOperationResult::FAILED;
+        $resultEntity = null;
         try {
             if ($fileOrFolder === null) {
                 throw new ResourceException\ResourceDoesNotExistException('Resource does not exist');
             } else {
-                $resultFileOrFolder = $fileOrFolder->rename($targetName,
+                $resultObject = $fileOrFolder->rename($targetName,
                     $conflictMode);
-                $resources[$identifier] = [
-                    'status' => 'RENAMED',
-                    'message' => 'File/folder was successfully renamed',
-                    'resultIdentifier' => $resultFileOrFolder->getCombinedIdentifier()
-                ];
+                if ($resultObject instanceof Folder) {
+                    $resultEntity = new FolderItemFolder($resultObject);
+                    $message = 'Folder was successfully renamed';
+                } else {
+                    $resultEntity = new FolderItemFile($resultObject);
+                    $message = 'File was successfully renamed';
+                }
+                $state = FileOperationResult::RENAMED;
             }
         } catch (ResourceException $e) {
             $message = $e->getMessage();
         }
-        if ($message !== '') {
-            $resources[$identifier] = [
-                'status' => 'FAILED',
-                'message' => $message
-            ];
-        }
+        $resources[] = new FileOperationResult(
+            $identifier,
+            $state,
+            $message,
+            $resultEntity
+        );
         return new JsonResponse($resources);
     }
 
@@ -504,23 +520,20 @@ class AjaxController
         foreach ($identifiers as $identifier) {
             try {
                 $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
-                if ($success = $sourceObject->delete(true)) {
-                    $resources[$identifier] = [
-                        'status' => 'DELETED'
-                    ];
+                if ($sourceObject->delete(true)) {
+                    $state = FileOperationResult::DELETED;
+                    $message = 'Resource deleted';
                 } else {
-                    throw new ResourceException('Resource could not be deleted');
+                    $state = FileOperationResult::FAILED;
+                    $message = 'Resource could not be deleted';
                 }
             } catch (ResourceException $e) {
-                if ($resources[$identifier] === null) {
-                    $resources[$identifier] = [
-                        'status' => 'FAILED',
-                        'message' => $e->getMessage()
-                    ];
-                }
+                $state = FileOperationResult::FAILED;
+                $message = $e->getMessage();
             }
+            $resources[] = new FileOperationResult($identifier, $state, $message, null);
         }
-        return new JsonResponse(['resources' => $resources]);
+        return new FileOperationResponse($resources);
     }
 
     /**
