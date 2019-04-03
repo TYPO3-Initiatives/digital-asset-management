@@ -45,6 +45,28 @@ use TYPO3\CMS\DigitalAssetManagement\Http\StoragesAndMountsResponse;
 class AjaxController
 {
     /**
+     * Set module state of BE user. Send a json array as ['data'] POST
+     *
+     * @param ServerRequestInterface $request
+     * @return JsonResponse
+     */
+    public function setStateAction(ServerRequestInterface $request): JsonResponse
+    {
+        $backendUser = $this->getBackendUser();
+        $backendUser->uc['digital_asset_management'] = $request->getParsedBody()['data'] ?? [];
+        $backendUser->writeUC();
+        return new JsonResponse();
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function getStateAction(): JsonResponse
+    {
+        return new JsonResponse([ 'data' => $this->getBackendUser()->uc['digital_asset_management'] ?? []]);
+    }
+
+    /**
      * @param ServerRequestInterface $request
      * @return JsonResponse
      */
