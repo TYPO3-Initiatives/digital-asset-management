@@ -50,6 +50,11 @@ class FileMount implements \JsonSerializable
     protected $storageOnline;
 
     /**
+     * @var string Markup of the storage icon
+     */
+    protected $icon;
+
+    /**
      * @param ResourceStorage $storage
      * @param array $fileMount
      */
@@ -60,6 +65,7 @@ class FileMount implements \JsonSerializable
         $this->storageName = $storage->getName();
         $this->storageType = $storage->getDriverType();
         $this->storageOnline = $storage->isOnline();
+        $this->icon = 'apps-filetree-mount';
     }
 
     public function jsonSerialize()
@@ -70,7 +76,8 @@ class FileMount implements \JsonSerializable
             'name' => $this->name,
             'storageName' => $this->storageName,
             'storageType' => $this->storageType,
-            'storageOnline' => $this->storageOnline
+            'storageOnline' => $this->storageOnline,
+            'icon' => $this->icon
         ];
     }
 }

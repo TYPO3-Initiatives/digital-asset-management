@@ -15,7 +15,10 @@ export default class Tree extends Vue {
     fetchTreeData: any;
 
     @State
-    storage!: StorageInterface;
+    activeStorage!: StorageInterface;
+
+    @State
+    treeFolders!: Array<FolderTreeNode>;
 
     private draggableService: DraggableService;
 
@@ -29,22 +32,22 @@ export default class Tree extends Vue {
         this.draggableService = new DraggableService(configuration);
     }
 
-    mounted(): void {
-        this.fetchTreeData(this.storage.identifier);
-        this.draggableService.makeDraggable();
+    get browsableIdentifier(): string {
+        return this.activeStorage.identifier + ':/';
     }
 
-    private render(h: CreateElement): VNode|null {
-        if (!this.storage.folders) {
-            return null;
-        }
+    mounted(): void {
+        this.draggableService.makeDraggable();
+        this.fetchTreeData(this.browsableIdentifier);
+    }
 
-        const nodes = [this.storage.folders].map(this.generateNodes, this);
+    private render(h: CreateElement): VNode | null {
+        const nodes = [this.treeFolders].map(this.generateNodes, this);
         return(
             <div>
                 <ul class='list-tree list-tree-root'>
                     <li class='list-tree-control-open'>
-                        <TreeRootNode></TreeRootNode>
+                        <TreeRootNode storage={this.activeStorage}></TreeRootNode>
                         {nodes}
                     </li>
                 </ul>

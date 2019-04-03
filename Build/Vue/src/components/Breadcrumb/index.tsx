@@ -14,6 +14,9 @@ export default class Breadcrumb extends Vue {
     @State
     current!: String;
 
+    @State
+    showTree!: boolean;
+
     @Action(AjaxRoutes.damGetFolderItems)
     fetchData: any;
 
@@ -39,7 +42,7 @@ export default class Breadcrumb extends Vue {
         });
         return (
             <div class='breadcrumb'>
-                <StorageSelector />
+                {!this.showTree ? <StorageSelector/> : ''}
                 {items}
             </div>
         );

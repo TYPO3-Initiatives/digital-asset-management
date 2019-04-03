@@ -1,3 +1,4 @@
+import {StorageInterface} from '@/interfaces/StorageInterface';
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import DocHeader from '@/components/DocHeader';
@@ -43,6 +44,9 @@ export default class ContentPanel extends Vue {
     fetchData: any;
 
     @State
+    activeStorage!: StorageInterface;
+
+    @State
     items: any;
 
     @State
@@ -56,6 +60,14 @@ export default class ContentPanel extends Vue {
 
     constructor(props: any) {
         super(props);
+    }
+
+    get browsableIdentifier(): string {
+        return this.activeStorage.identifier + ':/';
+    }
+
+    mounted(): void {
+        this.fetchData(this.browsableIdentifier);
     }
 
     private renderFileTiles(): VNode | null {

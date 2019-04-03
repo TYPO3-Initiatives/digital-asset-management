@@ -49,6 +49,11 @@ class Storage implements \JsonSerializable
     protected $storageOnline;
 
     /**
+     * @var string Markup of the storage icon
+     */
+    protected $icon;
+
+    /**
      * @param ResourceStorage $storage
      */
     public function __construct(ResourceStorage $storage)
@@ -57,6 +62,7 @@ class Storage implements \JsonSerializable
         $this->name = $this->storageName = $storage->getName();
         $this->storageType = $storage->getDriverType();
         $this->storageOnline = $storage->isOnline();
+        $this->icon = 'apps-filetree-root';
     }
 
     public function jsonSerialize()
@@ -67,7 +73,8 @@ class Storage implements \JsonSerializable
             'name' => $this->name,
             'storageName' => $this->storageName,
             'storageType' => $this->storageType,
-            'storageOnline' => $this->storageOnline
+            'storageOnline' => $this->storageOnline,
+            'icon' => $this->icon
         ];
     }
 }

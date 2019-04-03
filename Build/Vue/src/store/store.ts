@@ -1,4 +1,5 @@
 import FolderTreeNode from '@/interfaces/FolderTreeNode';
+import {StorageInterface} from '@/interfaces/StorageInterface';
 import Vue from 'vue';
 import Vuex, {StoreOptions} from 'vuex';
 import {RootState} from 'types/types';
@@ -31,12 +32,9 @@ const options: StoreOptions<RootState> = {
         current: '',
         viewMode: ViewType.TILE,
         showTree: true,
-        storage: {
-            folders: [],
-            title: '/fileadmin',
-            identifier: '1:/',
-            icon: '/typo3/sysext/core/Resources/Public/Icons/T3Icons/apps/apps-filetree-mount.svg',
-        },
+        activeStorage: null,
+        treeFolders: [],
+        storages: [],
         treeIdentifierLocationMap: {},
     },
     mutations: {
@@ -56,8 +54,22 @@ const options: StoreOptions<RootState> = {
             state.itemsGrouped.files.sort(sortItems);
             state.itemsGrouped.images.sort(sortItems);
         },
-        [Mutations.SET_STORAGE](state: RootState, identifier: string): void {
-            state.storage.identifier = identifier;
+        [Mutations.FETCH_STORAGES](state: RootState, data: Array<StorageInterface>): void {
+            state.storages = data;
+
+            if (!state.activeStorage) {
+                // TODO: Set active storage by value stored in UC
+                state.activeStorage = data[0];
+            }
+        },
+        [Mutations.SET_STORAGE](state: RootState, identifier: number): void {
+            state.treeFolders = [];
+
+            for (let storage of state.storages) {
+                if (storage.identifier === identifier) {
+                    state.activeStorage = storage;
+                }
+            }
         },
         [Mutations.SELECT_ITEM](state: RootState, identifier: String): void {
             if (!state.selected.includes(identifier)) {
@@ -83,6 +95,10 @@ const options: StoreOptions<RootState> = {
             state.viewMode = viewMode;
         },
         [Mutations.FETCH_TREE_DATA](state: RootState, data: {identifier: string, folders: Array<FolderTreeNode>}): void {
+            if (!state.activeStorage) {
+                return;
+            }
+
             const nestingStructure = state.treeIdentifierLocationMap[data.identifier] || [];
 
             data.folders.forEach((node: FolderTreeNode, index: number): void => {
@@ -96,10 +112,10 @@ const options: StoreOptions<RootState> = {
 
             if (data.identifier.match(/^\d+:\/$/)) {
                 // Storage root requested
-                state.storage.folders = data.folders;
+                state.treeFolders = data.folders;
             } else {
                 let node;
-                let folders = state.storage.folders;
+                let folders = state.treeFolders;
                 for (let index of nestingStructure) {
                     node = folders[index];
                     folders = folders[index].folders;
@@ -162,10 +178,14 @@ const options: StoreOptions<RootState> = {
             const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetTreeFolders] + '&identifier=' + identifier);
             commit(Mutations.FETCH_TREE_DATA, {identifier: identifier, folders: response.data});
         },
-        async [Mutations.SET_STORAGE]({commit, dispatch}: any, identifier: string): Promise<any> {
-            commit(Mutations.SET_STORAGE, identifier);
-            dispatch(AjaxRoutes.damGetFolderItems, identifier);
-            dispatch(AjaxRoutes.damGetTreeFolders, identifier);
+        async [AjaxRoutes.damGetStoragesAndMounts]({commit}: any): Promise<any> {
+            const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetStoragesAndMounts]);
+            commit(Mutations.FETCH_STORAGES, response.data);
+        },
+        async [Mutations.SET_STORAGE]({commit, dispatch}: any, data: {id: number, browsableIdentifier: string}): Promise<any> {
+            commit(Mutations.SET_STORAGE, data.id);
+            dispatch(AjaxRoutes.damGetTreeFolders, data.browsableIdentifier);
+            dispatch(AjaxRoutes.damGetFolderItems, data.browsableIdentifier);
         },
     },
 };

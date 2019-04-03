@@ -17,9 +17,6 @@
     "noImplicitReturns": true,
     "pretty": false,
     "baseUrl": ".",
-    "types": [
-      "requirejs", "webpack-env", "mocha", "chai"
-    ],
     "paths": {
       "@/*": [
         "src/*"
@@ -27,12 +24,12 @@
     },
     "lib": [
       "esnext", "dom", "dom.iterable", "scripthost"
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
     ]
   },
-  "typesRoot": [
-    "./node_modules/@types",
-    "./types"
-  ],
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",

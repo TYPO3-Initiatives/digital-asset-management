@@ -1,26 +1,31 @@
+import Icon from '@/components/Icon';
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {StorageInterface} from '@/interfaces/StorageInterface';
 import {CreateElement, VNode} from 'vue';
-import {Action, State} from 'vuex-class';
-import {Component, Vue} from 'vue-property-decorator';
+import {Action} from 'vuex-class';
+import {Component, Prop, Vue} from 'vue-property-decorator';
 
 @Component
 export default class TreeNode extends Vue {
     @Action(AjaxRoutes.damGetFolderItems)
     fetchData: any;
 
-    @State
+    @Prop()
     storage!: StorageInterface;
 
     constructor(props: any) {
         super(props);
     }
 
+    get browsableIdentifier(): string {
+        return this.storage.identifier + ':/';
+    }
+
     private render(h: CreateElement): VNode {
         return(
-            <span class='list-tree-group' data-identifier={this.storage.identifier}>
-                <a href='#' data-identifier={this.storage.identifier} onclick={() => this.fetchData(this.storage.identifier)}>
-                    <img src={this.storage.icon} width='16' height='16' /> {this.storage.title}
+            <span class='list-tree-group' data-identifier={this.browsableIdentifier}>
+                <a href='#' data-identifier={this.browsableIdentifier} onclick={() => this.fetchData(this.browsableIdentifier)}>
+                    <Icon identifier={this.storage.icon} /> {this.storage.storageName}
                 </a>
             </span>
         );
