@@ -9,7 +9,7 @@
 
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Digital Asset Management',
-    'description' => 'Modern way presenting files',
+    'description' => 'Through this module you can upload, copy, move an delete files on the configured file storages of your TYPO3 instance.',
     'category' => 'file',
     'state' => 'experimental',
     'author' => 'Schaffrath DigitalMedien',
