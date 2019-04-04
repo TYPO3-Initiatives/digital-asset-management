@@ -1,5 +1,13 @@
 <?php
 declare(strict_types = 1);
+
+/*
+ * This file is part of the package lns/digital-asset-management.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 
 /*
@@ -322,16 +330,20 @@ class AjaxController
                 throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
             }
             if (empty($targetFolderIdentifier)) {
-                throw new ControllerException('Target folder identifier needed',
-                    1554122023);
+                throw new ControllerException(
+                    'Target folder identifier needed',
+                    1554122023
+                );
             }
             $resourceFactory
                 = GeneralUtility::makeInstance(ResourceFactory::class);
             $targetFolderObject
                 = $resourceFactory->getObjectFromCombinedIdentifier($targetFolderIdentifier);
             if (!$targetFolderObject instanceof Folder) {
-                throw new ControllerException('Target identifier is not a folder',
-                    1553701684);
+                throw new ControllerException(
+                    'Target identifier is not a folder',
+                    1553701684
+                );
             }
         } catch (ResourceException $e) {
             return new JsonExceptionResponse($e);
@@ -344,8 +356,11 @@ class AjaxController
                 $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
                 $message = '';
                 if ($resultFolder
-                    = $sourceObject->copyTo($targetFolderObject, null,
-                    $conflictMode)
+                    = $sourceObject->copyTo(
+                        $targetFolderObject,
+                        null,
+                        $conflictMode
+                    )
                 ) {
                     $resources[$identifier] = [
                         'status' => 'COPIED',
@@ -392,16 +407,20 @@ class AjaxController
                 throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
             }
             if (empty($targetFolderIdentifier)) {
-                throw new ControllerException('Target folder identifier needed',
-                    1554122023);
+                throw new ControllerException(
+                    'Target folder identifier needed',
+                    1554122023
+                );
             }
             $resourceFactory
                 = GeneralUtility::makeInstance(ResourceFactory::class);
             $targetFolderObject
                 = $resourceFactory->getObjectFromCombinedIdentifier($targetFolderIdentifier);
             if (!$targetFolderObject instanceof Folder) {
-                throw new ControllerException('Target identifier is not a folder',
-                    1553701684);
+                throw new ControllerException(
+                    'Target identifier is not a folder',
+                    1553701684
+                );
             }
         } catch (ResourceException $e) {
             return new JsonExceptionResponse($e);
@@ -414,8 +433,11 @@ class AjaxController
                 $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
                 $message = '';
                 if ($resultFolder
-                    = $sourceObject->moveTo($targetFolderObject, null,
-                    $conflictMode)
+                    = $sourceObject->moveTo(
+                        $targetFolderObject,
+                        null,
+                        $conflictMode
+                    )
                 ) {
                     $resources[$identifier] = [
                         'status' => 'MOVED',
@@ -428,7 +450,7 @@ class AjaxController
                 $message = $e->getMessage();
             }
             if ($message !== ''&& $resources[$identifier] === null) {
-                    $resources[$identifier] = [
+                $resources[$identifier] = [
                     'status' => 'FAILED',
                     'message' => $message
                 ];
@@ -461,8 +483,10 @@ class AjaxController
                 throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
             }
             if (empty($targetName)) {
-                throw new ControllerException('Target name needed',
-                    1554193259);
+                throw new ControllerException(
+                    'Target name needed',
+                    1554193259
+                );
             }
         } catch (ControllerException $e) {
             return new JsonExceptionResponse($e);
@@ -481,8 +505,10 @@ class AjaxController
             if ($fileOrFolder === null) {
                 throw new ResourceException\ResourceDoesNotExistException('Resource does not exist');
             } else {
-                $resultFileOrFolder = $fileOrFolder->rename($targetName,
-                    $conflictMode);
+                $resultFileOrFolder = $fileOrFolder->rename(
+                    $targetName,
+                    $conflictMode
+                );
                 $resources[$identifier] = [
                     'status' => 'RENAMED',
                     'message' => 'File/folder was successfully renamed',
