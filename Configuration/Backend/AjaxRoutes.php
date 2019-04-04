@@ -4,6 +4,10 @@ return [
         'path' => '/dam/getNewStorageUrl',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::getNewStorageUrlAction',
     ],
+    'damPrepareDownload' => [
+        'path' => '/dam/prepareDownload',
+        'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::prepareDownloadAction',
+    ],
     'damSetState' => [
         'path' => '/dam/setState',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::setStateAction',
