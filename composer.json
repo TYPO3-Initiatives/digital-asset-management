@@ -26,9 +26,20 @@
 		"roave/security-advisories": "dev-master",
 		"typo3/testing-framework": "dev-master"
 	},
+	"autoload": {
+		"psr-4": {
+			"TYPO3\\CMS\\DigitalAssetManagement\\": "Classes/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"TYPO3\\CMS\\DigitalAssetManagement\\Tests\\": "Tests/"
+		}
+	},
 	"config": {
-		"bin-dir": "bin",
-		"sort-packages": true
+		"optimize-autoloader": true,
+		"vendor-dir": ".build/vendor",
+		"bin-dir": ".build/bin"
 	},
 	"scripts": {
 		"test:php:unit": [
@@ -43,21 +54,16 @@
 		],
 		"cgl": [
 			"php-cs-fixer fix --config Build/.php_cs.dist --format=junit > logs/php-cs-fixer.xml"
+		],
+		"post-autoload-dump": [
+			"mkdir -p .build/web/typo3conf/ext/",
+			"[ -L .build/web/typo3conf/ext/digital_asset_management ] || ln -snvf ../../../../. .build/web/typo3conf/ext/digital_asset_management"
 		]
 	},
 	"extra": {
 		"typo3/cms": {
-			"extension-key": "digital_asset_management"
-		}
-	},
-	"autoload": {
-		"psr-4": {
-			"TYPO3\\CMS\\DigitalAssetManagement\\": "Classes/"
-		}
-	},
-	"autoload-dev": {
-		"psr-4": {
-			"TYPO3\\CMS\\DigitalAssetManagement\\Tests\\": "Tests/"
+			"extension-key": "digital_asset_management",
+			"web-dir": ".build/web"
 		}
 	}
 }
