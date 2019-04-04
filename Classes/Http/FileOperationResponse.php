@@ -1,6 +1,5 @@
 <?php
 declare(strict_types = 1);
-namespace TYPO3\CMS\DigitalAssetManagement\Http;
 
 /*
  * This file is part of the package lns/digital-asset-management.
@@ -8,6 +7,8 @@ namespace TYPO3\CMS\DigitalAssetManagement\Http;
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
+
+namespace TYPO3\CMS\DigitalAssetManagement\Http;
 
 use TYPO3\CMS\Core\Http\JsonResponse;
 
@@ -17,7 +18,6 @@ use TYPO3\CMS\Core\Http\JsonResponse;
  */
 class FileOperationResponse extends JsonResponse
 {
-
     public function __construct(array $resultObjects)
     {
         $data = [

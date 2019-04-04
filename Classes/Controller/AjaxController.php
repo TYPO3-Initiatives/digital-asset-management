@@ -1,14 +1,14 @@
 <?php
 declare(strict_types = 1);
 
-namespace TYPO3\CMS\DigitalAssetManagement\Controller;
-
 /*
  * This file is part of the package lns/digital-asset-management.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
+
+namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
@@ -356,8 +356,10 @@ class AjaxController
                 throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
             }
             if (empty($targetFolderIdentifier)) {
-                throw new ControllerException('Target folder identifier needed',
-                    1554122023);
+                throw new ControllerException(
+                    'Target folder identifier needed',
+                    1554122023
+                );
             }
             $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
             $targetFolderObject = $resourceFactory->getObjectFromCombinedIdentifier($targetFolderIdentifier);

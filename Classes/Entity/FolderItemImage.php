@@ -1,6 +1,5 @@
 <?php
 declare(strict_types = 1);
-namespace TYPO3\CMS\DigitalAssetManagement\Entity;
 
 /*
  * This file is part of the package lns/digital-asset-management.
@@ -9,10 +8,10 @@ namespace TYPO3\CMS\DigitalAssetManagement\Entity;
  * LICENSE file that was distributed with this source code.
  */
 
+namespace TYPO3\CMS\DigitalAssetManagement\Entity;
+
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Imaging\Icon;
-use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -161,7 +160,8 @@ class FolderItemImage implements \JsonSerializable
     /**
      * @return LanguageService
      */
-    protected function getLanguageService() {
+    protected function getLanguageService()
+    {
         return $GLOBALS['LANG'];
     }
 }
