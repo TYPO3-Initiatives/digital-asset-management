@@ -16,6 +16,7 @@ import {FolderInterface} from '@/interfaces/FolderInterface';
 import {FileInterface} from '@/interfaces/FileInterface';
 import {ImageInterface} from '@/interfaces/ImageInterface';
 import {ResourceInterface} from '@/interfaces/ResourceInterface';
+import StorageSelector from '@/components/StorageSelector';
 
 @Component
 export default class ContentPanel extends Vue {
@@ -88,7 +89,7 @@ export default class ContentPanel extends Vue {
               <DocHeader>
                   <template slot='topBarLeft'><TreeToggle/><ViewSelector/></template>
                   <template slot='topBarRight'><SortingSelector/></template>
-                  <template slot='bottomBarLeft'><Breadcrumb/></template>
+                  <template slot='bottomBarLeft'><StorageSelector /><Breadcrumb/></template>
                   <template slot='bottomBarRight'><SelectIndicator/></template>
               </DocHeader>
               {this.renderContent()}

@@ -26,12 +26,17 @@ export default class AllSelector extends Vue {
     }
 
     private render(): VNode {
-        // fix me, I'm ugly
+        const randomPart: string =  Math.random().toString(36).substring(7);
         return (
-            <a href='#' onClick={(event: Event) => this.toggleSelect(event, this.listOfIdentifiers)} class='btn btn-sm btn-default'>
-                <i class='fa fa-check-square' v-show={this.isSelected} />
-                <i class='fa fa-square-o' v-show={!this.isSelected} />
-            </a>
+            <span class='component-checkbox'>
+                <input class='component-checkbox-input' type='checkbox' id={'component-datatable-selectall-' + randomPart}
+                  value='1' onClick={(event: Event) => this.toggleSelect(event, this.listOfIdentifiers)} />
+                <label class='component-checkbox-label' for={'component-datatable-selectall-' + randomPart}>
+                    <span class='component-visually-hidden'>
+                        {this.isSelected ? TYPO3.lang['AllSelector.label.deselect'] : TYPO3.lang['AllSelector.label.select']}
+                    </span>
+                </label>
+            </span>
         );
     }
 
