@@ -4,6 +4,7 @@ import Timeout = NodeJS.Timeout;
 import ChunkUploadDefaultHandler from './chunk/ChunkUploadHandler';
 import {VNode} from 'vue';
 import InputFile from '@/components/Upload/InputFile';
+import RandomService from '@/services/RandomService';
 
 interface ChunkOptions {
     headers: object;
@@ -364,7 +365,7 @@ export default class FileUpload extends Vue {
 
             // a file must have an ID
             if (!file.id) {
-                file.id = Math.random().toString(36).substr(2);
+                file.id = RandomService.getRandomString(2);
             }
 
             if (this.emitFilter(file, undefined)) {

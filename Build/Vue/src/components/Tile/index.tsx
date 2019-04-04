@@ -89,7 +89,7 @@ export default class Tile extends Vue {
     }
 
     private renderFolder(item: FolderInterface): VNode {
-        let classes = 'component-tile component-tile-' + item.type;
+        let classes = 'tile tile-' + item.type + ' t3js-contextmenutrigger';
         if (this.isSelected) {
             classes += ' component-tile-selected';
         }
@@ -98,15 +98,12 @@ export default class Tile extends Vue {
             this.openFolder(item.identifier);
         };
         return (
-            <a
-                class={classes}
-                href='#'
-                title={item.name}
-                onClick={clickFunction}
-                data-identifier={item.identifier}
-            >
-                <div class='component-tile-content'>
-                    <span class='component-tile-image-container'>
+            <a class={classes} onClick={clickFunction} data-identifier={item.identifier}
+                data-table='damListFolder-drag' data-uid={item.identifier}
+                >
+                <div class='tile-content'>
+                    <span class='pull-right'><ItemSelector item={item}/></span>
+                    <span class='tile-image-container'>
                         <img src={item.icon} class='tile-image'/>
                         <span class='tile-image-meta file-count' v-show={item.itemCount}>{item.itemCount}</span>
                     </span>
@@ -123,19 +120,19 @@ export default class Tile extends Vue {
     }
 
     private renderFile(item: FileInterface): VNode {
-        let classes = 'component-tile component-tile-' + item.type;
+        let classes = 'tile tile-' + item.type + ' t3js-contextmenutrigger';
         if (this.isSelected) {
             classes += ' component-tile-selected';
         }
         return (
-            <a
-                class={classes}
-                href={item.editMetaUrl}
-                title={item.name}
-                data-identifier={item.identifier}
-            >
-                <div class='component-tile-icon'>
-                    <Icon identifier={item.iconIdentifier} size='large' />
+            <a class={classes} href={item.editMetaUrl} data-identifier={item.identifier}
+                data-table='damListFile-drag' data-uid={item.identifier}
+                >
+                <div class='tile-content'>
+                    <span class='pull-right'><ItemSelector item={item}/></span>
+                    <span class='tile-image-container'>
+                        <Icon identifier={item.iconIdentifier} />
+                    </span>
                 </div>
                 <div class='component-tile-info'>
                     <div class='component-tile-info-name'>{item.name}</div>
@@ -149,7 +146,7 @@ export default class Tile extends Vue {
     }
 
     private renderImage(item: ImageInterface): VNode {
-        let classes = 'component-tile component-tile-' + item.type;
+        let classes = 'tile tile-' + item.type + ' t3js-contextmenutrigger';
         if (this.isSelected) {
             classes += ' component-tile-selected';
         }
@@ -159,6 +156,8 @@ export default class Tile extends Vue {
                 class={classes}
                 title={item.name}
                 data-identifier={item.identifier}
+                data-table='damListFile-drag'
+                data-uid={item.identifier}
             >
                 <div class='component-tile-background'>
                     <img src={item.thumbnailUrl}/>

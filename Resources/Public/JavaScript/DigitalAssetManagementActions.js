@@ -10,4 +10,4 @@
  *
  * The TYPO3 project - inspiring people to share!
  */
-define(["require", "TYPO3/CMS/DigitalAssetManagement/Library/filelist.umd.min"], function () {});
+define(["require", "TYPO3/CMS/DigitalAssetManagement/Library/filelist.umd.min", "TYPO3/CMS/Backend/ContextMenu"], function () {});

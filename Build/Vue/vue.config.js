@@ -23,6 +23,7 @@ module.exports = {
                     root: 'Vue' // indicates global variable
                 },
             },
+            'TYPO3/CMS/Backend/ContextMenu',
             'TYPO3/CMS/Backend/Icons',
             'TYPO3/CMS/Backend/Modal',
             'moment'

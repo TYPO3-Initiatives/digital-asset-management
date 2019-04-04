@@ -29,44 +29,59 @@ class ListFileProvider extends AbstractProvider
         'preview' => [
             'label' => 'Preview',
             'iconIdentifier' => 'actions-version-workspace-preview',
-            'callbackAction' => '',
+            'callbackAction' => 'actionPreview',
         ],
         'download' => [
             'label' => 'Download',
             'iconIdentifier' => 'actions-download',
-            'callbackAction' => '',
+            'callbackAction' => 'actionDownload',
         ],
         'moveTo' => [
             'label' => 'Move to',
             'iconIdentifier' => 'actions-move',
-            'callbackAction' => '',
+            'callbackAction' => 'actionMoveTo',
         ],
         'copyTo' => [
             'label' => 'Copy to',
             'iconIdentifier' => 'actions-document-paste-into',
-            'callbackAction' => '',
+            'callbackAction' => 'actionCopyTo',
         ],
         'delete' => [
             'label' => 'Delete',
             'iconIdentifier' => 'actions-delete',
-            'callbackAction' => '',
+            'callbackAction' => 'actionDelete',
         ],
         'replace' => [
             'label' => 'Replace',
             'iconIdentifier' => 'actions-replace',
-            'callbackAction' => '',
+            'callbackAction' => 'actionReplace',
         ],
         'rename' => [
             'label' => 'Rename',
             'iconIdentifier' => 'actions-rename',
-            'callbackAction' => '',
+            'callbackAction' => 'actionRename',
         ],
         'info' => [
             'label' => 'Details',
             'iconIdentifier' => 'actions-document-info',
-            'callbackAction' => ''
+            'callbackAction' => 'actionInfo'
         ],
     ];
+
+    /**
+     * Registers the additional JavaScript RequireJS callback-module which will allow to display a notification
+     * whenever the user tries to click on the "Hello World" item.
+     * The method is called from AbstractProvider::prepareItems() for each context menu item.
+     *
+     * @param string $itemName
+     * @return array
+     */
+    protected function getAdditionalAttributes(string $itemName): array
+    {
+        return [
+            'data-callback-module' => 'TYPO3/CMS/DigitalAssetManagement/ContextMenuActions',
+        ];
+    }
 
     /**
      * @var File

@@ -3,6 +3,7 @@ import {VNode} from 'vue';
 import {Mutation, State} from 'vuex-class';
 import {Mutations} from '@/enums/Mutations';
 import {ResourceInterface} from '@/interfaces/ResourceInterface';
+import RandomService from '@/services/RandomService';
 
 @Component
 export default class AllSelector extends Vue {
@@ -27,7 +28,7 @@ export default class AllSelector extends Vue {
     }
 
     private render(): VNode {
-        const randomPart: string =  Math.random().toString(36).substring(7);
+        const randomPart: string = RandomService.getRandomString();
         return (
             <span class='component-checkbox'>
                 <input class='component-checkbox-input' type='checkbox' id={'component-datatable-selectall-' + randomPart}

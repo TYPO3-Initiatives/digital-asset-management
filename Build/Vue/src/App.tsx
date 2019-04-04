@@ -2,10 +2,11 @@ import NoStoragesOverlay from '@/components/NoStoragesOverlay';
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {StorageInterface} from '@/interfaces/StorageInterface';
 import {Component, Vue} from 'vue-property-decorator';
-import {VNode} from 'vue';
+import {CreateElement, VNode} from 'vue';
 import TreePanel from '@/components/TreePanel';
 import ContentPanel from '@/components/ContentPanel';
-import {Action, Mutation, State} from 'vuex-class';
+import {Action, State} from 'vuex-class';
+import {EventService} from '@/services/EventService';
 import Modal from 'TYPO3/CMS/Backend/Modal';
 
 @Component
@@ -23,13 +24,15 @@ export default class App extends Vue {
     showTree!: boolean;
 
     private modal!: any;
+    private eventService!: EventService;
 
     mounted(): void {
         this.getStorages();
+        this.eventService = new EventService();
     }
 
-    private render(): VNode | null {
-        if (this.storages === null) {
+    private render(h: CreateElement): VNode | null {
+        if (!this.activeStorage) {
             return null;
         }
 

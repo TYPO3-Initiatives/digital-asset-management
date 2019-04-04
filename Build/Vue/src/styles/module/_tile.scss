@@ -15,6 +15,10 @@ $component-tile-gutter: 1rem;
     &:last-child {
         margin-bottom: (-1 * ($component-tile-gutter / 2));
     }
+
+    a {
+        position: relative;
+    }
 }
 
 .component-tile {

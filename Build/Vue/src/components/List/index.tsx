@@ -4,6 +4,7 @@ import {Mutation, State} from 'vuex-class';
 import ListItem from '@/components/ListItem';
 import {SortingFields, SortingOrder} from '@/enums/Sorting';
 import {Mutations} from '@/enums/Mutations';
+import RandomService from '@/services/RandomService';
 
 export default abstract class List extends Vue {
     @Mutation(Mutations.CHANGE_SORTING)
@@ -39,7 +40,7 @@ export default abstract class List extends Vue {
     }
 
     protected getRandomString(): string {
-        return Math.random().toString(36).substring(7);
+        return RandomService.getRandomString();
     }
 
     protected getHeaderColumns(): Array<VNode> {

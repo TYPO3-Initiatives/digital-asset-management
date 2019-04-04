@@ -58,7 +58,7 @@ const options: StoreOptions<RootState> = {
         [Mutations.FETCH_STORAGES](state: RootState, data: Array<StorageInterface>): void {
             state.storages = data;
 
-            if (!state.activeStorage && data.length === 1) {
+            if (!state.activeStorage && data.length > 0) {
                 state.activeStorage = data[0];
             }
         },

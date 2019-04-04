@@ -1,3 +1,4 @@
+declare module 'TYPO3/CMS/Backend/ContextMenu';
 declare module 'TYPO3/CMS/Backend/Icons';
 declare module 'TYPO3/CMS/Backend/Modal';
 

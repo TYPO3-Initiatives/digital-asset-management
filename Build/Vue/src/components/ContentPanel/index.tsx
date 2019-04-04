@@ -14,6 +14,7 @@ import {Action, State} from 'vuex-class';
 import TreeToggle from '@/components/TreeToggle';
 import DropZone from '@/components/DropZone';
 import ButtonBar from '@/components/ButtonBar';
+import FileService from '@/components/FileService';
 
 @Component
 export default class ContentPanel extends Vue {
@@ -36,6 +37,7 @@ export default class ContentPanel extends Vue {
     private render(): VNode {
         return (
             <div class='typo3-filelist-contentpanel'>
+                <FileService />
                 <DropZone>
                     <template slot='beforeUploadTable'>
                         <DocHeader>
