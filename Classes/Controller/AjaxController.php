@@ -1,5 +1,6 @@
 <?php
 declare(strict_types = 1);
+
 namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 
 /*
@@ -48,6 +49,7 @@ class AjaxController
 {
     /**
      * @param ServerRequestInterface $request
+     *
      * @return JsonResponse
      */
     public function createFolderAction(ServerRequestInterface $request): JsonResponse
@@ -58,7 +60,7 @@ class AjaxController
         }
         try {
             $folder = $this->createFolderRecursive($identifier);
-            return new JsonResponse([ new FolderItemFolder($folder) ]);
+            return new JsonResponse([new FolderItemFolder($folder)]);
         } catch (ResourceException $e) {
             return new JsonExceptionResponse($e);
         }
@@ -66,6 +68,7 @@ class AjaxController
 
     /**
      * @param ServerRequestInterface $request
+     *
      * @return JsonResponse
      */
     public function fileUploadAction(ServerRequestInterface $request): JsonResponse
@@ -95,9 +98,9 @@ class AjaxController
             if (GeneralUtility::inList($GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'], $fileExtension)
                 || GeneralUtility::inList($GLOBALS['TYPO3_CONF_VARS']['GFX']['mediafile_ext'], $fileExtension)
             ) {
-                return new JsonResponse([ new FolderItemImage($file) ]);
+                return new JsonResponse([new FolderItemImage($file)]);
             }
-            return new JsonResponse([ new FolderItemFile($file) ]);
+            return new JsonResponse([new FolderItemFile($file)]);
         } catch (ResourceException $e) {
             if (!empty($tempFilename) && file_exists($tempFilename)) {
                 unlink($tempFilename);
@@ -110,6 +113,7 @@ class AjaxController
 
     /**
      * @param string $folderIdentifier
+     *
      * @return Folder
      */
     protected function createFolderRecursive(string $folderIdentifier): Folder
@@ -130,13 +134,15 @@ class AjaxController
         while ($folderName = array_pop($stack)) {
             try {
                 $parentObject = $parentObject->createFolder($folderName);
-            } catch (ResourceException $e){}
+            } catch (ResourceException $e) {
+            }
         }
         return $parentObject;
     }
 
     /**
      * @param ServerRequestInterface $request
+     *
      * @return JsonResponse
      */
     public function fileExistsAction(ServerRequestInterface $request): JsonResponse
@@ -161,9 +167,9 @@ class AjaxController
             if (GeneralUtility::inList($GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'], $fileExtension)
                 || GeneralUtility::inList($GLOBALS['TYPO3_CONF_VARS']['GFX']['mediafile_ext'], $fileExtension)
             ) {
-                return new JsonResponse([ new FolderItemImage($file) ]);
+                return new JsonResponse([new FolderItemImage($file)]);
             }
-            return new JsonResponse([ new FolderItemFile($file) ]);
+            return new JsonResponse([new FolderItemFile($file)]);
         } else {
             return new FileExistsResponse(FileExistsResponse::FILE_DOES_NOT_EXIST);
         }
@@ -174,6 +180,7 @@ class AjaxController
      * FAL folder identifier. GET request with identifier argument.
      *
      * @param ServerRequestInterface $request
+     *
      * @return JsonResponse
      */
     public function getFolderItemsAction(ServerRequestInterface $request): JsonResponse
@@ -223,6 +230,8 @@ class AjaxController
      * by 'sorting' DB field.
      *
      * Return structure is an array of Storage or FileMount objects.
+     *
+     * @return JsonResponse
      */
     public function getStoragesAndMountsAction(): JsonResponse
     {
@@ -295,28 +304,21 @@ class AjaxController
         try {
             $identifiers = $request->getQueryParams()['identifiers'];
             $conflictMode = $request->getQueryParams()['conflictMode'] ?? '';
-            $targetFolderIdentifier
-                = $request->getQueryParams()['targetFolderIdentifier'];
+            $targetFolderIdentifier = $request->getQueryParams()['targetFolderIdentifier'];
             if (empty($identifiers)) {
                 throw new ControllerException('Identifiers needed', 1553699828);
             }
-            if (empty($conflictMode)
-                || !in_array($conflictMode, ['replace', 'cancel', 'rename'],
-                    true)
-            ) {
+            if (empty($conflictMode) || !in_array($conflictMode, ['replace', 'cancel', 'rename'], true)) {
                 throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
             }
             if (empty($targetFolderIdentifier)) {
                 throw new ControllerException('Target folder identifier needed',
                     1554122023);
             }
-            $resourceFactory
-                = GeneralUtility::makeInstance(ResourceFactory::class);
-            $targetFolderObject
-                = $resourceFactory->getObjectFromCombinedIdentifier($targetFolderIdentifier);
+            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+            $targetFolderObject = $resourceFactory->getObjectFromCombinedIdentifier($targetFolderIdentifier);
             if (!$targetFolderObject instanceof Folder) {
-                throw new ControllerException('Target identifier is not a folder',
-                    1553701684);
+                throw new ControllerException('Target identifier is not a folder', 1553701684);
             }
         } catch (ResourceException $e) {
             return new JsonExceptionResponse($e);
@@ -329,12 +331,8 @@ class AjaxController
             $message = '';
             $resultEntity = null;
             try {
-                $sourceObject
-                    = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
-                if ($resultObject
-                    = $sourceObject->copyTo($targetFolderObject, null,
-                    (string)DuplicationBehavior::cast($conflictMode))
-                ) {
+                $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+                if ($resultObject = $sourceObject->copyTo($targetFolderObject, null, (string)DuplicationBehavior::cast($conflictMode))) {
                     if ($resultObject instanceof Folder) {
                         $resultEntity = new FolderItemFolder($resultObject);
                     } else {
@@ -347,9 +345,7 @@ class AjaxController
             } catch (ResourceException $e) {
                 $message = $e->getMessage();
             }
-            $resources[] = new FileOperationResult($identifier, $state,
-                $message, $resultEntity
-            );
+            $resources[] = new FileOperationResult($identifier, $state, $message, $resultEntity);
         }
         return new FileOperationResponse($resources);
     }
@@ -370,28 +366,20 @@ class AjaxController
         try {
             $identifiers = $request->getQueryParams()['identifiers'];
             $conflictMode = $request->getQueryParams()['conflictMode'] ?? '';
-            $targetFolderIdentifier
-                = $request->getQueryParams()['targetFolderIdentifier'];
+            $targetFolderIdentifier = $request->getQueryParams()['targetFolderIdentifier'];
             if (empty($identifiers)) {
                 throw new ControllerException('Identifiers needed', 1553699828);
             }
-            if (empty($conflictMode)
-                || !in_array($conflictMode, ['replace', 'cancel', 'rename'],
-                    true)
-            ) {
+            if (empty($conflictMode) || !in_array($conflictMode, ['replace', 'cancel', 'rename'], true)) {
                 throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
             }
             if (empty($targetFolderIdentifier)) {
-                throw new ControllerException('Target folder identifier needed',
-                    1554122023);
+                throw new ControllerException('Target folder identifier needed', 1554122023);
             }
-            $resourceFactory
-                = GeneralUtility::makeInstance(ResourceFactory::class);
-            $targetFolderObject
-                = $resourceFactory->getObjectFromCombinedIdentifier($targetFolderIdentifier);
+            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+            $targetFolderObject = $resourceFactory->getObjectFromCombinedIdentifier($targetFolderIdentifier);
             if (!$targetFolderObject instanceof Folder) {
-                throw new ControllerException('Target identifier is not a folder',
-                    1553701684);
+                throw new ControllerException('Target identifier is not a folder', 1553701684);
             }
         } catch (ResourceException $e) {
             return new JsonExceptionResponse($e);
@@ -404,12 +392,8 @@ class AjaxController
             $message = '';
             $resultEntity = null;
             try {
-                $sourceObject
-                    = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
-                if ($resultObject
-                    = $sourceObject->moveTo($targetFolderObject, null,
-                    (string)DuplicationBehavior::cast($conflictMode))
-                ) {
+                $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+                if ($resultObject = $sourceObject->moveTo($targetFolderObject, null, (string)DuplicationBehavior::cast($conflictMode))) {
                     if ($resultObject instanceof Folder) {
                         $resultEntity = new FolderItemFolder($resultObject);
                     } else {
@@ -422,9 +406,7 @@ class AjaxController
             } catch (ResourceException $e) {
                 $message = $e->getMessage();
             }
-            $resources[] = new FileOperationResult($identifier, $state,
-                $message, $resultEntity
-            );
+            $resources[] = new FileOperationResult($identifier, $state, $message, $resultEntity);
         }
         return new FileOperationResponse($resources);
     }
@@ -449,20 +431,14 @@ class AjaxController
             if (empty($identifier)) {
                 throw new ControllerException('Identifier needed', 1553699828);
             }
-            if (empty($conflictMode)
-                || !in_array($conflictMode, ['replace', 'cancel', 'rename'],
-                    true)
-            ) {
+            if (empty($conflictMode) || !in_array($conflictMode, ['replace', 'cancel', 'rename'], true)) {
                 throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
             }
             if (empty($targetName)) {
-                throw new ControllerException('Target name needed',
-                    1554193259);
+                throw new ControllerException('Target name needed', 1554193259);
             }
-            $resourceFactory
-                = GeneralUtility::makeInstance(ResourceFactory::class);
-            $fileOrFolder
-                = $resourceFactory->retrieveFileOrFolderObject($identifier);
+            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+            $fileOrFolder = $resourceFactory->retrieveFileOrFolderObject($identifier);
         } catch (ResourceException $e) {
             return new JsonExceptionResponse($e);
         } catch (ControllerException $e) {
@@ -475,8 +451,7 @@ class AjaxController
             if ($fileOrFolder === null) {
                 throw new ResourceException\ResourceDoesNotExistException('Resource does not exist');
             } else {
-                $resultObject = $fileOrFolder->rename($targetName,
-                    (string)DuplicationBehavior::cast($conflictMode));
+                $resultObject = $fileOrFolder->rename($targetName, (string)DuplicationBehavior::cast($conflictMode));
                 if ($resultObject instanceof Folder) {
                     $resultEntity = new FolderItemFolder($resultObject);
                     $message = 'Folder was successfully renamed';
@@ -489,9 +464,7 @@ class AjaxController
         } catch (ResourceException $e) {
             $message = $e->getMessage();
         }
-        $resources[] = new FileOperationResult($identifier, $state, $message,
-            $resultEntity
-        );
+        $resources[] = new FileOperationResult($identifier, $state, $message, $resultEntity);
         return new JsonResponse($resources);
     }
 
@@ -514,13 +487,11 @@ class AjaxController
         } catch (ControllerException $e) {
             return new JsonExceptionResponse($e);
         }
-        $resourceFactory
-            = GeneralUtility::makeInstance(ResourceFactory::class);
+        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         $resources = [];
         foreach ($identifiers as $identifier) {
             try {
-                $sourceObject
-                    = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+                $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
                 if ($sourceObject->delete(true)) {
                     $state = FileOperationResult::DELETED;
                     $message = 'Resource deleted';
@@ -532,8 +503,7 @@ class AjaxController
                 $state = FileOperationResult::FAILED;
                 $message = $e->getMessage();
             }
-            $resources[] = new FileOperationResult($identifier, $state,
-                $message, null);
+            $resources[] = new FileOperationResult($identifier, $state, $message, null);
         }
         return new FileOperationResponse($resources);
     }
