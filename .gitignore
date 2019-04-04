@@ -1,24 +1,26 @@
-# PHPStorm
-.idea
+# IDE
+/.idea
+/.vscode
 
 # OSX
-.DS_Store
+/.DS_Store
 
 # Composer
-vendor/
-bin/
+/vendor/
+/bin/
+/.composer.lock
 
 # TYPO3 test
-.php_cs.cache
+/.php_cs.cache
 /public/
 /typo3/
-var/
-logs/
-index.php
+/var/
+/logs/
+/index.php
 
 # Vue
-Resources/Public/JavaScript/Library/demo.html
-Resources/Public/JavaScript/Library/filelist.common.js
-Resources/Public/JavaScript/Library/filelist.common.js.map
-Resources/Public/JavaScript/Library/*hot-update.js
-Resources/Public/JavaScript/Library/*hot-update.json
+/Resources/Public/JavaScript/Library/demo.html
+/Resources/Public/JavaScript/Library/filelist.common.js
+/Resources/Public/JavaScript/Library/filelist.common.js.map
+/Resources/Public/JavaScript/Library/*hot-update.js
+/Resources/Public/JavaScript/Library/*hot-update.json
