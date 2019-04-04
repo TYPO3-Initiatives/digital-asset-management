@@ -9,7 +9,9 @@ namespace TYPO3\CMS\DigitalAssetManagement\Entity;
  * LICENSE file that was distributed with this source code.
  */
 
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Immutable storage object, used by getStoragesAndMountsAction() for admin users.
@@ -54,6 +56,11 @@ class Storage implements \JsonSerializable
     protected $icon;
 
     /**
+     * @var string
+     */
+    protected $editStorageUrl;
+
+    /**
      * @param ResourceStorage $storage
      */
     public function __construct(ResourceStorage $storage)
@@ -63,6 +70,16 @@ class Storage implements \JsonSerializable
         $this->storageType = $storage->getDriverType();
         $this->storageOnline = $storage->isOnline();
         $this->icon = 'apps-filetree-root';
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        $urlParameters = [
+            'edit' => [
+                'sys_file_storage' => [
+                    $storage->getUid() => 'edit',
+                ],
+            ],
+            'returnUrl' => (string)$uriBuilder->buildUriFromRoute('file_DigitalAssetManagement'),
+        ];
+        $this->editStorageUrl = (string)$uriBuilder->buildUriFromRoute('record_edit', $urlParameters);
     }
 
     public function jsonSerialize()
@@ -74,7 +91,8 @@ class Storage implements \JsonSerializable
             'storageName' => $this->storageName,
             'storageType' => $this->storageType,
             'storageOnline' => $this->storageOnline,
-            'icon' => $this->icon
+            'icon' => $this->icon,
+            'editStorageUrl' => $this->editStorageUrl,
         ];
     }
 }
