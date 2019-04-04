@@ -26,6 +26,8 @@ export default class App extends Vue {
     @State
     activeStorage!: StorageInterface;
 
+    private modal!: any;
+
     mounted(): void {
         this.getStorages();
     }
@@ -40,8 +42,8 @@ export default class App extends Vue {
 
             this.$nextTick(() => {
                 const content = (document.querySelector('#vue-modalContent') as HTMLDivElement);
-                Modal.advanced({
-                    title: 'XX',
+                this.modal = Modal.advanced({
+                    title: '',
                     size: Modal.sizes.small,
                     content: content,
                 }).on('hidden.bs.modal', (): void => {
@@ -53,6 +55,11 @@ export default class App extends Vue {
                 <div id='app' class='module'>
                 </div>
             );
+        }
+
+        if (this.modal) {
+            this.modal = null;
+            Modal.dismiss();
         }
 
         return (
