@@ -30,9 +30,6 @@
 		"bin-dir": "bin",
 		"sort-packages": true
 	},
-	"replace": {
-		"digital_asset_management": "*"
-	},
 	"scripts": {
 		"test:php:unit": [
 			"phpunit -c Build/UnitTests.xml --log-junit logs/phpunit.xml"
