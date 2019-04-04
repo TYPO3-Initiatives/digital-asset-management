@@ -53,7 +53,7 @@
 			"@test:php:functional"
 		],
 		"cgl": [
-			"php-cs-fixer fix --config Build/.php_cs.dist"
+			"php-cs-fixer fix --diff -v"
 		],
 		"post-autoload-dump": [
 			"mkdir -p .build/web/typo3conf/ext/",
