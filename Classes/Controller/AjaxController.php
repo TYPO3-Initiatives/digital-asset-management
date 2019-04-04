@@ -10,6 +10,7 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
  */
 
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Resource\DuplicationBehavior;
@@ -44,6 +45,27 @@ use TYPO3\CMS\DigitalAssetManagement\Http\StoragesAndMountsResponse;
  */
 class AjaxController
 {
+    /**
+     * @return JsonResponse
+     */
+    public function getNewStorageUrlAction(): JsonResponse
+    {
+        $backendUser = $this->getBackendUser();
+        if (!$backendUser->isAdmin()) {
+            return new JsonExceptionResponse(new ControllerException('User is not admin', 1554380677));
+        }
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        $urlParameters = [
+            'edit' => [
+                'sys_file_storage' => [
+                    0 => 'new',
+                ],
+            ],
+            'returnUrl' => (string)$uriBuilder->buildUriFromRoute('file_DigitalAssetManagement'),
+        ];
+        return new JsonResponse([ (string)$uriBuilder->buildUriFromRoute('record_edit', $urlParameters) ]);
+    }
+
     /**
      * Set module state of BE user. Send a json array as ['data'] POST
      *

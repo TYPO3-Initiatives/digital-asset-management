@@ -134,12 +134,16 @@ const options: StoreOptions<RootState> = {
             state.modalContent = modalContent;
         },
         [Mutations.CHANGE_SORTING](state: RootState, sorting: SortingFields): void {
-            const stringSort = (a: ResourceInterface, b: ResourceInterface) => a[sorting].localeCompare(
-                b[sorting],
-                undefined,
-                {numeric: true, sensitivity: 'base'},
-            );
-            const numberSort = (a: ResourceInterface, b: ResourceInterface) => a[sorting] < b[sorting];
+            const stringSort = (a: ResourceInterface, b: ResourceInterface) => {
+                return state.sorting.order === SortingOrder.ASC
+                    ? a[sorting].localeCompare(b[sorting], undefined, {numeric: true, sensitivity: 'base'})
+                    : b[sorting].localeCompare(a[sorting], undefined, {numeric: true, sensitivity: 'base'});
+            };
+            const numberSort = (a: ResourceInterface, b: ResourceInterface) => {
+                return state.sorting.order === SortingOrder.ASC
+                  ? a[sorting] < b[sorting]
+                  : a[sorting] > b[sorting];
+            };
 
             const sortItems = ([SortingFields.MTIME, SortingFields.SIZE].indexOf(sorting) === -1)
                 ? stringSort
@@ -159,7 +163,6 @@ const options: StoreOptions<RootState> = {
                 state.itemsGrouped.files.reverse();
                 state.itemsGrouped.images.reverse();
             }
-
         },
     },
     actions: {

@@ -1,5 +1,9 @@
 <?php
 return [
+    'damGetNewStorageUrl' => [
+        'path' => '/dam/getNewStorageUrl',
+        'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::getNewStorageUrlAction',
+    ],
     'damSetState' => [
         'path' => '/dam/setState',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::setStateAction',

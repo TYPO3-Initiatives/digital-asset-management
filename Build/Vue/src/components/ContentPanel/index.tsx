@@ -1,4 +1,4 @@
-import {AjaxRoutes} from "@/enums/AjaxRoutes";
+import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import FolderContent from './FolderContent';
 import StorageContent from './StorageContent';
 import {StorageInterface} from '@/interfaces/StorageInterface';
@@ -9,6 +9,7 @@ import SortingSelector from '@/components/SortingSelector';
 import ViewSelector from '@/components/ViewSelector';
 import Breadcrumb from '@/components/Breadcrumb';
 import SelectIndicator from '@/components/SelectIndicator';
+import StorageSelector from '@/components/StorageSelector';
 import {Action, State} from 'vuex-class';
 import TreeToggle from '@/components/TreeToggle';
 
@@ -24,7 +25,7 @@ export default class ContentPanel extends Vue {
         super(props);
     }
 
-    updated() {
+    updated(): void {
         if (this.activeStorage) {
             this.fetchData(this.activeStorage.identifier + ':/');
         }
@@ -36,7 +37,7 @@ export default class ContentPanel extends Vue {
               <DocHeader>
                   <template slot='topBarLeft'><TreeToggle v-show={this.activeStorage}/><ViewSelector/></template>
                   <template slot='topBarRight'><SortingSelector/></template>
-                  <template slot='bottomBarLeft'><Breadcrumb v-show={this.activeStorage}/></template>
+                  <template slot='bottomBarLeft'><StorageSelector /><Breadcrumb v-show={this.activeStorage}/></template>
                   <template slot='bottomBarRight'><SelectIndicator v-show={this.activeStorage}/></template>
               </DocHeader>
               {this.activeStorage ? <FolderContent /> : <StorageContent />}

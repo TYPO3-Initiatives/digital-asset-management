@@ -23,13 +23,23 @@ export default class StorageContentList extends List {
     }
 
     protected renderTable(list: Array<VNode>): VNode {
+        const randomPart: string = this.getRandomString();
         return (
-            <table class='table table-striped table-hover'>
-                <thead>
-                {this.getHeaderColumns()}
-                </thead>
-                <tbody>{list}</tbody>
-            </table>
+            <div class='component-datatable' role='group' aria-labelledby={'component-datatable-' + randomPart}>
+                <table class='component-datatable-table'>
+                    <caption class='component-datatable-caption' id={'component-datatable-' + randomPart}>
+                        {this.current}
+                    </caption>
+                    <thead class='component-datatable-head'>
+                    <tr>
+                        {this.getHeaderColumns()}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {list}
+                    </tbody>
+                </table>
+            </div>
         );
     }
 }

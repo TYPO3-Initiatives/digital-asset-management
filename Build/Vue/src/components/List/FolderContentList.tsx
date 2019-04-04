@@ -23,14 +23,26 @@ export default class FolderContentList extends List {
     }
 
     protected renderTable(list: Array<VNode>): VNode {
+        const randomPart: string = this.getRandomString();
         return (
-            <table class='table table-striped table-hover'>
-                <thead>
-                <th><AllSelector listOfIdentifiers={this.items.map((item: any) => {return item.identifier; })}/></th>
-                {this.getHeaderColumns()}
-                </thead>
-                <tbody>{list}</tbody>
-            </table>
+            <div class='component-datatable' role='group' aria-labelledby={'component-datatable-' + randomPart}>
+                <table class='component-datatable-table'>
+                    <caption class='component-datatable-caption' id={'component-datatable-' + randomPart}>
+                        {this.current}
+                    </caption>
+                    <thead class='component-datatable-head'>
+                    <tr>
+                        <th data-type='checkbox' scope='col' role='columnheader'>
+                            <AllSelector listOfIdentifiers={this.items.map((item: any) => {return item.identifier; })}/>
+                        </th>
+                        {this.getHeaderColumns()}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {list}
+                    </tbody>
+                </table>
+            </div>
         );
     }
 }

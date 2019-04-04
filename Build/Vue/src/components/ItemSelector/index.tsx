@@ -26,12 +26,17 @@ export default class ItemSelector extends Vue {
     }
 
     private render(): VNode {
-        // fix me, I'm ugly
+        const randomPart: string =  Math.random().toString(36).substring(7);
+        const label: string = this.isSelected ? TYPO3.lang['ItemSelector.label.deselect'] : TYPO3.lang['ItemSelector.label.select'];
         return (
-          <a href='#' onClick={(event: Event) => this.toggleSelect(event, this.identifier)} className='btn btn-sm btn-default'>
-              <i class='fa fa-check-square' v-show={this.isSelected} />
-              <i class='fa fa-square-o' v-show={!this.isSelected} />
-          </a>
+            <span class='component-checkbox'>
+                <input class='component-checkbox-input' type='checkbox' id={'component-datatable-select-identifier-' + randomPart}
+                  value='1' checked={this.selected.includes(this.identifier)} />
+                <label class='component-checkbox-label' for={'component-datatable-select-identifier-' + randomPart}
+                    onClick={(event: Event) => this.toggleSelect(event, this.identifier)}>
+                    <span class='component-visually-hidden'>{label} {this.identifier}</span>
+                </label>
+            </span>
         );
     }
 
