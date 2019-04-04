@@ -1,6 +1,5 @@
 <?php
 declare(strict_types = 1);
-namespace TYPO3\CMS\DigitalAssetManagement\Exception;
 
 /*
  * This file is part of the package lns/digital-asset-management.
@@ -9,10 +8,11 @@ namespace TYPO3\CMS\DigitalAssetManagement\Exception;
  * LICENSE file that was distributed with this source code.
  */
 
+namespace TYPO3\CMS\DigitalAssetManagement\Exception;
+
 /**
  * Generic top level execption of this extension.
  */
 class Exception extends \Exception
 {
-
 }
