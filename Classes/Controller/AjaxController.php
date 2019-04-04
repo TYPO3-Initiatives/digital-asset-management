@@ -67,6 +67,19 @@ class AjaxController
     }
 
     /**
+     * @return JsonResponse
+     */
+    public function damGetLogoutUrlAction(): JsonResponse
+    {
+        $backendUser = $this->getBackendUser();
+        if (!$backendUser) {
+            return new JsonExceptionResponse(new ControllerException('User is not logged in', 1554380677));
+        }
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        return new JsonResponse([ (string)$uriBuilder->buildUriFromRoute('logout') ]);
+    }
+
+    /**
      * Set module state of BE user. Send a json array as ['data'] POST
      *
      * @param ServerRequestInterface $request
@@ -281,7 +294,7 @@ class AjaxController
                 }
             }
         }
-        return new StoragesAndMountsResponse([]);
+        return new StoragesAndMountsResponse($entities);
     }
 
     /**

@@ -12,7 +12,7 @@ export default class NoStoragesOverlay extends Vue {
     @Action(AjaxRoutes.damGetStoragesAndMounts)
     getStorages!: Function;
 
-    private createNewStorageUrl: string | null = null;
+    private receivedUrl: string | null = null;
 
     constructor(props: any) {
         super(props);
@@ -20,7 +20,12 @@ export default class NoStoragesOverlay extends Vue {
 
     private async getNewStorageUrl(): Promise<any> {
         const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetNewStorageUrl]);
-        this.createNewStorageUrl = response.data[0];
+        this.receivedUrl = response.data[0];
+    }
+
+    private async getLogoutUrl(): Promise<any> {
+        const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetLogoutUrl]);
+        this.receivedUrl = response.data[0];
     }
 
     private render(): VNode {
@@ -41,13 +46,14 @@ export default class NoStoragesOverlay extends Vue {
                     Do you want t connect to a new storage now?
                 </p>
                 <Icon identifier='apps-filetree-mount' />
-                <a href={this.createNewStorageUrl}>Connect storage</a>
+                <a href={this.receivedUrl}>Connect storage</a>
             </div>
         );
     }
 
     private renderIfNonAdmin(): VNode {
-        const url = TYPO3.ModuleMenu.App.showModule('logout');
+        this.getLogoutUrl();
+
         return(
             <div>
                 <h2>You do not have sufficient permissions to access any storage folder.</h2>
@@ -56,7 +62,7 @@ export default class NoStoragesOverlay extends Vue {
                     <strong>Username:</strong> {TYPO3.settings.BackendUser.username}<br />
                     <strong>Reference: </strong> #123456789
                 </p>
-                <a href={url} class='btn btn-block btn-default'>Switch User</a>
+                <a href={this.receivedUrl} class='btn btn-block btn-default'>Switch User</a>
                 <a href='#' class='btn btn-block btn-success' onclick={() => this.getStorages()}>
                     <Icon identifier='actions-refresh' /> Refresh
                 </a>
