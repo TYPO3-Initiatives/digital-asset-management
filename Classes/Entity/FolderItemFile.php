@@ -122,14 +122,15 @@ class FolderItemFile implements \JsonSerializable
         $this->iconIdentifier = GeneralUtility::makeInstance(IconFactory::class)
             ->getIconForResource($file, Icon::SIZE_SMALL)
             ->getIdentifier();
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $urlParameters = [
             'edit' => [
                 'sys_file_metadata' => [
                     $file->getMetaData()['uid'] => 'edit',
-                ]
+                ],
             ],
+            'returnUrl' => (string)$uriBuilder->buildUriFromRoute('file_DigitalAssetManagement'),
         ];
-        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $this->editMetaUrl = (string)$uriBuilder->buildUriFromRoute('record_edit', $urlParameters);
         $this->editContentUrl = '';
     }
