@@ -26,19 +26,19 @@ script:
   if [[ "$UNIT_TESTS" == "yes" ]]; then
     echo;
     echo "Running unit tests";
-    composer t3g:test:php:unit
+    composer test:php:unit
   fi
 - |
   if [[ "FUNCTIONAL_TESTS" == "yes" ]]; then
     echo;
     echo "Running functional tests";
-    composer t3g:test:php:functional
+    composer test:php:functional
   fi
 - |
   if [[ "$PHP_CS_FIXER" == "yes" ]]; then
     echo;
     echo "Running PHP CS Fixer";
-    composer t3g:cgl
+    composer cgl
   fi
 - |-
   if [[ "$PHP_LINT" == "yes" ]]; then
