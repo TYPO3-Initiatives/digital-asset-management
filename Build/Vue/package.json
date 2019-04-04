@@ -4,12 +4,10 @@
   "private": true,
   "scripts": {
     "build": "vue-cli-service build",
-    "lib": "vue-cli-service build --target lib --name filelist ./src/main.ts",
+    "build-lib": "vue-cli-service build --target lib --name filelist ./src/main.ts",
     "lint": "vue-cli-service lint",
-    "serve": "vue-cli-service serve",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit",
-    "watch": "vue-cli-service build --watch",
     "watch-lib": "vue-cli-service build --watch --target lib --name filelist ./src/main.ts"
   },
   "dependencies": {

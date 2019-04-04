@@ -62,8 +62,8 @@ export default class NoStoragesOverlay extends Vue {
                     <strong>Username:</strong> {TYPO3.settings.BackendUser.username}<br />
                     <strong>Reference: </strong> #123456789
                 </p>
-                <a href={this.receivedUrl} class='btn btn-block btn-default'>Switch User</a>
-                <a href='#' class='btn btn-block btn-success' onclick={() => this.getStorages()}>
+                <a href={this.receivedUrl}>Switch User</a><br/>
+                <a href='#' onclick={() => this.getStorages()}>
                     <Icon identifier='actions-refresh' /> Refresh
                 </a>
             </div>
