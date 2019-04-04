@@ -1,3 +1,5 @@
+import Icon from '@/components/Icon';
+import {Mutations} from '@/enums/Mutations';
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {Action, State} from 'vuex-class';
@@ -14,6 +16,9 @@ export default class ListItem extends Vue {
 
     @Action(AjaxRoutes.damGetFolderItems)
     fetchData: any;
+
+    @Action(Mutations.SET_STORAGE)
+    setStorage!: Function;
 
     @State
     selected!: Array<object>;
@@ -35,6 +40,10 @@ export default class ListItem extends Vue {
         this.fetchData(identifier);
     }
 
+    private openStorage(identifier: number): void {
+        this.setStorage(identifier);
+    }
+
     private render(): VNode {
         let classes = 'list-item ';
         if (this.isSelected) {
@@ -47,7 +56,17 @@ export default class ListItem extends Vue {
                 let fieldName = this.visibleColumns[field];
                 let val: any = this.item[fieldName] || '';
                 if (fieldName === 'name') {
-                    if (this.item.type === FileType.FOLDER) {
+                    if (this.item.type === FileType.STORAGE) {
+                        const clickFunction = (e: Event) => {
+                            e.stopPropagation();
+                            this.openStorage(this.item.identifier);
+                        };
+                        columns.push(
+                            <td>
+                                <Icon identifier={this.item.icon} />
+                                <a href='#' onClick={clickFunction}>{val}</a>
+                            </td>);
+                    } else if (this.item.type === FileType.FOLDER) {
                         const clickFunction = (e: Event) => {
                             e.stopPropagation();
                             this.openFolder(this.item.identifier);
@@ -72,6 +91,8 @@ export default class ListItem extends Vue {
                     columns.push(<td><a href='#' onClick={clickFunction}>{val}</a></td>);
                 } else if (fieldName === 'permissions') {
                     columns.push(<td>{val.isReadable ? 'R' : ''}{val.isWritable ? 'W' : ''}</td>);
+                } else if (typeof val === 'boolean') {
+                    columns.push(<td>{TYPO3.lang['List.table.header.state.' + (val.toString())]}</td>);
                 } else {
                     columns.push(<td>{val}</td>);
                 }
@@ -80,7 +101,7 @@ export default class ListItem extends Vue {
 
         return (
             <tr class={classes} data-identifier={this.identifier}>
-                <th><ItemSelector identifier={this.identifier}/></th>
+                {this.item.type !== FileType.STORAGE ? <th><ItemSelector identifier={this.identifier}/></th> : ''}
                 {columns}
             </tr>
         );

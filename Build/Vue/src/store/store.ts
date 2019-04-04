@@ -58,8 +58,7 @@ const options: StoreOptions<RootState> = {
         [Mutations.FETCH_STORAGES](state: RootState, data: Array<StorageInterface>): void {
             state.storages = data;
 
-            if (data.length && !state.activeStorage) {
-                // TODO: Set active storage by value stored in UC
+            if (!state.activeStorage && data.length === 1) {
                 state.activeStorage = data[0];
             }
         },
@@ -164,12 +163,6 @@ const options: StoreOptions<RootState> = {
         },
     },
     actions: {
-        async [Mutations.FETCH_DATA]({commit}: any, identifier: String): Promise<any> {
-            commit(Mutations.NAVIGATE, identifier);
-            // request [dummy data]:
-            const response = await client.get('http://localhost:8080/api/files.json?identifier=' + identifier);
-            commit(Mutations.FETCH_DATA, response.data);
-        },
         async [AjaxRoutes.damGetFolderItems]({commit}: any, identifier: String): Promise<any> {
             commit(Mutations.NAVIGATE, identifier);
             const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetFolderItems] + '&identifier=' + identifier);
@@ -183,10 +176,8 @@ const options: StoreOptions<RootState> = {
             const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetTreeFolders] + '&identifier=' + identifier);
             commit(Mutations.FETCH_TREE_DATA, {identifier: identifier, folders: response.data});
         },
-        async [Mutations.SET_STORAGE]({commit, dispatch}: any, data: {id: number, browsableIdentifier: string}): Promise<any> {
-            commit(Mutations.SET_STORAGE, data.id);
-            dispatch(AjaxRoutes.damGetTreeFolders, data.browsableIdentifier);
-            dispatch(AjaxRoutes.damGetFolderItems, data.browsableIdentifier);
+        async [Mutations.SET_STORAGE]({commit, dispatch}: any, storageId: number): Promise<any> {
+            commit(Mutations.SET_STORAGE, storageId);
         },
     },
 };

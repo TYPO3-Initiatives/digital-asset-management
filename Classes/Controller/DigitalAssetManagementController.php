@@ -13,6 +13,7 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
+use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -64,6 +65,8 @@ class DigitalAssetManagementController
      */
     public function handleRequest(ServerRequestInterface $request): ResponseInterface
     {
+        $backendUser = GeneralUtility::makeInstance(Context::class)->getAspect('backend.user');
+
         /**
          * @var PageRenderer $pageRenderer
          */
@@ -74,6 +77,10 @@ class DigitalAssetManagementController
         $pageRenderer->addInlineLanguageLabelFile('EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf');
         $pageRenderer->addInlineLanguageLabelFile('EXT:digital_asset_management/Resources/Private/Language/locallang_vue.xlf');
         $pageRenderer->addInlineLanguageLabelFile('EXT:core/Resources/Private/Language/locallang_core.xlf', 'file_upload');
+        $pageRenderer->addInlineSettingArray('BackendUser', [
+            'isAdmin' => $backendUser->isAdmin(),
+            'username' => $backendUser->get('username'),
+        ]);
         $this->initializeView('index');
         // Add shortcut button
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();

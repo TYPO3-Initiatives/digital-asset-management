@@ -1,12 +1,9 @@
 import {Prop, Vue} from 'vue-property-decorator';
-import {VNode} from 'vue';
+import {CreateElement, VNode} from 'vue';
 import {State} from 'vuex-class';
-import Component from 'vue-class-component';
 import ListItem from '@/components/ListItem';
-import AllSelector from '@/components/AllSelector';
 
-@Component
-export default class List extends Vue {
+export default abstract class List extends Vue {
     @Prop()
     items: any;
 
@@ -15,12 +12,14 @@ export default class List extends Vue {
 
     visibleColumns: Array<string> = ['name', 'mtimeDisplay', 'sizeDisplay', 'type', 'translations', 'references', 'permissions'];
 
-    constructor(props: any) {
-        super(props);
+    protected abstract renderTable(list: Array<VNode>): VNode;
+
+    protected render(h: CreateElement): VNode {
+        const list = this.items.map(this.generateListItem, this);
+        return this.renderTable(list);
     }
 
-    private render(): VNode {
-        const list = this.items.map(this.generateListItem, this);
+    protected getHeaderColumns(): Array<VNode> {
         const headerColumns: Array<VNode> = [];
         for (let field in this.visibleColumns) {
             if (this.visibleColumns.hasOwnProperty(field)) {
@@ -28,15 +27,7 @@ export default class List extends Vue {
             }
         }
 
-        return (
-            <table class='table table-striped table-hover'>
-                <thead>
-                    <th><AllSelector listOfIdentifiers={this.items.map((item: any) => {return item.identifier; })}/></th>
-                    {headerColumns}
-                </thead>
-                <tbody>{list}</tbody>
-            </table>
-        );
+        return headerColumns;
     }
 
     private generateListItem(item: any): VNode {

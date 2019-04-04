@@ -1,6 +1,5 @@
-import {NoStoragesModal} from '@/components/NoStoragesModal';
+import NoStoragesOverlay from '@/components/NoStoragesOverlay';
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
-import {Mutations} from '@/enums/Mutations';
 import {StorageInterface} from '@/interfaces/StorageInterface';
 import {Component, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
@@ -17,14 +16,14 @@ export default class App extends Vue {
     @Action(AjaxRoutes.damGetFolderItems)
     fetchData: any;
 
-    @Mutation(Mutations.SET_MODAL_CONTENT)
-    setModalContent!: Function;
-
     @State
     storages!: Array<StorageInterface>;
 
     @State
     activeStorage!: StorageInterface;
+
+    @State
+    showTree!: boolean;
 
     private modal!: any;
 
@@ -38,21 +37,10 @@ export default class App extends Vue {
         }
 
         if (!this.storages.length) {
-            this.setModalContent(<NoStoragesModal />);
-
-            this.$nextTick(() => {
-                const content = (document.querySelector('#vue-modalContent') as HTMLDivElement);
-                this.modal = Modal.advanced({
-                    title: '',
-                    size: Modal.sizes.small,
-                    content: content,
-                }).on('hidden.bs.modal', (): void => {
-                    ((document.querySelector('#app') as HTMLDivElement).parentNode as HTMLElement).appendChild(content);
-                });
-            });
-
             return (
                 <div id='app' class='module'>
+                    <NoStoragesOverlay />
+                    <ContentPanel />
                 </div>
             );
         }
@@ -64,7 +52,7 @@ export default class App extends Vue {
 
         return (
             <div id='app' class='module'>
-                <TreePanel />
+                <TreePanel v-show={this.showTree && this.activeStorage}/>
                 <ContentPanel />
             </div>
         );

@@ -24,6 +24,21 @@
       <trans-unit id="List.table.header.permissions">
         <source>RW</source>
       </trans-unit>
+      <trans-unit id="List.table.header.storageName">
+        <source>Storage Name</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.storageOnline">
+        <source>Is online?</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.storageType">
+        <source>Type</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.state.true">
+        <source>Yes</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.state.false">
+        <source>No</source>
+      </trans-unit>
       <trans-unit id="StorageSelector.title">
         <source>Select a file storage to browse the assets</source>
       </trans-unit>

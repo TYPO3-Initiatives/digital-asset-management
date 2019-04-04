@@ -1,16 +1,21 @@
 import Icon from '@/components/Icon';
+import Overlay from '@/components/Overlay';
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
-import {Component, Vue} from 'vue-property-decorator';
-import {CreateElement, VNode} from 'vue';
+import {VNode} from 'vue';
+import Component from 'vue-class-component';
+import {Vue} from 'vue-property-decorator';
 import {Action} from 'vuex-class';
 
 @Component
-export class NoStoragesModal extends Vue {
+export default class NoStoragesOverlay extends Vue {
     @Action(AjaxRoutes.damGetStoragesAndMounts)
     getStorages!: Function;
 
-    private render(h: CreateElement): VNode | null {
-        return this.renderIfNonAdmin();
+    private render(): VNode {
+        const content = TYPO3.settings.BackendUser.isAdmin ? this.renderIfAdmin() : this.renderIfNonAdmin();
+        return (
+            <Overlay content={content} />
+        );
     }
 
     private renderIfAdmin(): VNode {
@@ -28,15 +33,16 @@ export class NoStoragesModal extends Vue {
     }
 
     private renderIfNonAdmin(): VNode {
+        const url = TYPO3.ModuleMenu.App.showModule('logout');
         return(
             <div>
                 <h2>You do not have sufficient permissions to access any storage folder.</h2>
                 <p>Please contact your administrator for assistance.</p>
                 <p>
-                    <strong>Username:</strong> face@yomama.com<br />
+                    <strong>Username:</strong> {TYPO3.settings.BackendUser.username}<br />
                     <strong>Reference: </strong> #123456789
                 </p>
-                <a href='#' class='btn btn-block btn-default'>Switch User</a>
+                <a href={url} class='btn btn-block btn-default'>Switch User</a>
                 <a href='#' class='btn btn-block btn-success' onclick={() => this.getStorages()}>
                     <Icon identifier='actions-refresh' /> Refresh
                 </a>
