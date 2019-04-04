@@ -36,7 +36,7 @@ export default class StorageContentList extends List {
                     </tr>
                     </thead>
                     <tbody>
-                    {list}
+                        {list}
                     </tbody>
                 </table>
             </div>

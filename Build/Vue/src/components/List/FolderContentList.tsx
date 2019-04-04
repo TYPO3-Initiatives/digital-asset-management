@@ -39,7 +39,7 @@ export default class FolderContentList extends List {
                     </tr>
                     </thead>
                     <tbody>
-                    {list}
+                        {list}
                     </tbody>
                 </table>
             </div>

@@ -5,11 +5,23 @@ import {VNode} from 'vue';
 import Component from 'vue-class-component';
 import {Vue} from 'vue-property-decorator';
 import {Action} from 'vuex-class';
+import client from '@/services/http/Typo3Client';
 
 @Component
 export default class NoStoragesOverlay extends Vue {
     @Action(AjaxRoutes.damGetStoragesAndMounts)
     getStorages!: Function;
+
+    private createNewStorageUrl: string | null = null;
+
+    constructor(props: any) {
+        super(props);
+    }
+
+    private async getNewStorageUrl(): Promise<any> {
+        const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetNewStorageUrl]);
+        this.createNewStorageUrl = response.data[0];
+    }
 
     private render(): VNode {
         const content = TYPO3.settings.BackendUser.isAdmin ? this.renderIfAdmin() : this.renderIfNonAdmin();
@@ -19,6 +31,8 @@ export default class NoStoragesOverlay extends Vue {
     }
 
     private renderIfAdmin(): VNode {
+        this.getNewStorageUrl();
+
         return(
             <div>
                 <h2>Your system has no asset storages configured.</h2>
@@ -27,7 +41,7 @@ export default class NoStoragesOverlay extends Vue {
                     Do you want t connect to a new storage now?
                 </p>
                 <Icon identifier='apps-filetree-mount' />
-                <a href='#'>Connect storage</a>
+                <a href={this.createNewStorageUrl}>Connect storage</a>
             </div>
         );
     }
