@@ -4,9 +4,9 @@ export default class FormatterService {
         let str = '';
 
         if (sizeKB > 1024) {
-            str = (sizeKB / 1024).toFixed(1) + ' MB';
+            str = (sizeKB / 1024).toFixed(0) + ' MB';
         } else {
-            str = sizeKB.toFixed(1) + ' KB';
+            str = sizeKB.toFixed(0) + ' KB';
         }
         return str;
     }

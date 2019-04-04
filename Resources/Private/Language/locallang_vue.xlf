@@ -3,7 +3,6 @@
   <file t3:id="65436677" source-language="en" datatype="plaintext" original="messages" date="2018-04-12T22:22:32Z" product-name="backend">
     <header/>
     <body>
-      <!-- List -->
       <trans-unit id="List.table.header.name">
         <source>Name</source>
       </trans-unit>
@@ -73,6 +72,32 @@
       </trans-unit>
       <trans-unit id="ItemSelector.label.deselect">
         <source>deselect</source>
+      </trans-unit>
+
+	  <!-- DropZone -->
+      <trans-unit id="DropZone.status.startUpload">
+        <source>Starting Upload</source>
+      </trans-unit>
+      <trans-unit id="DropZone.status.preflight">
+        <source>Preflight Checks Running</source>
+      </trans-unit>
+      <trans-unit id="DropZone.status.initializing">
+        <source>Initializing</source>
+      </trans-unit>
+      <trans-unit id="DropZone.status.uploadFailed">
+        <source>Upload Failed.</source>
+      </trans-unit>
+      <trans-unit id="DropZone.status.uploadSucceeded">
+        <source>Upload Succeeded.</source>
+      </trans-unit>
+      <trans-unit id="DropZone.uploadTable.header.name">
+        <source>Name</source>
+      </trans-unit>
+      <trans-unit id="DropZone.uploadTable.header.size">
+        <source>Size</source>
+      </trans-unit>
+      <trans-unit id="DropZone.uploadTable.header.progress">
+        <source>Progress</source>
       </trans-unit>
     </body>
   </file>

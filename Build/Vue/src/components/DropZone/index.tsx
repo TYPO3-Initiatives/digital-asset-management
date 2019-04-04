@@ -1,6 +1,5 @@
 import {Component, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
-import FileUpload from 'vue-upload-component';
 import client from '@/services/http/Typo3Client';
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import {Action, Mutation, State} from 'vuex-class';
@@ -8,11 +7,12 @@ import {Mutations} from '@/enums/Mutations';
 import {FileOverrideAction} from '@/enums/FileOverrideAction';
 import Modal from 'TYPO3/CMS/Backend/Modal';
 import FilesOverrideModalContent from '@/components/FilesOverrideModalContent';
-import {FileUploadComponent, UploadedFile} from '../../../types';
+import {UploadedFile} from '../../../types';
 import {SeverityEnum} from '@/enums/Severity';
 import FormatterService from '@/services/FormatterService';
 import {FileExistResponseCode} from '@/enums/FileExistResponseCode';
 import {AxiosResponse} from 'axios';
+import FileUpload from '@/components/Upload/FileUpload';
 
 @Component
 export default class DropZone extends Vue {
@@ -68,14 +68,14 @@ export default class DropZone extends Vue {
         );
     }
 
-    private upload = async (file: UploadedFile, fileUpload: FileUploadComponent) => {
+    private upload = async (file: UploadedFile, fileUpload: FileUpload) => {
         // do not upload skipped files
         if (file.fileExists && file.conflictMode === FileOverrideAction.SKIP) {
             file.success = true;
             file.statusMessage = '';
             return Promise.resolve('Skipped.');
         }
-        file.statusMessage = 'Starting Upload';
+        file.statusMessage = TYPO3.lang['DropZone.status.startUpload'];
         // data attributes are automatically converted into request parameters
         file.data.identifier = file.targetFolder + file.name;
         file.data.conflictMode = file.conflictMode;
@@ -133,12 +133,10 @@ export default class DropZone extends Vue {
         for (let i = 0; i < files.length; i++) {
             if (!hasBeenChecked(i)) {
                 this.files[i].fileExists = false;
-                this.files[i].statusMessage = 'Initializing';
                 const url = `${TYPO3.settings.ajaxUrls[AjaxRoutes.damFileExists]}&identifier=${this.targetFolder}${files[i].name}`;
                 promises.push(client.get(url).then((response) => {
-                    // set progress to give user feedback that something is indeed happening
-                    this.files[i].statusMessage = 'Preflight Checks Running';
                     if (hasFileConflict(response)) {
+                        this.files[i].statusMessage = TYPO3.lang['DropZone.status.preflight'];
                         let originalFile = response.data[0];
                         this.files[i].fileExists = true;
                         conflictedFiles.push(
@@ -187,9 +185,9 @@ export default class DropZone extends Vue {
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Name</th>
-                            <th>Size</th>
-                            <th>Progress</th>
+                            <th>{TYPO3.lang['DropZone.uploadTable.header.name']}</th>
+                            <th>{TYPO3.lang['DropZone.uploadTable.header.size']}</th>
+                            <th>{TYPO3.lang['DropZone.uploadTable.header.progress']}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -209,11 +207,11 @@ export default class DropZone extends Vue {
         let success = '';
         let errorMessage = null;
         if (file.error) {
-            file.statusMessage = 'Upload failed.';
+            file.statusMessage = TYPO3.lang['DropZone.status.uploadFailed'];
             errorMessage = file.response.errorMessage ? file.response.errorMessage : file.error;
             success = 'danger';
         } else if (file.success) {
-            file.statusMessage = 'Upload succeeded.';
+            file.statusMessage = TYPO3.lang['DropZone.status.uploadSucceeded'];
             success = 'success';
         } else if (file.active) {
             success = 'info';
@@ -274,6 +272,9 @@ export default class DropZone extends Vue {
                 Clear
             </button>);
             buttons.push(<button type='button' class='btn btn-success' onclick={async (e: Event) => {
+                this.files.forEach((file: UploadedFile, index) => {
+                    this.files[index].statusMessage = TYPO3.lang['DropZone.status.initializing'];
+                });
                 await this.uploadFiles();
             }}>
                 <i class='fa fa-arrow-up' aria-hidden='true'></i>

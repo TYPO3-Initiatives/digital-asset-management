@@ -1,9 +1,8 @@
-import _ from 'vue-upload-component';
 import {FileOverrideAction} from '@/enums/FileOverrideAction';
 
 export interface UploadedFile {
     file: File;
-    readonly fileObject: boolean;
+    fileObject: boolean|object;
     id: string | number;
     size: number;
     name: string;
@@ -13,7 +12,9 @@ export interface UploadedFile {
     success: boolean;
     putAction: string;
     postAction: string;
-    headers: object;
+    headers: {
+        [x: string]: any,
+    };
     timeout: number;
     response: {
         errorMessage: string;
@@ -23,22 +24,20 @@ export interface UploadedFile {
     xhr: XMLHttpRequest;
     iframe: Element;
     data: {
-        identifier: string,
-        conflictMode: string;
+        [x: string]: any,
     };
     customAction: Function | null;
     callback: Function;
     conflictMode: FileOverrideAction;
     targetFolder: string;
-    fileExists: boolean;
+    fileExists: boolean|undefined;
     statusMessage: string;
+    chunk: any;
+    el: any;
 }
 
-export interface FileUploadComponent extends _ {
-    shouldUseChunkUpload: Function;
-    uploadChunk: Function;
-    uploadFile: Function;
-    uploadPut: Function;
-    uploadHtml5: Function;
-    uploadHtml4: Function;
+
+export interface ExperimentalHTMLInputElement extends HTMLInputElement {
+    webkitdirectory: boolean | undefined;
+    directory: boolean | undefined;
 }
