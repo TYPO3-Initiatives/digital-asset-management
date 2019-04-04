@@ -1,3 +1,6 @@
+# Build
+/.build
+
 # IDE
 /.idea
 /.vscode
@@ -5,18 +8,16 @@
 # OSX
 /.DS_Store
 
+# Development
+/.ddev
+
 # Composer
-/vendor/
-/bin/
-/.composer.lock
+/composer.lock
 
 # TYPO3 test
 /.php_cs.cache
-/public/
-/typo3/
 /var/
 /logs/
-/index.php
 
 # Vue
 /Resources/Public/JavaScript/Library/demo.html
