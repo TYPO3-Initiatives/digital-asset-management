@@ -97,6 +97,11 @@ class FolderItemImage implements \JsonSerializable
     protected $thumbnailUrl;
 
     /**
+     * @var string
+     */
+    protected $publicUrl;
+
+    /**
      * @param File $image
      */
     public function __construct(File $image)
@@ -130,6 +135,7 @@ class FolderItemImage implements \JsonSerializable
             'width' => $thumbnailConfiguration->getWidth(),
             'height' => $thumbnailConfiguration->getHeight()
         ]);
+        $this->publicUrl = $image->getPublicUrl();
     }
 
     public function jsonSerialize()
@@ -148,6 +154,7 @@ class FolderItemImage implements \JsonSerializable
             'references' => $this->references,
             'editMetaUrl' => $this->editMetaUrl,
             'thumbnailUrl' => $this->thumbnailUrl,
+            'publicUrl' => $this->publicUrl,
         ];
     }
 

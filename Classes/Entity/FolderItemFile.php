@@ -102,6 +102,11 @@ class FolderItemFile implements \JsonSerializable
     protected $editContentUrl;
 
     /**
+     * @var string
+     */
+    protected $publicUrl;
+
+    /**
      * @param File $file
      */
     public function __construct(File $file)
@@ -133,6 +138,7 @@ class FolderItemFile implements \JsonSerializable
         ];
         $this->editMetaUrl = (string)$uriBuilder->buildUriFromRoute('record_edit', $urlParameters);
         $this->editContentUrl = '';
+        $this->publicUrl = $file->getPublicUrl();
     }
 
     public function jsonSerialize()
@@ -152,6 +158,7 @@ class FolderItemFile implements \JsonSerializable
             'iconIdentifier' => $this->iconIdentifier,
             'editMetaUrl' => $this->editMetaUrl,
             'editContentUrl' => $this->editContentUrl,
+            'publicUrl' => $this->publicUrl,
         ];
     }
 
