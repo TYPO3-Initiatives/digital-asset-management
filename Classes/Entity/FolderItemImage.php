@@ -10,13 +10,6 @@ declare(strict_types = 1);
 
 namespace TYPO3\CMS\DigitalAssetManagement\Entity;
 
-/*
- * This file is part of the package lns/digital-asset-management.
- *
- * For the full copyright and license information, please read the
- * LICENSE file that was distributed with this source code.
- */
-
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Localization\LanguageService;
