@@ -128,7 +128,9 @@ class AjaxController
             }
         }
         while ($folderName = array_pop($stack)) {
-            $parentObject = $parentObject->createFolder($folderName);
+            try {
+                $parentObject = $parentObject->createFolder($folderName);
+            } catch (ResourceException $e){}
         }
         return $parentObject;
     }
@@ -298,7 +300,10 @@ class AjaxController
             if (empty($identifiers)) {
                 throw new ControllerException('Identifiers needed', 1553699828);
             }
-            if (empty($conflictMode) || !in_array($conflictMode, ['replace', 'cancel', 'rename'], true)) {
+            if (empty($conflictMode)
+                || !in_array($conflictMode, ['replace', 'cancel', 'rename'],
+                    true)
+            ) {
                 throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
             }
             if (empty($targetFolderIdentifier)) {
@@ -328,7 +333,7 @@ class AjaxController
                     = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
                 if ($resultObject
                     = $sourceObject->copyTo($targetFolderObject, null,
-                    $conflictMode)
+                    (string)DuplicationBehavior::cast($conflictMode))
                 ) {
                     if ($resultObject instanceof Folder) {
                         $resultEntity = new FolderItemFolder($resultObject);
@@ -342,11 +347,8 @@ class AjaxController
             } catch (ResourceException $e) {
                 $message = $e->getMessage();
             }
-            $resources[] = new FileOperationResult(
-                $identifier,
-                $state,
-                $message,
-                $resultEntity
+            $resources[] = new FileOperationResult($identifier, $state,
+                $message, $resultEntity
             );
         }
         return new FileOperationResponse($resources);
@@ -373,7 +375,10 @@ class AjaxController
             if (empty($identifiers)) {
                 throw new ControllerException('Identifiers needed', 1553699828);
             }
-            if (empty($conflictMode) || !in_array($conflictMode, ['replace', 'cancel', 'rename'], true)) {
+            if (empty($conflictMode)
+                || !in_array($conflictMode, ['replace', 'cancel', 'rename'],
+                    true)
+            ) {
                 throw new ControllerException('conflictMode must be one of "replace", "cancel", "rename"');
             }
             if (empty($targetFolderIdentifier)) {
@@ -399,10 +404,11 @@ class AjaxController
             $message = '';
             $resultEntity = null;
             try {
-                $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+                $sourceObject
+                    = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
                 if ($resultObject
                     = $sourceObject->moveTo($targetFolderObject, null,
-                    $conflictMode)
+                    (string)DuplicationBehavior::cast($conflictMode))
                 ) {
                     if ($resultObject instanceof Folder) {
                         $resultEntity = new FolderItemFolder($resultObject);
@@ -416,11 +422,8 @@ class AjaxController
             } catch (ResourceException $e) {
                 $message = $e->getMessage();
             }
-            $resources[] = new FileOperationResult(
-                $identifier,
-                $state,
-                $message,
-                $resultEntity
+            $resources[] = new FileOperationResult($identifier, $state,
+                $message, $resultEntity
             );
         }
         return new FileOperationResponse($resources);
@@ -473,7 +476,7 @@ class AjaxController
                 throw new ResourceException\ResourceDoesNotExistException('Resource does not exist');
             } else {
                 $resultObject = $fileOrFolder->rename($targetName,
-                    $conflictMode);
+                    (string)DuplicationBehavior::cast($conflictMode));
                 if ($resultObject instanceof Folder) {
                     $resultEntity = new FolderItemFolder($resultObject);
                     $message = 'Folder was successfully renamed';
@@ -486,10 +489,7 @@ class AjaxController
         } catch (ResourceException $e) {
             $message = $e->getMessage();
         }
-        $resources[] = new FileOperationResult(
-            $identifier,
-            $state,
-            $message,
+        $resources[] = new FileOperationResult($identifier, $state, $message,
             $resultEntity
         );
         return new JsonResponse($resources);
@@ -519,7 +519,8 @@ class AjaxController
         $resources = [];
         foreach ($identifiers as $identifier) {
             try {
-                $sourceObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+                $sourceObject
+                    = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
                 if ($sourceObject->delete(true)) {
                     $state = FileOperationResult::DELETED;
                     $message = 'Resource deleted';
@@ -531,7 +532,8 @@ class AjaxController
                 $state = FileOperationResult::FAILED;
                 $message = $e->getMessage();
             }
-            $resources[] = new FileOperationResult($identifier, $state, $message, null);
+            $resources[] = new FileOperationResult($identifier, $state,
+                $message, null);
         }
         return new FileOperationResponse($resources);
     }
