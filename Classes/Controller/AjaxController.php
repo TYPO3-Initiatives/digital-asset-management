@@ -667,7 +667,7 @@ class AjaxController
             if (!$folderObject instanceof Folder) {
                 throw new ControllerException('Identifier is not a folder', 1553701684);
             }
-            $allFiles = $this->searchFiles($folderObject, $query);
+            $allFiles = $this->searchFiles($identifier, $query);
             $folders = [];
             $files = [];
             $images = [];
@@ -708,19 +708,15 @@ class AjaxController
                 'file_metadata',
                 $queryBuilder->expr()->eq('sys_file.uid', 'file_metadata.file')
             )
-            ->where($queryBuilder->expr()->like('sys_file.name', $queryBuilder->createNamedParameter('%'. $queryBuilder->escapeLikeWildcards($searchWord).'%') ))
+            ->where(
+                $queryBuilder->expr()->like('sys_file.name', $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($searchWord) . '%') )
+            )
             ->execute();
         $files = [];
+        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         while ($row = $statement->fetch()) {
-            $files[] = new FolderItemFile()
-            $file['identifier'] = $this->storage->getUid().':'.$row[identifier];
-            $file['mimetype'] = $row['mime_type'];
-            $file['size'] = $row['size'];
-            $file['name'] = $row['name'];
-            $file['modification_date'] = $row['modification_date'];
-            $files[] = $file;
+            $files[] = $resourceFactory->getObjectFromCombinedIdentifier($row['identifier']);
         }
-
         return $files;
     }
 
