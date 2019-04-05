@@ -6,6 +6,10 @@ build:
       - 'composer require typo3/minimal="^9"'
   nodes:
     analysis:
+      cache:
+        disabled: false
+        directories:
+          - ~/.composer/cache
       tests:
         override:
           - php-scrutinizer-run
