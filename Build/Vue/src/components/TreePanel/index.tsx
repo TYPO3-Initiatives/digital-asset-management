@@ -26,6 +26,12 @@ export default class TreePanel extends Vue {
     return this.activeStorage.identifier + ':/';
   }
 
+  mounted(): void {
+    if (this.activeStorage) {
+      this.fetchTreeData(this.browsableIdentifier);
+    }
+  }
+
   updated(): void {
     this.fetchTreeData(this.browsableIdentifier);
   }
