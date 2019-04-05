@@ -1,26 +1,31 @@
 const path = require("path");
 
 module.exports = {
-  outputDir: path.resolve(__dirname, "../../Resources/Public/JavaScript/Library/"),
-  configureWebpack: {
-    devServer: {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': '*',
-      },
+    outputDir: path.resolve(__dirname, "../../Resources/Public/JavaScript/Library/"),
+    productionSourceMap: false,
+    filenameHashing: false,
+    css: {
+        extract: true,
     },
-    externals: [
-      {
-        // Object
-        vue$: {
-          commonjs: 'Vue',
-          amd: 'Vue',
-          root: 'Vue' // indicates global variable
+    configureWebpack: {
+        devServer: {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': '*',
+            },
         },
-      },
-      'TYPO3/CMS/Backend/Icons',
-      'TYPO3/CMS/Backend/Modal',
-      'moment'
-    ],
-  }
+        externals: [
+            {
+                // Object
+                vue$: {
+                    commonjs: 'Vue',
+                    amd: 'Vue',
+                    root: 'Vue' // indicates global variable
+                },
+            },
+            'TYPO3/CMS/Backend/Icons',
+            'TYPO3/CMS/Backend/Modal',
+            'moment'
+        ],
+    }
 };
