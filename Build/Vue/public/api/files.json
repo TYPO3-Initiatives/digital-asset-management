@@ -1,0 +1,152 @@
+{
+  "folders": [
+    {
+      "name": "folder1",
+      "mtime": "1553687038",
+      "mtimeDisplay": "27.03.2019",
+      "type": "folder",
+      "itemCount": 5,
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
+      "identifier": "1:/foo/bar/folder1",
+      "icon": "http://localhost:8080/testfiles/folder.jpg"
+    }, {
+      "name": "folder2",
+      "mtime": "1553687037",
+      "mtimeDisplay": "27.03.2019",
+      "type": "folder",
+      "itemCount": 3,
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
+      "identifier": "1:/foo/bar/folder2",
+      "icon": "http://localhost:8080/testfiles/folder.jpg"
+    },
+    {
+      "name": "folder3",
+      "mtime": "1553687036",
+      "mtimeDisplay": "27.03.2019",
+      "type": "folder",
+      "itemCount": 7,
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
+      "identifier": "1:/foo/bar/folder3",
+      "icon": "http://localhost:8080/testfiles/folder.jpg"
+    }
+  ],
+  "files": [
+    {
+      "name": "somefile.txt",
+      "mtime": "1553687035",
+      "mtimeDisplay": "27.03.2019",
+      "size": "1024",
+      "sizeDisplay": "1 KB",
+      "type": "file",
+      "extension": "txt",
+      "translations": [],
+      "references": 0,
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
+      "identifier": "1:/foo/bar/somefile.txt",
+      "iconIdentifier": "mimetypes-text-text",
+      "editMetaUrl": "/typo3/index.php?route=formEngineFoo",
+      "editContentUrl": ""
+    }, {
+      "name": "somefile2.txt",
+      "mtime": "1553687034",
+      "mtimeDisplay": "27.03.2019",
+      "size": "1024",
+      "sizeDisplay": "1 KB",
+      "type": "file",
+      "extension": "txt",
+      "translations": [],
+      "references": 0,
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
+      "identifier": "1:/foo/bar/somefile2.txt",
+      "iconIdentifier": "mimetypes-text-text",
+      "editMetaUrl": "/typo3/index.php?route=formEngineFoo",
+      "editContentUrl": "/typo3/index.php?route=formEngineFoo"
+    }, {
+      "name": "3.txt",
+      "mtime": "1553687033",
+      "mtimeDisplay": "27.03.2019",
+      "size": "1024",
+      "sizeDisplay": "1 KB",
+      "type": "file",
+      "extension": "txt",
+      "translations": [],
+      "references": 0,
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
+      "identifier": "1:/foo/bar/3.txt",
+      "iconIdentifier": "mimetypes-text-text",
+      "editMetaUrl": "/typo3/index.php?route=formEngineFoo",
+    }
+  ],
+  "images": [
+    {
+      "name": "somefile.png",
+      "mtime": "1553687032",
+      "mtimeDisplay": "27.03.2019",
+      "size": "4096",
+      "sizeDisplay": "4 KB",
+      "type": "image",
+      "extension": "png",
+      "translations": [],
+      "references": 1,
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
+      "identifier": "1:/foo/bar/somefile.png",
+      "thumbnail": "http://localhost:8080/testfiles/somefile.png",
+      "editMetaUrl": "/typo3/index.php?route=formEngineFoo"
+    }, {
+      "name": "somefile2.png",
+      "mtime": "1553687031",
+      "mtimeDisplay": "27.03.2019",
+      "size": "4096",
+      "sizeDisplay": "4 KB",
+      "type": "image",
+      "extension": "png",
+      "translations": [],
+      "references": 0,
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
+      "identifier": "1:/foo/bar/somefile2.png",
+      "thumbnail": "http://localhost:8080/testfiles/somefile2.png",
+      "editMetaUrl": "/typo3/index.php?route=formEngineFoo"
+    }, {
+      "name": "3.jpg",
+      "mtime": "1553687030",
+      "mtimeDisplay": "27.03.2019",
+      "size": "2048",
+      "sizeDisplay": "2 KB",
+      "type": "image",
+      "extension": "png",
+      "translations": [],
+      "references": 0,
+      "permissions": {
+        "isReadable": true,
+        "isWritable": true
+      },
+      "identifier": "1:/foo/bar/3.jpg",
+      "thumbnail": "http://localhost:8080/testfiles/3.jpg",
+      "editMetaUrl": "/typo3/index.php?route=formEngineFoo"
+    }
+  ]
+}

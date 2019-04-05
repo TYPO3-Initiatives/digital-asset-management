@@ -1,28 +1,78 @@
-==================================================
-Fancy filelist as new module
-==================================================
+========================
+Digital Asset Management
+========================
 
-A new backend module to organize the files. Respecting storages, mounts and user rights.
+**IMPORTANT: This project is currently under development. We strongly advise against using this project in production environments.**
 
-Experimental: Do not use at all.
+Assets
+======
 
-Done:
-- New backend module with backend view
-- JSON based communication
-- CSS based folder and file icons
-- Read sys_file_referenece
+* Mockups: https://xd.adobe.com/view/f870af49-1519-4051-7a88-490e94fb7b0d-8e41/
+* Icons: https://github.com/typo3/typo3.icons
+
+Contributing to the Frontend
+============================
+
+Project Setup
+-------------
+
+.. code-block::
+
+    yarn install
 
 
-ToDo:
-- Save user settings, position in file tree etc.
+Compile Libary
+--------------
+
+To integrate with requirejs compile vue project as lib and manually copy it to extensions' resources dir.
+
+.. code-block::
+
+    yarn build-lib
+
+
+Watch & Build Libary
+--------------------
+
+To integrate with requirejs compile vue project as lib and manually copy it to extensions' resources dir.
+
+.. code-block::
+
+    yarn watch-lib
+
+
+Testing
+=======
+
+Linting and fixing files
+------------------------
+
+.. code-block::
+    
+    yarn run lint
+
+Run end-to-end tests
+--------------------
+
+.. code-block::
+    
+    yarn run test:e2e
+
+Run unit tests
+--------------
+
+.. code-block::
+
+    yarn run test:unit
 
 
 Code Quality
 ============
-.. image:: https://travis-ci.org/juergen-venne/typo3-digital-asset-management.svg?branch=master
-   :alt: Build Status
-   :target: https://travis-ci.org/juergen-venne/typo3-digital-asset-management
 
-.. image:: https://scrutinizer-ci.com/g/juergen-venne/typo3-digital-asset-management/badges/quality-score.png?b=master
+.. image:: https://travis-ci.org/TYPO3-Initiatives/digital-asset-management.svg?branch=master
+   :alt: Build Status
+   :target: https://travis-ci.org/TYPO3-Initiatives/digital-asset-management
+
+.. image:: https://scrutinizer-ci.com/g/TYPO3-Initiatives/digital-asset-management/badges/quality-score.png?b=master
    :alt: Scrutinizer Code Quality
-   :target: https://scrutinizer-ci.com/g/juergen-venne/typo3-digital-asset-management/?branch=master
+   :target: https://scrutinizer-ci.com/g/TYPO3-Initiatives/digital-asset-management/?branch=master

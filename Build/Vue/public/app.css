@@ -1,0 +1,193 @@
+/* I should be built with scss */
+.module-docheader {
+    display: none;
+}
+
+.module-body {
+    padding: 0 !important;
+    width: 100%;
+}
+
+.module {
+    display: flex;
+}
+
+.typo3-filelist-treepanel {
+    width: 300px;
+    height: 100%;
+}
+
+.typo3-filelist-contentpanel {
+    flex-grow: 1;
+}
+
+.module-docheader-bar {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-end;
+    background: #e1e1e1;
+    padding: 5px;
+}
+.module-docheader-bar-column-left {
+    width: 50%;
+}
+.module-docheader-bar-column-right {
+    width: 50%;
+    text-align: right;
+}
+
+.typo3-filelist-contentpanel .module-docheader {
+    padding-right: 310px;
+}
+
+.tile {
+    float: left;
+    width: 200px;
+    height: 200px;
+    border: 1px solid #e1e1e1;
+}
+
+.tile img {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.tile.selected {
+    background-color: aliceblue;
+}
+
+.tile-thumbnail {
+    width: 100%;
+    height: 100%;
+}
+
+.tiles-empty {
+    background-size: 25%;
+    background-repeat: no-repeat;
+    background-image: url(http://localhost:8080/testfiles/no-image.png);
+    background-position: center;
+}
+
+.breadcrumb {
+    display: flex;
+    width: 100%;
+    padding: 5px;
+}
+
+.breadcrumb .storage-selector {
+    margin-right: 10px;
+}
+
+.breadcrumb .breadcrumb-item {
+    color: #999;
+    margin-top: 4px;
+    margin-right: 4px;
+}
+
+.breadcrumb .breadcrumb-item:after {
+    content: " / ";
+    color: #999;
+}
+
+.hot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #0c5460;
+    opacity: 0.8;
+    z-index: 50;
+}
+
+
+.dropZone {
+    height: 100%;
+}
+.dragMessage {
+    display: none;
+}
+
+.hot .dragMessage {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 30px;
+    color: white;
+}
+
+
+.tree-dropzone-blocked {
+    background-color: tomato;
+    opacity: 0.3;
+}
+
+.list-tree-group[draggable="true"].drag-active {
+    border: 1px dashed tomato;
+}
+
+.tree-dropzone-allowed {
+    background-color: lightblue;
+}
+
+.file-uploads {
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    display: inline-block;
+}
+
+.file-uploads.file-uploads-html4 input, .file-uploads.file-uploads-html5 label {
+    /* background fix ie  click */
+    background: #fff;
+    opacity: 0;
+    font-size: 20em;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.file-uploads.file-uploads-html5 input, .file-uploads.file-uploads-html4 label {
+    /* background fix ie  click */
+    background: rgba(255, 255, 255, 0);
+    overflow: hidden;
+    position: fixed;
+    width: 1px;
+    height: 1px;
+    z-index: -1;
+    opacity: 0;
+}
+
+.overlay {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 9999999;
+}
+
+.overlay-backdrop {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.overlay-content {
+    position: relative;
+    width: 30%;
+    top: 50%;
+    left: 50%;
+    bottom: 0;
+    right: 0;
+    background-color: #FFFFFF;
+    padding: 2rem;
+    transform: translate3d(-50%, -50%, 0);
+}

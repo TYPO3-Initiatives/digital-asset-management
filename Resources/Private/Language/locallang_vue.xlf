@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0" xmlns:t3="http://typo3.org/schemas/xliff">
+  <file t3:id="65436677" source-language="en" datatype="plaintext" original="messages" date="2018-04-12T22:22:32Z" product-name="backend">
+    <header/>
+    <body>
+      <trans-unit id="List.table.header.name">
+        <source>Name</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.mtimeDisplay">
+        <source>Modified</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.sizeDisplay">
+        <source>Size</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.type">
+        <source>Type</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.translations">
+        <source>Translations</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.references">
+        <source>References</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.permissions">
+        <source>RW</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.storageName">
+        <source>Storage Name</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.storageOnline">
+        <source>Is online?</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.storageType">
+        <source>Type</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.state.true">
+        <source>Yes</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.state.false">
+        <source>No</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.sort_info">
+        <source>sort by {field} in {order} order</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.ascending">
+        <source>ascending</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.descending">
+        <source>descending</source>
+      </trans-unit>
+
+      <!-- StorageSelector -->
+      <trans-unit id="StorageSelector.title">
+        <source>Select a file storage to browse the assets</source>
+      </trans-unit>
+      <trans-unit id="StorageSelector.label">
+        <source>Select a file storage</source>
+      </trans-unit>
+      <trans-unit id="List.table.header.none">
+        <source>none</source>
+      </trans-unit>
+
+      <!-- ListItem -->
+      <trans-unit id="ListItem.label.open">
+        <source>Open</source>
+      </trans-unit>
+
+      <!-- AllSelector -->
+      <trans-unit id="AllSelector.label.select">
+        <source>select all elements</source>
+      </trans-unit>
+      <trans-unit id="AllSelector.label.deselect">
+        <source>deselect all elements</source>
+      </trans-unit>
+
+      <!-- Breadcrumb -->
+      <trans-unit id="Breadcrumb.current_folder_description">
+        <source>Breadcrumb, you are currently in </source>
+      </trans-unit>
+      <trans-unit id="current_folder_description_glue_word">
+        <source>within</source>
+      </trans-unit>
+
+      <!-- ItemSelector -->
+      <trans-unit id="ItemSelector.label.select">
+        <source>select</source>
+      </trans-unit>
+      <trans-unit id="ItemSelector.label.deselect">
+        <source>deselect</source>
+      </trans-unit>
+
+      <!-- DropZone -->
+      <trans-unit id="DropZone.status.startUpload">
+        <source>Starting Upload</source>
+      </trans-unit>
+      <trans-unit id="DropZone.status.preflight">
+        <source>Preflight Checks Running</source>
+      </trans-unit>
+      <trans-unit id="DropZone.status.initializing">
+        <source>Initializing</source>
+      </trans-unit>
+      <trans-unit id="DropZone.status.uploadFailed">
+        <source>Upload Failed.</source>
+      </trans-unit>
+      <trans-unit id="DropZone.status.uploadSucceeded">
+        <source>Upload Succeeded.</source>
+      </trans-unit>
+      <trans-unit id="DropZone.uploadTable.header.name">
+        <source>Name</source>
+      </trans-unit>
+      <trans-unit id="DropZone.uploadTable.header.size">
+        <source>Size</source>
+      </trans-unit>
+      <trans-unit id="DropZone.uploadTable.header.progress">
+        <source>Progress</source>
+      </trans-unit>
+      <!-- NoStorageOverlay -->
+      <trans-unit id="NoStorageOverlay.admin.headline">
+        <source>Your system has no asset storages configured</source>
+      </trans-unit>
+      <trans-unit id="NoStorageOverlay.admin.content">
+        <source>To manage or adding assets to your website you need to have a storage to save the assets. Do you want t connect to a new storage now?</source>
+      </trans-unit>
+      <trans-unit id="NoStorageOverlay.admin.button.connect">
+        <source>Connect storage</source>
+      </trans-unit>
+
+      <trans-unit id="NoStorageOverlay.nonadmin.headline">
+        <source>You do not have sufficient permissions to access any storage folder</source>
+      </trans-unit>
+      <trans-unit id="NoStorageOverlay.nonadmin.content">
+        <source>Please contact your administrator for assistance.</source>
+      </trans-unit>
+      <trans-unit id="NoStorageOverlay.nonadmin.trace.username">
+        <source>Username:</source>
+      </trans-unit>
+      <trans-unit id="NoStorageOverlay.nonadmin.trace.reference">
+        <source>Reference:</source>
+      </trans-unit>
+
+      <trans-unit id="NoStorageOverlay.nonadmin.button.switchuser">
+        <source>Switch User</source>
+      </trans-unit>
+      <trans-unit id="NoStorageOverlay.nonadmin.button.refresh">
+        <source>Refresh</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

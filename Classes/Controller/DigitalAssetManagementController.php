@@ -10,27 +10,14 @@ declare(strict_types = 1);
 
 namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
-
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
+use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-use TYPO3Fluid\Fluid\View\ViewInterface;
 
 /**
  * Backend controller: The "Digital Asset Management" module
@@ -45,7 +32,7 @@ class DigitalAssetManagementController
     protected $moduleTemplate;
 
     /**
-     * @var ViewInterface
+     * @var StandaloneView
      */
     protected $view;
 
@@ -77,17 +64,22 @@ class DigitalAssetManagementController
      */
     public function handleRequest(ServerRequestInterface $request): ResponseInterface
     {
+        $backendUser = GeneralUtility::makeInstance(Context::class)->getAspect('backend.user');
+
         /**
          * @var PageRenderer $pageRenderer
          */
         $pageRenderer = $this->moduleTemplate->getPageRenderer();
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/DigitalAssetManagement/DigitalAssetManagementActions');
-        $pageRenderer->addCssFile('EXT:digital_asset_management/Resources/Public/Css/digitalassetmanagement.css');
+        $pageRenderer->addCssFile('EXT:backend/Resources/Public/Css/backend.css');
+        $pageRenderer->addCssFile('EXT:digital_asset_management/Build/Vue/public/app.css');
         $pageRenderer->addInlineLanguageLabelFile('EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf');
+        $pageRenderer->addInlineLanguageLabelFile('EXT:digital_asset_management/Resources/Private/Language/locallang_vue.xlf');
         $pageRenderer->addInlineLanguageLabelFile('EXT:core/Resources/Private/Language/locallang_core.xlf', 'file_upload');
-        //Include bootstrap css
-        //@todo: include bootstrap css from TYPO3 not from CDN, how to?
-        // $pageRenderer->addCssFile('EXT:digital_asset_management/Resources/Public/Css/bootstrap.min.css');
+        $pageRenderer->addInlineSettingArray('BackendUser', [
+            'isAdmin' => $backendUser->isAdmin(),
+            'username' => $backendUser->get('username'),
+        ]);
         $this->initializeView('index');
         // Add shortcut button
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
