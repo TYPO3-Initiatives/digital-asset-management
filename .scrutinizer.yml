@@ -28,6 +28,7 @@ filter:
     - ".build/"
 
 checks:
+  javascript: true
   php:
     code_rating: true
     remove_extra_empty_lines: true
