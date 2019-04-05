@@ -1,0 +1,17 @@
+//
+// Contrast
+// Origin: https://github.com/twbs/bootstrap/blob/7626f8b17d59fcb65b1f3e9f5ea4f4c8522d3f40/scss/_functions.scss#L51-L64
+//
+@function color-contrast($color, $dark: $contrast-text-dark, $light: $contrast-text-light) {
+    $r: red($color);
+    $g: green($color);
+    $b: blue($color);
+
+    $yiq: (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+
+    @if ($yiq >= $contrast-threshold) {
+        @return $dark;
+    } @else {
+        @return $light;
+    }
+}

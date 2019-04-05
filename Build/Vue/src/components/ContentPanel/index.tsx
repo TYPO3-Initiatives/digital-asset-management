@@ -34,21 +34,23 @@ export default class ContentPanel extends Vue {
 
     private render(): VNode {
         return (
-          <div class='typo3-filelist-contentpanel'>
-              <DropZone>
-                  <template slot='beforeUploadTable'>
-                      <DocHeader>
-                          <template slot='topBarLeft'><TreeToggle v-show={this.activeStorage}/><ViewSelector/></template>
-                          <template slot='topBarRight'><SortingSelector/></template>
-                          <template slot='bottomBarLeft'><StorageSelector /><Breadcrumb v-show={this.activeStorage}/></template>
-                          <template slot='bottomBarRight'><SelectIndicator v-show={this.activeStorage}/></template>
-                      </DocHeader>
-                  </template>
-                  <template slot='afterUploadTable'>
-                      {this.activeStorage ? <FolderContent /> : <StorageContent />}
-                  </template>
-              </DropZone>
-          </div>
+            <div class='typo3-filelist-contentpanel'>
+                <DropZone>
+                    <template slot='beforeUploadTable'>
+                        <DocHeader>
+                            <template slot='topBarLeft'><TreeToggle v-show={this.activeStorage}/><ViewSelector/></template>
+                            <template slot='topBarRight'><SortingSelector/></template>
+                            <template slot='bottomBarLeft'><StorageSelector /><Breadcrumb v-show={this.activeStorage}/></template>
+                            <template slot='bottomBarRight'><SelectIndicator v-show={this.activeStorage}/></template>
+                        </DocHeader>
+                    </template>
+                    <template slot='afterUploadTable'>
+                        <div class='component-module-body'>
+                            {this.activeStorage ? <FolderContent /> : <StorageContent />}
+                        </div>
+                    </template>
+                </DropZone>
+            </div>
         );
     }
 }

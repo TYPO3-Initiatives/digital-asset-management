@@ -1,0 +1,40 @@
+//
+// Checkbox
+//
+$component-checkbox-size: 1rem;
+
+$component-checkbox-unchecked-bg: #FFFFFF;
+$component-checkbox-unchecked-color: color-contrast($component-checkbox-unchecked-bg);
+$component-checkbox-unchecked-border-color: #EAEAEA;
+
+$component-checkbox-checked-bg: map-get($colors, 'primary');
+$component-checkbox-checked-color: color-contrast($component-checkbox-checked-bg);
+$component-checkbox-checked-border-color: darken(map-get($colors, 'primary'), 20%);
+$component-checkbox-checked-icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M11.88 5.66l-.51-.51a.35.35 0 0 0-.5-.01l-.01.01L6.9 9.11 5.07 7.2a.363.363 0 0 0-.51-.02l-.01.01-.44.51a.35.35 0 0 0-.01.5l.01.01 2.64 2.64c.13.14.36.15.5.01l.01-.01 4.69-4.69c.09-.16.06-.37-.07-.5z" fill="#{$component-checkbox-checked-color}"/></svg>';
+
+
+.component-checkbox {
+    display: inline-block;
+    height: $component-checkbox-size;
+    width: $component-checkbox-size;
+    line-height: $component-checkbox-size;
+    vertical-align: middle;
+}
+.component-checkbox-input {
+    display: none;
+}
+.component-checkbox-label {
+    display: block;
+    height: $component-checkbox-size;
+    width: $component-checkbox-size;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: $component-checkbox-unchecked-bg;
+    border: 1px solid $component-checkbox-unchecked-border-color;
+    cursor: pointer;
+}
+.component-checkbox-input:checked ~ .component-checkbox-label {
+    background-color: $component-checkbox-checked-bg;
+    background-image: url(svg-inline($component-checkbox-checked-icon));
+    border: 1px solid $component-checkbox-checked-border-color;
+}

@@ -19938,11 +19938,11 @@ function (_AbstractContent) {
     key: "renderList",
     value: function renderList() {
       var h = this.$createElement;
-      return h("div", [h(List_StorageContentList, {
+      return h(List_StorageContentList, {
         "attrs": {
           "items": this.storages
         }
-      })]);
+      });
     }
   }, {
     key: "renderTiles",
@@ -23365,7 +23365,9 @@ function (_Vue) {
         }]
       })])])]), h("template", {
         "slot": 'afterUploadTable'
-      }, [this.activeStorage ? h(ContentPanel_FolderContent) : h(ContentPanel_StorageContent)])])]);
+      }, [h("div", {
+        "class": 'component-module-body'
+      }, [this.activeStorage ? h(ContentPanel_FolderContent) : h(ContentPanel_StorageContent)])])])]);
     }
   }]);
 
