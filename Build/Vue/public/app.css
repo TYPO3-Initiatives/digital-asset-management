@@ -101,3 +101,30 @@
 .tree-dropzone-allowed {
     background-color: lightblue;
 }
+
+.overlay {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 9999999;
+}
+
+.overlay-backdrop {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.overlay-content {
+    position: relative;
+    width: 30%;
+    top: 50%;
+    left: 50%;
+    bottom: 0;
+    right: 0;
+    background-color: #FFFFFF;
+    padding: 2rem;
+    transform: translate3d(-50%, -50%, 0);
+}

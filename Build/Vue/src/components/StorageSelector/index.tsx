@@ -37,11 +37,11 @@ export default class StorageSelector extends Vue {
         }
     }
 
-    private static getBrowsableIdentifier(identifier: number): string {
-        return identifier + ':/';
-    }
-
     private render(): VNode | null {
+        if (!this.activeStorage) {
+            return null;
+        }
+
         if (!this.storages.length) {
             return null;
         }
@@ -105,10 +105,7 @@ export default class StorageSelector extends Vue {
 
         const storageId = parseInt(link.dataset.identifier, 10);
         if (storageId !== this.activeStorage.identifier) {
-            this.setStorage({
-                id: storageId,
-                browsableIdentifier: StorageSelector.getBrowsableIdentifier(storageId),
-            });
+            this.setStorage(storageId);
         }
     }
 }
