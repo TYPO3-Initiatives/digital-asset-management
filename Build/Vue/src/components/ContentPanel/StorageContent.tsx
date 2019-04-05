@@ -21,9 +21,7 @@ export default class StorageContent extends AbstractContent {
 
     protected renderList(): VNode {
         return (
-            <div>
-                <StorageContentList items={this.storages} />
-            </div>
+            <StorageContentList items={this.storages} />
         );
     }
 

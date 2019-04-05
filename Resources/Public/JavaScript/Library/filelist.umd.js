@@ -19349,60 +19349,16 @@ function (_Vue) {
 
       var h = this.$createElement;
       var sortingOrder = this.sorting.order;
-      var sortIcon = this.sorting.field === field ? h("span", {
-        "class": 'component-datatable-sorting-icon',
-        "attrs": {
-          "role": 'presentation'
-        }
-      }, [h("svg", {
-        "attrs": {
-          "xmlns": 'http://www.w3.org/2000/svg',
-          "viewBox": '0 0 16 16'
-        },
-        "directives": [{
-          name: "show",
-          value: sortingOrder === SortingOrder.ASC
-        }]
-      }, [h("g", {
-        "class": 'icon-color'
-      }, [h("path", {
-        "attrs": {
-          "d": 'M4 2h1v12H4z'
-        }
-      }), h("path", {
-        "attrs": {
-          "d": 'M6 12l-1.5 2L3 12H2l2.3 3c.1.1.3.1.4 0L7 12H6zM9 5h5V4H8v2h1zM9 8h3V7H8v2h1zM9 11h1v-1H8v2h1z'
-        }
-      })])]), h("svg", {
-        "attrs": {
-          "xmlns": 'http://www.w3.org/2000/svg',
-          "viewBox": '0 0 16 16'
-        },
-        "directives": [{
-          name: "show",
-          value: sortingOrder === SortingOrder.DESC
-        }]
-      }, [h("g", {
-        "class": 'icon-color'
-      }, [h("path", {
-        "attrs": {
-          "d": 'M4 2h1v12H4z'
-        }
-      }), h("path", {
-        "attrs": {
-          "d": 'M3 4l1.5-2L6 4h1L4.7 1c-.1-.1-.3-.1-.4 0L2 4h1zM9 5h5V4H8v2h1zM9 8h3V7H8v2h1zM9 11h1v-1H8v2h1z'
-        }
-      })])])]) : '';
       var sortInfo = TYPO3.lang['List.table.header.sort_info'].replace('{field}', TYPO3.lang['List.table.header.' + field]).replace('{order}', sortingOrder === SortingOrder.ASC ? TYPO3.lang['List.table.header.descending'] : TYPO3.lang['List.table.header.ascending']);
       var sortText = h("span", {
         "class": 'component-datatable-sorting-label component-visually-hidden'
       }, [sortInfo]);
-      var iconMarkup = h("span", {
+      var iconMarkup = icon ? h("span", {
         "class": 'component-datatable-columnheader-icon',
         "attrs": {
           "role": 'presentation'
         }
-      }, [icon]);
+      }, [icon]) : '';
       var sortField = field.replace('Display', '');
       var ariaSortLabel = this.sorting.field === sortField ? sortingOrder === SortingOrder.ASC ? TYPO3.lang['List.table.header.ascending'] : TYPO3.lang['List.table.header.descending'] : TYPO3.lang['List.table.header.none'];
 
@@ -19434,7 +19390,12 @@ function (_Vue) {
             _this2.changeSortOrder(sortingOrder === SortingOrder.ASC ? SortingOrder.DESC : SortingOrder.ASC);
           }
         }
-      }, [sortIcon, sortText])]);
+      }, [h("span", {
+        "class": 'component-datatable-sorting-icon',
+        "attrs": {
+          "role": 'presentation'
+        }
+      }), sortText])]);
     }
   }, {
     key: "generateListItem",
@@ -20099,11 +20060,11 @@ function (_AbstractContent) {
     key: "renderList",
     value: function renderList() {
       var h = this.$createElement;
-      return h("div", [h(List_StorageContentList, {
+      return h(List_StorageContentList, {
         "attrs": {
           "items": this.storages
         }
-      })]);
+      });
     }
   }, {
     key: "renderTiles",
@@ -24093,7 +24054,9 @@ function (_Vue) {
         }]
       })])])]), h("template", {
         "slot": 'afterUploadTable'
-      }, [this.activeStorage ? h(ContentPanel_FolderContent) : h(ContentPanel_StorageContent)])])]);
+      }, [h("div", {
+        "class": 'component-module-body'
+      }, [this.activeStorage ? h(ContentPanel_FolderContent) : h(ContentPanel_StorageContent)])])])]);
     }
   }]);
 

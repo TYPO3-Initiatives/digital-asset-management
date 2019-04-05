@@ -1,0 +1,13 @@
+//
+// SVG
+//
+@function svg-inline($string){
+    $result: $string;
+    $result: str-replace($result, "<svg", "<svg xmlns='http://www.w3.org/2000/svg'");
+    $result: str-replace($result, '%', '%25');
+    $result: str-replace($result, '#', "%23");
+    $result: str-replace($result, '"', "'");
+    $result: str-replace($result, '<', '%3C');
+    $result: str-replace($result, '>', '%3E');
+    @return "data:image/svg+xml;charset=utf-8," + $result;
+}

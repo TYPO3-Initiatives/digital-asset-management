@@ -25,6 +25,11 @@ indent_size = 4
 indent_style = space
 indent_size = 4
 
+# TSX-Files
+[*.tsx]
+indent_style = space
+indent_size = 4
+
 # LESS-Files
 [*.less]
 indent_style = space

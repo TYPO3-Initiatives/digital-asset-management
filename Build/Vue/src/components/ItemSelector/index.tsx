@@ -30,10 +30,10 @@ export default class ItemSelector extends Vue {
         const randomPart: string =  Math.random().toString(36).substring(7);
         const label: string = this.isSelected ? TYPO3.lang['ItemSelector.label.deselect'] : TYPO3.lang['ItemSelector.label.select'];
         return (
-          <a href='#' onClick={(event: Event) => this.toggleSelect(event, this.item)} className='btn btn-sm btn-default'>
-              <i class='fa fa-check-square' v-show={this.isSelected} />
-              <i class='fa fa-square-o' v-show={!this.isSelected} />
-          </a>
+            <a href='#' onClick={(event: Event) => this.toggleSelect(event, this.item)} className='btn btn-sm btn-default'>
+                <i class='fa fa-check-square' v-show={this.isSelected} />
+                <i class='fa fa-square-o' v-show={!this.isSelected} />
+            </a>
         );
     }
 
@@ -44,4 +44,3 @@ export default class ItemSelector extends Vue {
             : this.selectItem(item);
     }
 }
-
