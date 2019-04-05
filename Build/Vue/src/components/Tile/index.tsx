@@ -1,3 +1,6 @@
+import Icon from '@/components/Icon';
+import {Mutations} from '@/enums/Mutations';
+import {StorageInterface} from '@/interfaces/StorageInterface';
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {Action, State} from 'vuex-class';
@@ -14,11 +17,14 @@ export default class Tile extends Vue {
     @Action(AjaxRoutes.damGetFolderItems)
     fetchData: any;
 
+    @Action(Mutations.SET_STORAGE)
+    setStorage!: Function;
+
     @State
     selected!: Array<object>;
 
     @Prop()
-    item!: ResourceInterface;
+    item!: ResourceInterface | StorageInterface;
 
     constructor(props: any) {
         super(props);
@@ -32,7 +38,14 @@ export default class Tile extends Vue {
         this.fetchData(identifier);
     }
 
+    private openStorage(identifier: number): void {
+        this.setStorage(identifier);
+    }
+
     private render(): VNode {
+        if (this.item.type === FileType.STORAGE) {
+            return this.renderStorage(this.item as StorageInterface);
+        }
         if (this.item.type === FileType.FOLDER) {
             return this.renderFolder(this.item as FolderInterface);
         }
@@ -43,6 +56,37 @@ export default class Tile extends Vue {
             return this.renderFile(this.item as FileInterface);
         }
         throw new Error('invalid resource type');
+    }
+
+    private renderStorage(item: StorageInterface): VNode {
+        let classes = 'tile tile-' + item.type;
+        if (this.isSelected) {
+            classes += ' selected';
+        }
+        const clickFunction = (e: Event) => {
+            e.stopPropagation();
+            this.openStorage(item.identifier);
+        };
+
+        return (
+            <div
+                class={classes}
+                onClick={clickFunction}
+                data-identifier={item.identifier}
+                data-connectivity={item.storageOnline ? 'online' : 'offline'}
+            >
+                <div class='tile-content'>
+                    <span class='pull-right'></span>
+                    <span class='tile-image-container'>
+                        <Icon identifier={item.icon} size='large' />
+                    </span>
+                </div>
+                <div className='tile-title'>
+                    <span class='tile-header'>{item.name}</span><br/>
+                    <span class='tile-image-meta storage-type'>{item.type}</span>
+                </div>
+            </div>
+        );
     }
 
     private renderFolder(item: FolderInterface): VNode {

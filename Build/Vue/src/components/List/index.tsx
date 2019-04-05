@@ -1,14 +1,11 @@
 import {Prop, Vue} from 'vue-property-decorator';
-import {VNode} from 'vue';
+import {CreateElement, VNode} from 'vue';
 import {Mutation, State} from 'vuex-class';
-import Component from 'vue-class-component';
 import ListItem from '@/components/ListItem';
-import AllSelector from '@/components/AllSelector';
 import {SortingFields, SortingOrder} from '@/enums/Sorting';
 import {Mutations} from '@/enums/Mutations';
 
-@Component
-export default class List extends Vue {
+export default abstract class List extends Vue {
     @Mutation(Mutations.CHANGE_SORTING)
     changeSorting: any;
 
@@ -26,14 +23,19 @@ export default class List extends Vue {
 
     visibleColumns: Array<string> = ['name', 'mtimeDisplay', 'sizeDisplay', 'type', 'translations', 'references', 'permissions'];
 
-    constructor(props: any) {
-        super(props);
+    protected abstract renderTable(list: Array<VNode>): VNode;
+
+    protected render(h: CreateElement): VNode {
+        const list = this.items.map(this.generateListItem, this);
+        return this.renderTable(list);
     }
 
-    private render(): VNode {
-        const list = this.items.map(this.generateListItem, this);
+    protected getRandomString(): string {
+        return Math.random().toString(36).substring(7);
+    }
+
+    protected getHeaderColumns(): Array<VNode> {
         const headerColumns: Array<VNode> = [];
-        const randomPart: string =  Math.random().toString(36).substring(7);
 
         for (let field in this.visibleColumns) {
             if (this.visibleColumns.hasOwnProperty(field)) {
@@ -41,26 +43,7 @@ export default class List extends Vue {
             }
         }
 
-        return (
-            <div class='component-datatable' role='group' aria-labelledby={'component-datatable-' + randomPart}>
-                <table class='component-datatable-table'>
-                    <caption class='component-datatable-caption' id={'component-datatable-' + randomPart}>
-                      {this.current}
-                    </caption>
-                    <thead class='component-datatable-head'>
-                      <tr>
-                          <th data-type='checkbox' scope='col' role='columnheader'>
-                              <AllSelector listOfIdentifiers={this.items.map((item: any) => {return item.identifier; })}/>
-                          </th>
-                          {headerColumns}
-                      </tr>
-                </thead>
-                  <tbody>
-                      {list}
-                  </tbody>
-                </table>
-            </div>
-        );
+        return headerColumns;
     }
 
     private renderHeaderColumn(field: string, icon?: string): VNode {

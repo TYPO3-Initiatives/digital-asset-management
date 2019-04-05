@@ -12,6 +12,14 @@ return [
         'path' => '/dam/getNewStorageUrl',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::getNewStorageUrlAction',
     ],
+    'damGetLogoutUrl' => [
+        'path' => '/dam/getLogoutUrl',
+        'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::damGetLogoutUrlAction',
+    ],
+    'damPrepareDownload' => [
+        'path' => '/dam/prepareDownload',
+        'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::prepareDownloadAction',
+    ],
     'damSetState' => [
         'path' => '/dam/setState',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::setStateAction',
