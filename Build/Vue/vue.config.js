@@ -20,7 +20,7 @@ module.exports = {
       },
       'TYPO3/CMS/Backend/Icons',
       'TYPO3/CMS/Backend/Modal',
-      'TYPO3/CMS/Backend/Severity',
+      'moment'
     ],
   }
 };

@@ -18,3 +18,6 @@ interface Window {
   fsMod: { [key: string]: any };
   nextLoadModuleUrl: string;
 }
+
+declare module 'TYPO3/CMS/Backend/Modal';
+declare module 'moment';

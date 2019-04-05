@@ -30,13 +30,13 @@ const options: StoreOptions<RootState> = {
         },
         items: [],
         current: '',
-        modalContent: null,
         viewMode: ViewType.TILE,
         showTree: true,
         activeStorage: null,
         treeFolders: [],
-        storages: null,
+        storages: [],
         treeIdentifierLocationMap: {},
+        modalContent: null,
     },
     mutations: {
         [Mutations.FETCH_DATA](state: RootState, items: {
@@ -163,6 +163,12 @@ const options: StoreOptions<RootState> = {
                 state.itemsGrouped.files.reverse();
                 state.itemsGrouped.images.reverse();
             }
+        },
+        [Mutations.SET_MODAL_CONTENT](state: RootState, modalContent: VNode): void {
+            state.modalContent = modalContent;
+        },
+        [Mutations.CLEAR_MODAL_CONTENT](state: RootState): void {
+            state.modalContent = null;
         },
     },
     actions: {

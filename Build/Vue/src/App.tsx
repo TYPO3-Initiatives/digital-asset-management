@@ -13,9 +13,6 @@ export default class App extends Vue {
     @Action(AjaxRoutes.damGetStoragesAndMounts)
     getStorages!: Function;
 
-    @Action(AjaxRoutes.damGetFolderItems)
-    fetchData: any;
-
     @State
     storages!: Array<StorageInterface>;
 
