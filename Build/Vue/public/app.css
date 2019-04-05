@@ -97,6 +97,7 @@
     width: 100%;
     background-color: #0c5460;
     opacity: 0.8;
+    z-index: 50;
 }
 
 

@@ -7,7 +7,7 @@ import {Mutations} from '@/enums/Mutations';
 import {FileOverrideAction} from '@/enums/FileOverrideAction';
 import Modal from 'TYPO3/CMS/Backend/Modal';
 import FilesOverrideModalContent from '@/components/FilesOverrideModalContent';
-import {UploadedFile} from '../../../types';
+import {UploadedFile} from 'types';
 import {SeverityEnum} from '@/enums/Severity';
 import FormatterService from '@/services/FormatterService';
 import {FileExistResponseCode} from '@/enums/FileExistResponseCode';
@@ -319,9 +319,9 @@ export default class DropZone extends Vue {
                 callback: (currentModal: JQuery): void => {
                     currentModal.on('button.clicked', (e: JQueryEventObject): void => {
                         if (e.target.getAttribute('name') === 'cancel') {
-                            $(e.currentTarget).trigger('confirm.button.cancel');
+                            currentModal.trigger('confirm.button.cancel');
                         } else if (e.target.getAttribute('name') === 'ok') {
-                            $(e.currentTarget).trigger('confirm.button.ok');
+                            currentModal.trigger('confirm.button.ok');
                         }
                     });
                 },
