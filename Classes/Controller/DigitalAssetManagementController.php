@@ -72,7 +72,7 @@ class DigitalAssetManagementController
         $pageRenderer = $this->moduleTemplate->getPageRenderer();
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/DigitalAssetManagement/DigitalAssetManagementActions');
         $pageRenderer->addCssFile('EXT:backend/Resources/Public/Css/backend.css');
-        $pageRenderer->addCssFile('EXT:digital_asset_management/Build/Vue/public/app.css');
+        $pageRenderer->addCssFile('EXT:digital_asset_management/Resources/Public/JavaScript/Library/filelist.css');
         $pageRenderer->addInlineLanguageLabelFile('EXT:digital_asset_management/Resources/Private/Language/locallang_mod.xlf');
         $pageRenderer->addInlineLanguageLabelFile('EXT:digital_asset_management/Resources/Private/Language/locallang_vue.xlf');
         $pageRenderer->addInlineLanguageLabelFile('EXT:core/Resources/Private/Language/locallang_core.xlf', 'file_upload');

@@ -1,10 +1,11 @@
 {
-  "name": "vue-testing2",
+  "name": "typo3-filelist",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "build": "vue-cli-service build",
     "build-lib": "vue-cli-service build --target lib --name filelist ./src/main.ts",
+    "config-inspect": "vue-cli-service inspect",
     "lint": "vue-cli-service lint",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit",
