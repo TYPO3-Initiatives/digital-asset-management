@@ -101,7 +101,7 @@ export default class Tile extends Vue {
         return (
             <div class={classes} onClick={clickFunction} data-identifier={item.identifier}>
                 <div class='tile-content'>
-                    <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
+                    <span class='pull-right'><ItemSelector item={item}/></span>
                     <span class='tile-image-container'>
                         <img src={item.icon} class='tile-image'/>
                         <span class='tile-image-meta file-count' v-show={item.itemCount}>{item.itemCount}</span>
@@ -123,9 +123,9 @@ export default class Tile extends Vue {
         return (
             <a class={classes} href={item.editMetaUrl} data-identifier={item.identifier}>
                 <div class='tile-content'>
-                    <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
+                    <span class='pull-right'><ItemSelector item={item}/></span>
                     <span class='tile-image-container'>
-                        <img src={item.iconIdentifier} class='tile-image'/>
+                        <Icon identifier={item.iconIdentifier} />
                     </span>
                 </div>
                 <div className='tile-title'>
@@ -144,7 +144,7 @@ export default class Tile extends Vue {
         return (
             <div class={classes} data-identifier={item.identifier}>
                 <div class='tile-content'>
-                    <span class='pull-right'><ItemSelector identifier={item.identifier}/></span>
+                    <span class='pull-right'><ItemSelector item={item}/></span>
                     <span class='tile-image-container'>
                         <a href={item.editMetaUrl}><img src={item.thumbnailUrl} class='tile-thumbnail'/></a>
                     </span>

@@ -10,6 +10,7 @@ declare(strict_types = 1);
 
 namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
@@ -17,6 +18,7 @@ use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Http\Response;
+use TYPO3\CMS\Core\Http\Stream;
 use TYPO3\CMS\Core\Resource\Driver\LocalDriver;
 use TYPO3\CMS\Core\Resource\DuplicationBehavior;
 use TYPO3\CMS\Core\Resource\Exception as ResourceException;
@@ -26,7 +28,6 @@ use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FileMount;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FileOperationResult;
@@ -80,7 +81,7 @@ class AjaxController
      * @param ServerRequestInterface $request
      * @return Response
      */
-    public function prepareDownloadAction(ServerRequestInterface $request): JsonResponse
+    public function prepareDownloadAction(ServerRequestInterface $request): ResponseInterface
     {
         $identifiers = $request->getQueryParams()['identifiers'] ?? '';
         try {
@@ -111,15 +112,19 @@ class AjaxController
                     /** @var Folder $resource */
                     $this->addFolderToArchiveRecursive($resource, $zip);
                 }
-                $zip->close();
             }
+            $zip->close();
             GeneralUtility::fixPermissions($archiveFilename);
         } catch (ResourceException $e) {
             return new JsonExceptionResponse($e);
         } catch (ControllerException $e) {
             return new JsonExceptionResponse($e);
         }
-        return new JsonResponse([ PathUtility::getAbsoluteWebPath($archiveFilename) ]);
+        return (new Response())
+            ->withHeader('Filename', basename($archiveFilename))
+            ->withHeader('Content-Type', 'application/zip')
+            ->withHeader('Content-Length', (string) filesize($archiveFilename))
+            ->withBody(new Stream($archiveFilename));
     }
 
     /**
@@ -693,13 +698,25 @@ class AjaxController
     /**
      * returns an array of files in a current path
      *
+     * @param string $combinedIdentifier
      * @param string $searchWord
      *
      * @return array
+     * @throws ResourceDoesNotExistException
      */
-    protected function searchFiles($searchWord = ''): array
+    protected function searchFiles($combinedIdentifier = '', $searchWord = ''): array
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_file');
+        /** @var ResourceFactory $resourceFactory */
+        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+        $storage = $resourceFactory->getStorageObjectFromCombinedIdentifier($combinedIdentifier);
+        $identifier = substr($combinedIdentifier, strpos($combinedIdentifier, ':') + 1);
+        $constraints = [];
+        $constraints[] = $queryBuilder->expr()->eq('storage', $storage->getUid());
+        $constraints[] = $queryBuilder->expr()->like('sys_file.name', $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($searchWord) . '%') );
+        if ($identifier !== '/') {
+            $constraints[] = $queryBuilder->expr()->like('identifier', $queryBuilder->createNamedParameter( $queryBuilder->escapeLikeWildcards($identifier) . '%') );
+        }
         $statement = $queryBuilder->select('*')
             ->from('sys_file')
             ->join(
@@ -708,14 +725,12 @@ class AjaxController
                 'file_metadata',
                 $queryBuilder->expr()->eq('sys_file.uid', 'file_metadata.file')
             )
-            ->where(
-                $queryBuilder->expr()->like('sys_file.name', $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($searchWord) . '%') )
-            )
+            ->where($queryBuilder->expr()->andX(...$constraints))
             ->execute();
         $files = [];
         $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         while ($row = $statement->fetch()) {
-            $files[] = $resourceFactory->getObjectFromCombinedIdentifier($row['identifier']);
+            $files[] = $resourceFactory->getObjectFromCombinedIdentifier($row['storage'] . ':' . $row['identifier']);
         }
         return $files;
     }

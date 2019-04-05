@@ -2,6 +2,7 @@ import {Component, Prop, Vue} from 'vue-property-decorator';
 import {VNode} from 'vue';
 import {Mutation, State} from 'vuex-class';
 import {Mutations} from '@/enums/Mutations';
+import {ResourceInterface} from '@/interfaces/ResourceInterface';
 
 @Component
 export default class AllSelector extends Vue {
@@ -16,10 +17,10 @@ export default class AllSelector extends Vue {
     unselectItems: any;
 
     @State
-    selected!: Array<object>;
+    selected!: Array<ResourceInterface>;
 
     @Prop()
-    listOfIdentifiers!: Array<String>;
+    listOfResources!: Array<ResourceInterface>;
 
     constructor(props: any) {
         super(props);
@@ -30,7 +31,7 @@ export default class AllSelector extends Vue {
         return (
             <span class='component-checkbox'>
                 <input class='component-checkbox-input' type='checkbox' id={'component-datatable-selectall-' + randomPart}
-                  value='1' onClick={(event: Event) => this.toggleSelect(event, this.listOfIdentifiers)} />
+                  value='1' onClick={(event: Event) => this.toggleSelect(event, this.listOfResources)} />
                 <label class='component-checkbox-label' for={'component-datatable-selectall-' + randomPart}>
                     <span class='component-visually-hidden'>
                         {this.isSelected ? TYPO3.lang['AllSelector.label.deselect'] : TYPO3.lang['AllSelector.label.select']}
@@ -40,10 +41,10 @@ export default class AllSelector extends Vue {
         );
     }
 
-    private toggleSelect(event: Event, listOfIdentifiers: Array<String>): void {
+    private toggleSelect(event: Event, listOfResources: Array<ResourceInterface>): void {
         event.stopPropagation();
         this.selected.length > 0
-            ? this.unselectItems(listOfIdentifiers)
-            : this.selectItems(listOfIdentifiers);
+            ? this.unselectItems(listOfResources)
+            : this.selectItems(listOfResources);
     }
 }

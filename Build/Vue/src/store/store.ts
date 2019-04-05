@@ -30,13 +30,13 @@ const options: StoreOptions<RootState> = {
         },
         items: [],
         current: '',
+        modalContent: null,
         viewMode: ViewType.TILE,
         showTree: true,
         activeStorage: null,
         treeFolders: [],
         storages: [],
         treeIdentifierLocationMap: {},
-        modalContent: null,
     },
     mutations: {
         [Mutations.FETCH_DATA](state: RootState, items: {
@@ -73,18 +73,18 @@ const options: StoreOptions<RootState> = {
                 }
             }
         },
-        [Mutations.SELECT_ITEM](state: RootState, identifier: String): void {
-            if (!state.selected.includes(identifier)) {
-                state.selected.push(identifier);
+        [Mutations.SELECT_ITEM](state: RootState, item: ResourceInterface): void {
+            if (!state.selected.includes(item)) {
+                state.selected.push(item);
             }
         },
-        [Mutations.UNSELECT_ITEM](state: RootState, identifier: String): void {
-            if (state.selected.includes(identifier)) {
-                state.selected.splice(state.selected.indexOf(identifier), 1);
+        [Mutations.UNSELECT_ITEM](state: RootState, item: ResourceInterface): void {
+            if (state.selected.includes(item)) {
+                state.selected.splice(state.selected.indexOf(item), 1);
             }
         },
-        [Mutations.SELECT_ALL](state: RootState, listOfIdentifiers: Array<String>): void {
-            state.selected = listOfIdentifiers;
+        [Mutations.SELECT_ALL](state: RootState, listOfResources: Array<ResourceInterface>): void {
+            state.selected = listOfResources;
         },
         [Mutations.UNSELECT_ALL](state: RootState): void {
             state.selected = [];
@@ -172,6 +172,12 @@ const options: StoreOptions<RootState> = {
         },
     },
     actions: {
+        async [Mutations.FETCH_DATA]({commit}: any, identifier: String): Promise<any> {
+            commit(Mutations.NAVIGATE, identifier);
+            // request [dummy data]:
+            const response = await client.get('http://localhost:8080/api/files.json?identifier=' + identifier);
+            commit(Mutations.FETCH_DATA, response.data);
+        },
         async [AjaxRoutes.damGetFolderItems]({commit}: any, identifier: String): Promise<any> {
             commit(Mutations.NAVIGATE, identifier);
             const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetFolderItems] + '&identifier=' + identifier);
