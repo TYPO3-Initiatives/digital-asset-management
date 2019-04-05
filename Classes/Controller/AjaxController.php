@@ -74,8 +74,7 @@ class AjaxController
      */
     public function damGetLogoutUrlAction(): JsonResponse
     {
-        $backendUser = $this->getBackendUser();
-        if (!$backendUser) {
+        if (empty($this->getBackendUser()->user['uid'])) {
             return new JsonExceptionResponse(new ControllerException('User is not logged in', 1554380677));
         }
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
