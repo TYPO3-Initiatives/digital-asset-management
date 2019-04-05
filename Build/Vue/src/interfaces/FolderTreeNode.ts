@@ -3,6 +3,7 @@ export default interface FolderTreeNode {
     identifier: string;
     icon: any;
     expanded: boolean;
+    selected: boolean;
     hasChildren: boolean;
     folders: Array<FolderTreeNode>;
 }
