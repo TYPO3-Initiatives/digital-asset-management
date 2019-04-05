@@ -13,6 +13,7 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Resource\DuplicationBehavior;
 use TYPO3\CMS\Core\Resource\Exception as ResourceException;
@@ -553,6 +554,91 @@ class AjaxController
         }
         return new FileOperationResponse($resources);
     }
+
+    /**
+     * Return item list (folders, files, images) of a storage:path
+     * FAL folder identifier. GET request with identifier argument.
+     * Query parameter
+     *  identifier string combined identifier of search starting point
+     *  query string serach string
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return JsonResponse
+     */
+    public function searchAction(ServerRequestInterface $request): JsonResponse
+    {
+        try {
+            $identifier = $request->getQueryParams()['identifier'] ?? '';
+            $query = $request->getQueryParams()['query'] ?? '';
+            if (empty($identifier)) {
+                throw new ControllerException('Identifier needed', 1553699828);
+            }
+            if (empty($identifier)) {
+                throw new ControllerException('Query string needed', 1554452377);
+            }
+            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+            $folderObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+            if (!$folderObject instanceof Folder) {
+                throw new ControllerException('Identifier is not a folder', 1553701684);
+            }
+            $allFiles = $this->searchFiles($folderObject, $query);
+            $folders = [];
+            $files = [];
+            $images = [];
+            foreach ($allFiles as $file) {
+                // If file is an image or media, create image object, else file object
+                $fileExtension = strtolower($file->getExtension());
+                if (GeneralUtility::inList($GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'], $fileExtension)
+                    || GeneralUtility::inList($GLOBALS['TYPO3_CONF_VARS']['GFX']['mediafile_ext'], $fileExtension)
+                ) {
+                    $images[] = new FolderItemImage($file);
+                } else {
+                    $files[] = new FolderItemFile($file);
+                }
+            }
+            return new FolderItemsResponse($folders, $files, $images);
+        } catch (ResourceException $e) {
+            return new JsonExceptionResponse($e);
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
+        }
+    }
+
+    /**
+     * returns an array of files in a current path
+     *
+     * @param string $searchWord
+     *
+     * @return array
+     */
+    protected function searchFiles($searchWord = ''): array
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_file');
+        $statement = $queryBuilder->select('*')
+            ->from('sys_file')
+            ->join(
+                'sys_file',
+                'sys_file_metadata',
+                'file_metadata',
+                $queryBuilder->expr()->eq('sys_file.uid', 'file_metadata.file')
+            )
+            ->where($queryBuilder->expr()->like('sys_file.name', $queryBuilder->createNamedParameter('%'. $queryBuilder->escapeLikeWildcards($searchWord).'%') ))
+            ->execute();
+        $files = [];
+        while ($row = $statement->fetch()) {
+            $files[] = new FolderItemFile()
+            $file['identifier'] = $this->storage->getUid().':'.$row[identifier];
+            $file['mimetype'] = $row['mime_type'];
+            $file['size'] = $row['size'];
+            $file['name'] = $row['name'];
+            $file['modification_date'] = $row['modification_date'];
+            $files[] = $file;
+        }
+
+        return $files;
+    }
+
 
     /**
      * @return BackendUserAuthentication

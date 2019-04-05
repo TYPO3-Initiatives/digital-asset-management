@@ -60,4 +60,8 @@ return [
         'path' => '/dam/deleteResources',
         'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::deleteResourcesAction',
     ],
+    'damSearch' => [
+        'path' => '/dam/search',
+        'target' => TYPO3\CMS\DigitalAssetManagement\Controller\AjaxController::class . '::searchAction',
+    ],
 ];
