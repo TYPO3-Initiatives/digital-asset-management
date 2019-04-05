@@ -18,7 +18,6 @@ use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-use TYPO3Fluid\Fluid\View\ViewInterface;
 
 /**
  * Backend controller: The "Digital Asset Management" module
@@ -33,7 +32,7 @@ class DigitalAssetManagementController
     protected $moduleTemplate;
 
     /**
-     * @var ViewInterface
+     * @var StandaloneView
      */
     protected $view;
 

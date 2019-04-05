@@ -1,6 +1,5 @@
 <?php
 declare(strict_types = 1);
-namespace TYPO3\CMS\DigitalAssetManagement\Entity;
 
 /*
  * This file is part of the package lns/digital-asset-management.
@@ -9,7 +8,7 @@ namespace TYPO3\CMS\DigitalAssetManagement\Entity;
  * LICENSE file that was distributed with this source code.
  */
 
-use TYPO3\CMS\Core\Resource\Folder;
+namespace TYPO3\CMS\DigitalAssetManagement\Entity;
 
 /**
  * Immutable permission object, used by FolderItemFolder
@@ -35,9 +34,9 @@ class FileOperationResult implements \JsonSerializable
      */
     protected $state;
 
-   /**
-     * @var string, The success or error message
-     */
+    /**
+      * @var string, The success or error message
+      */
     protected $message;
 
     /**
