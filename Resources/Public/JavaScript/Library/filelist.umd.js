@@ -18693,6 +18693,13 @@ function (_Vue) {
   }
 
   _createClass(TreePanel, [{
+    key: "mounted",
+    value: function mounted() {
+      if (this.activeStorage) {
+        this.fetchTreeData(this.browsableIdentifier);
+      }
+    }
+  }, {
     key: "updated",
     value: function updated() {
       this.fetchTreeData(this.browsableIdentifier);
