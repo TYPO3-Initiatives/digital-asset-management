@@ -13,15 +13,21 @@ namespace TYPO3\CMS\DigitalAssetManagement\Controller;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\JsonResponse;
+use TYPO3\CMS\Core\Http\Response;
+use TYPO3\CMS\Core\Resource\Driver\LocalDriver;
 use TYPO3\CMS\Core\Resource\DuplicationBehavior;
 use TYPO3\CMS\Core\Resource\Exception as ResourceException;
 use TYPO3\CMS\Core\Resource\Exception\InvalidTargetFolderException;
 use TYPO3\CMS\Core\Resource\Exception\ResourceDoesNotExistException;
+use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
+use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FileMount;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FileOperationResult;
 use TYPO3\CMS\DigitalAssetManagement\Entity\FolderItemFile;
@@ -67,7 +73,86 @@ class AjaxController
             ],
             'returnUrl' => (string)$uriBuilder->buildUriFromRoute('file_DigitalAssetManagement'),
         ];
-        return new JsonResponse([ (string)$uriBuilder->buildUriFromRoute('record_edit', $urlParameters) ]);
+        return new JsonResponse([(string)$uriBuilder->buildUriFromRoute('record_edit', $urlParameters)]);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return Response
+     */
+    public function prepareDownloadAction(ServerRequestInterface $request): JsonResponse
+    {
+        $identifiers = $request->getQueryParams()['identifiers'] ?? '';
+        try {
+            if (empty($identifiers) || !is_array($identifiers)) {
+                throw new ControllerException('List of files or folders needed', 1554375542);
+            }
+            // (Mis)-use the LocalDriver method to sanitize the filename prefix
+            $archivePrefix = rtrim(
+                GeneralUtility::makeInstance(LocalDriver::class)
+                    ->sanitizeFileName($request->getQueryParams()['filenamePrefix'] ?? 'download'),
+                '-'
+            );
+            $archiveFilename = Environment::getVarPath()
+                . '/transient/'
+                . $archivePrefix
+                . '-'
+                . GeneralUtility::hmac(StringUtility::getUniqueId(), 'damDownload')
+                . '.zip';
+            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+            $zip = new \ZipArchive();
+            $zip->open($archiveFilename, \ZipArchive::CREATE);
+            foreach ($identifiers as $identifier) {
+                $resource = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+                if ($resource instanceof FileInterface) {
+                    /** @var FileInterface $resource */
+                    $zip->addFile($resource->getForLocalProcessing(false), $resource->getName());
+                } else {
+                    /** @var Folder $resource */
+                    $this->addFolderToArchiveRecursive($resource, $zip);
+                }
+                $zip->close();
+            }
+            GeneralUtility::fixPermissions($archiveFilename);
+        } catch (ResourceException $e) {
+            return new JsonExceptionResponse($e);
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
+        }
+        return new JsonResponse([ PathUtility::getAbsoluteWebPath($archiveFilename) ]);
+    }
+
+    /**
+     * @param Folder $folder
+     * @param \ZipArchive $zip
+     * @param array $parentFolders
+     */
+    protected function addFolderToArchiveRecursive(Folder $folder, \ZipArchive $zip, array $parentFolders = []): void
+    {
+        $folderName = $folder->getName();
+        $parentFolders[] = $folderName;
+        $implodedParentFolders = implode('/', $parentFolders);
+        $zip->addEmptyDir($implodedParentFolders);
+        $files = $folder->getFiles();
+        foreach ($files as $file) {
+            $zip->addFile($file->getForLocalProcessing(false), $implodedParentFolders . '/' . $file->getName());
+        }
+        $subFolders = $folder->getSubfolders();
+        foreach ($subFolders as $subFolder) {
+            $this->addFolderToArchiveRecursive($subFolder, $zip, $parentFolders);
+        }
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function damGetLogoutUrlAction(): JsonResponse
+    {
+        if (empty($this->getBackendUser()->user['uid'])) {
+            return new JsonExceptionResponse(new ControllerException('User is not logged in', 1554380677));
+        }
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        return new JsonResponse([ (string)$uriBuilder->buildUriFromRoute('logout') ]);
     }
 
     /**

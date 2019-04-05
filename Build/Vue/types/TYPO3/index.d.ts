@@ -1,4 +1,5 @@
 declare module 'TYPO3/CMS/Backend/Icons';
+declare module 'TYPO3/CMS/Backend/Modal';
 
 // type definition for global namespace object
 interface Window {
@@ -17,3 +18,6 @@ interface Window {
   fsMod: { [key: string]: any };
   nextLoadModuleUrl: string;
 }
+
+declare module 'TYPO3/CMS/Backend/Modal';
+declare module 'moment';

@@ -6,9 +6,14 @@ build:
       - 'composer require typo3/minimal="^9"'
   nodes:
     analysis:
+      cache:
+        disabled: false
+        directories:
+          - ~/.composer/cache
       tests:
         override:
           - php-scrutinizer-run
+          - js-scrutinizer-run
   tests:
     override:
       -
@@ -23,6 +28,7 @@ filter:
     - ".build/"
 
 checks:
+  javascript: true
   php:
     code_rating: true
     remove_extra_empty_lines: true

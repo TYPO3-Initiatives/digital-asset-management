@@ -7,6 +7,9 @@ export default class Icon extends Vue {
     @Prop()
     identifier!: string;
 
+    @Prop({default: 'small'})
+    size!: string;
+
     private icon: VNode | null = null;
 
     constructor(props: any) {
@@ -14,7 +17,7 @@ export default class Icon extends Vue {
     }
 
     async mounted(): Promise<any> {
-        const iconRaw = await Icons.getIcon(this.$props.identifier, Icons.sizes.small, null, null, 'inline');
+        const iconRaw = await Icons.getIcon(this.$props.identifier, this.size, null, null, 'inline');
         this.icon = <span domPropsInnerHTML={iconRaw}></span>;
     }
 
