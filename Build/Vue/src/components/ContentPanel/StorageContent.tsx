@@ -1,46 +1,25 @@
+import AbstractContent from '@/components/ContentPanel/AbstractContent';
 import StorageContentList from '@/components/List/StorageContentList';
 import {StorageInterface} from '@/interfaces/StorageInterface';
-import {Component, Vue} from 'vue-property-decorator';
-import {VNode} from 'vue';
+import {Component} from 'vue-property-decorator';
+import {CreateElement, VNode} from 'vue';
 import Tiles from '@/components/Tiles';
 import {State} from 'vuex-class';
-import {ViewType} from '@/enums/ViewType';
 
 @Component
-export default class StorageContent extends Vue {
+export default class StorageContent extends AbstractContent {
     @State
     storages!: Array<StorageInterface>;
-
-    @State
-    viewMode!: String;
-
-    get currentViewMode(): String {
-        return this.viewMode;
-    }
 
     constructor(props: any) {
         super(props);
     }
 
-    private renderStorageTiles(): VNode | null {
-        return this.storages ? <Tiles items={this.storages} /> : null;
+    protected render(h: CreateElement): VNode {
+        return super.render(h);
     }
 
-    private render(): VNode {
-        return (
-            this.renderContent()
-        );
-    }
-
-    private renderContent(): VNode {
-        if (this.currentViewMode === ViewType.LIST) {
-            return this.renderList();
-        } else {
-            return this.renderTiles();
-        }
-    }
-
-    private renderList(): VNode {
+    protected renderList(): VNode {
         return (
             <div>
                 <StorageContentList items={this.storages} />
@@ -48,11 +27,15 @@ export default class StorageContent extends Vue {
         );
     }
 
-    private renderTiles(): VNode {
+    protected renderTiles(): VNode {
         return (
             <div>
                 {this.renderStorageTiles()}
             </div>
         );
+    }
+
+    private renderStorageTiles(): VNode | null {
+        return this.storages ? <Tiles items={this.storages} /> : null;
     }
 }

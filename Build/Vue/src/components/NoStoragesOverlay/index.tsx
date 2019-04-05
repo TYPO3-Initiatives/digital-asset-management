@@ -14,10 +14,6 @@ export default class NoStoragesOverlay extends Vue {
 
     private receivedUrl: string | null = null;
 
-    constructor(props: any) {
-        super(props);
-    }
-
     private async getNewStorageUrl(): Promise<any> {
         const response = await client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetNewStorageUrl]);
         this.receivedUrl = response.data[0];
@@ -40,13 +36,10 @@ export default class NoStoragesOverlay extends Vue {
 
         return(
             <div>
-                <h2>Your system has no asset storages configured.</h2>
-                <p>
-                    To manage or adding asdsets to your website you need to have a storage to save the assets.
-                    Do you want t connect to a new storage now?
-                </p>
+                <h2>{TYPO3.lang['NoStorageOverlay.admin.headline']}</h2>
+                <p>{TYPO3.lang['NoStorageOverlay.admin.content']}</p>
                 <Icon identifier='apps-filetree-mount' />
-                <a href={this.receivedUrl}>Connect storage</a>
+                <a href={this.receivedUrl}>{TYPO3.lang['NoStorageOverlay.admin.button.connect']}</a>
             </div>
         );
     }
@@ -56,15 +49,15 @@ export default class NoStoragesOverlay extends Vue {
 
         return(
             <div>
-                <h2>You do not have sufficient permissions to access any storage folder.</h2>
-                <p>Please contact your administrator for assistance.</p>
+                <h2>{TYPO3.lang['NoStorageOverlay.nonadmin.headline']}</h2>
+                <p>{TYPO3.lang['NoStorageOverlay.nonadmin.contenjt']}</p>
                 <p>
-                    <strong>Username:</strong> {TYPO3.settings.BackendUser.username}<br />
-                    <strong>Reference: </strong> #123456789
+                    <strong>{TYPO3.lang['NoStorageOverlay.nonadmin.trace.username']}</strong> {TYPO3.settings.BackendUser.username}<br />
+                    <strong>{TYPO3.lang['NoStorageOverlay.nonadmin.trace.reference']}</strong> #123456789
                 </p>
-                <a href={this.receivedUrl}>Switch User</a><br/>
+                <a href={this.receivedUrl}>{TYPO3.lang['NoStorageOverlay.nonadmin.button.switchuser']}</a><br/>
                 <a href='#' onclick={() => this.getStorages()}>
-                    <Icon identifier='actions-refresh' /> Refresh
+                    <Icon identifier='actions-refresh' /> {TYPO3.lang['NoStorageOverlay.nonadmin.button.refresh']}
                 </a>
             </div>
         );

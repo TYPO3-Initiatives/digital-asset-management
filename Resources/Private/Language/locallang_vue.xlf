@@ -89,6 +89,37 @@
       <trans-unit id="ItemSelector.label.deselect">
         <source>deselect</source>
       </trans-unit>
+
+      <!-- NoStorageOverlay -->
+      <trans-unit id="NoStorageOverlay.admin.headline">
+        <source>Your system has no asset storages configured</source>
+      </trans-unit>
+      <trans-unit id="NoStorageOverlay.admin.content">
+        <source>To manage or adding assets to your website you need to have a storage to save the assets. Do you want t connect to a new storage now?</source>
+      </trans-unit>
+      <trans-unit id="NoStorageOverlay.admin.button.connect">
+        <source>Connect storage</source>
+      </trans-unit>
+
+      <trans-unit id="NoStorageOverlay.nonadmin.headline">
+        <source>You do not have sufficient permissions to access any storage folder</source>
+      </trans-unit>
+      <trans-unit id="NoStorageOverlay.nonadmin.content">
+        <source>Please contact your administrator for assistance.</source>
+      </trans-unit>
+      <trans-unit id="NoStorageOverlay.nonadmin.trace.username">
+        <source>Username:</source>
+      </trans-unit>
+      <trans-unit id="NoStorageOverlay.nonadmin.trace.reference">
+        <source>Reference:</source>
+      </trans-unit>
+
+      <trans-unit id="NoStorageOverlay.nonadmin.button.switchuser">
+        <source>Switch User</source>
+      </trans-unit>
+      <trans-unit id="NoStorageOverlay.nonadmin.button.refresh">
+        <source>Refresh</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>
