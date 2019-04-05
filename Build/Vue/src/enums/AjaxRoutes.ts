@@ -1,9 +1,15 @@
 export enum AjaxRoutes {
-  damGetFolderItems = 'damGetFolderItems',
-  damGetStoragesAndMounts = 'damGetStoragesAndMounts',
-  damGetTreeFolders = 'damGetTreeFolders',
+  damCreateFolder = 'damCreateFolder',
   damFileExists = 'damFileExists',
   damFileUpload = 'damFileUpload',
+  damGetFolderItems = 'damGetFolderItems',
+  damGetTreeFolders = 'damGetTreeFolders',
+  damGetStoragesAndMounts = 'damGetStoragesAndMounts',
+  damCopyResources = 'damCopyResources',
+  damMoveResources = 'damMoveResources',
+  damRenameResources = 'damRenameResources',
+  damDeleteResources = 'damDeleteResources',
+  damPrepareDownload = 'damPrepareDownload',
   damGetNewStorageUrl = 'damGetNewStorageUrl',
   damGetLogoutUrl = 'damGetLogoutUrl',
 }

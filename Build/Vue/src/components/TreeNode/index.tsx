@@ -1,19 +1,25 @@
 import {AjaxRoutes} from '@/enums/AjaxRoutes';
 import FolderTreeNode from '@/interfaces/FolderTreeNode';
-import {CreateElement, VNode} from 'vue';
-import {Component, Prop, Vue} from 'vue-property-decorator';
-import {Action} from 'vuex-class';
+import {VNode} from 'vue';
+import {Component, Prop, Vue, Watch} from 'vue-property-decorator';
+import {Action, State} from 'vuex-class';
 
 @Component
 export default class TreeNode extends Vue {
-    @Action(AjaxRoutes.damGetFolderItems)
-    fetchData: any;
-
     @Action(AjaxRoutes.damGetTreeFolders)
     fetchTreeData: any;
 
+    @State
+    treeFolders!: Array<FolderTreeNode>;
+
+    @Prop()
+    selectedNodeIdentifier!: string;
+
     @Prop()
     node!: FolderTreeNode;
+
+    @Prop()
+    selectCallBack!: Function;
 
     constructor(props: any) {
         super(props);
@@ -21,19 +27,24 @@ export default class TreeNode extends Vue {
 
     // lifecycle method
     mounted(): void {
-        if (this.$props.node.expanded) {
-            this.fetchTreeData(this.$props.node.identifier);
+        if (this.node.expanded) {
+            this.fetchTreeData(this.node.identifier);
         }
     }
 
-    private render(h: CreateElement): VNode {
-        const controlClassName = 'list-tree-control ' + (this.node.expanded ? 'list-tree-control-open' : 'list-tree-control-closed');
+    private select(): void {
+        this.selectCallBack(this.node.identifier);
+    }
+
+    private render(): VNode {
+        const controlClassName = 'list-tree-control list-tree-control-' + (this.node.expanded ? 'open' : 'closed');
+        const activeClassName = this.selectedNodeIdentifier === this.node.identifier ? 'active' : '';
         return(
-            <span class='list-tree-group' data-identifier={this.node.identifier}>
-                <a class={controlClassName} href='#' v-show={this.node.hasChildren} onclick={() => this.toggleNode(this.$props.node)}>
-                    <i class='fa'></i>
+            <span class={'list-tree-group ' + activeClassName} data-identifier={this.node.identifier}>
+                <a class={controlClassName} href='#' v-show={this.node.hasChildren} onclick={() => this.toggleNode(this.node)}>
+                    <i class='fa' />
                 </a>
-                <a href='#' data-identifier={this.node.identifier} onclick={() => this.fetchData(this.$props.node.identifier)}>
+                <a href='#' data-identifier={this.node.identifier} onclick={() => this.select()}>
                     <img src={this.node.icon} width='16' height='16' /> {this.node.name}
                 </a>
             </span>

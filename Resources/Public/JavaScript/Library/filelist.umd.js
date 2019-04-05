@@ -662,6 +662,57 @@ module.exports = __webpack_require__("e829");
 
 /***/ }),
 
+/***/ "0a49":
+/***/ (function(module, exports, __webpack_require__) {
+
+// 0 -> Array#forEach
+// 1 -> Array#map
+// 2 -> Array#filter
+// 3 -> Array#some
+// 4 -> Array#every
+// 5 -> Array#find
+// 6 -> Array#findIndex
+var ctx = __webpack_require__("9b43");
+var IObject = __webpack_require__("626a");
+var toObject = __webpack_require__("4bf8");
+var toLength = __webpack_require__("9def");
+var asc = __webpack_require__("cd1c");
+module.exports = function (TYPE, $create) {
+  var IS_MAP = TYPE == 1;
+  var IS_FILTER = TYPE == 2;
+  var IS_SOME = TYPE == 3;
+  var IS_EVERY = TYPE == 4;
+  var IS_FIND_INDEX = TYPE == 6;
+  var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
+  var create = $create || asc;
+  return function ($this, callbackfn, that) {
+    var O = toObject($this);
+    var self = IObject(O);
+    var f = ctx(callbackfn, that, 3);
+    var length = toLength(self.length);
+    var index = 0;
+    var result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined;
+    var val, res;
+    for (;length > index; index++) if (NO_HOLES || index in self) {
+      val = self[index];
+      res = f(val, index, O);
+      if (TYPE) {
+        if (IS_MAP) result[index] = res;   // map
+        else if (res) switch (TYPE) {
+          case 3: return true;             // some
+          case 5: return val;              // find
+          case 6: return index;            // findIndex
+          case 2: result.push(val);        // filter
+        } else if (IS_EVERY) return false; // every
+      }
+    }
+    return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
+  };
+};
+
+
+/***/ }),
+
 /***/ "0bfb":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -741,6 +792,18 @@ var min = Math.min;
 module.exports = function (index, length) {
   index = toInteger(index);
   return index < 0 ? max(index + length, 0) : min(index, length);
+};
+
+
+/***/ }),
+
+/***/ "1169":
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.2.2 IsArray(argument)
+var cof = __webpack_require__("2d95");
+module.exports = Array.isArray || function isArray(arg) {
+  return cof(arg) == 'Array';
 };
 
 
@@ -12015,6 +12078,28 @@ $export($export.G + $export.F * (parseInt != $parseInt), { parseInt: $parseInt }
 
 /***/ }),
 
+/***/ "7514":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
+var $export = __webpack_require__("5ca1");
+var $find = __webpack_require__("0a49")(5);
+var KEY = 'find';
+var forced = true;
+// Shouldn't skip holes
+if (KEY in []) Array(1)[KEY](function () { forced = false; });
+$export($export.P + $export.F * forced, 'Array', {
+  find: function find(callbackfn /* , that = undefined */) {
+    return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+__webpack_require__("9c6c")(KEY);
+
+
+/***/ }),
+
 /***/ "765d":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -14994,6 +15079,19 @@ exports.f = __webpack_require__("5168");
 
 /***/ }),
 
+/***/ "cd1c":
+/***/ (function(module, exports, __webpack_require__) {
+
+// 9.4.2.3 ArraySpeciesCreate(originalArray, length)
+var speciesConstructor = __webpack_require__("e853");
+
+module.exports = function (original, length) {
+  return new (speciesConstructor(original))(length);
+};
+
+
+/***/ }),
+
 /***/ "cd78":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -15632,6 +15730,29 @@ module.exports = __webpack_require__("b9e9");
 
 __webpack_require__("2f37");
 module.exports = __webpack_require__("584a").Date.now;
+
+
+/***/ }),
+
+/***/ "e853":
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__("d3f4");
+var isArray = __webpack_require__("1169");
+var SPECIES = __webpack_require__("2b4c")('species');
+
+module.exports = function (original) {
+  var C;
+  if (isArray(original)) {
+    C = original.constructor;
+    // cross-realm fallback
+    if (typeof C == 'function' && (C === Array || isArray(C.prototype))) C = undefined;
+    if (isObject(C)) {
+      C = C[SPECIES];
+      if (C === null) C = undefined;
+    }
+  } return C === undefined ? Array : C;
+};
 
 
 /***/ }),
@@ -16536,11 +16657,17 @@ Overlay_Overlay = __decorate([vue_class_component_common_default.a], Overlay_Ove
 var AjaxRoutes;
 
 (function (AjaxRoutes) {
-  AjaxRoutes["damGetFolderItems"] = "damGetFolderItems";
-  AjaxRoutes["damGetStoragesAndMounts"] = "damGetStoragesAndMounts";
-  AjaxRoutes["damGetTreeFolders"] = "damGetTreeFolders";
+  AjaxRoutes["damCreateFolder"] = "damCreateFolder";
   AjaxRoutes["damFileExists"] = "damFileExists";
   AjaxRoutes["damFileUpload"] = "damFileUpload";
+  AjaxRoutes["damGetFolderItems"] = "damGetFolderItems";
+  AjaxRoutes["damGetTreeFolders"] = "damGetTreeFolders";
+  AjaxRoutes["damGetStoragesAndMounts"] = "damGetStoragesAndMounts";
+  AjaxRoutes["damCopyResources"] = "damCopyResources";
+  AjaxRoutes["damMoveResources"] = "damMoveResources";
+  AjaxRoutes["damRenameResources"] = "damRenameResources";
+  AjaxRoutes["damDeleteResources"] = "damDeleteResources";
+  AjaxRoutes["damPrepareDownload"] = "damPrepareDownload";
   AjaxRoutes["damGetNewStorageUrl"] = "damGetNewStorageUrl";
   AjaxRoutes["damGetLogoutUrl"] = "damGetLogoutUrl";
 })(AjaxRoutes || (AjaxRoutes = {}));
@@ -17820,18 +17947,25 @@ function (_Vue) {
   _createClass(TreeNode, [{
     key: "mounted",
     value: function mounted() {
-      if (this.$props.node.expanded) {
-        this.fetchTreeData(this.$props.node.identifier);
+      if (this.node.expanded) {
+        this.fetchTreeData(this.node.identifier);
       }
     }
   }, {
+    key: "select",
+    value: function select() {
+      this.selectCallBack(this.node.identifier);
+    }
+  }, {
     key: "render",
-    value: function render(h) {
+    value: function render() {
       var _this = this;
 
-      var controlClassName = 'list-tree-control ' + (this.node.expanded ? 'list-tree-control-open' : 'list-tree-control-closed');
+      var h = arguments[0];
+      var controlClassName = 'list-tree-control list-tree-control-' + (this.node.expanded ? 'open' : 'closed');
+      var activeClassName = this.selectedNodeIdentifier === this.node.identifier ? 'active' : '';
       return h("span", {
-        "class": 'list-tree-group',
+        "class": 'list-tree-group ' + activeClassName,
         "attrs": {
           "data-identifier": this.node.identifier
         }
@@ -17846,7 +17980,7 @@ function (_Vue) {
         }],
         "on": {
           "click": function click() {
-            return _this.toggleNode(_this.$props.node);
+            return _this.toggleNode(_this.node);
           }
         }
       }, [h("i", {
@@ -17858,7 +17992,7 @@ function (_Vue) {
         },
         "on": {
           "click": function click() {
-            return _this.fetchData(_this.$props.node.identifier);
+            return _this.select();
           }
         }
       }, [h("img", {
@@ -17918,11 +18052,15 @@ function (_Vue) {
   return TreeNode;
 }(vue_runtime_esm["default"]);
 
-__decorate([Action(AjaxRoutes.damGetFolderItems)], TreeNode_TreeNode.prototype, "fetchData", void 0);
-
 __decorate([Action(AjaxRoutes.damGetTreeFolders)], TreeNode_TreeNode.prototype, "fetchTreeData", void 0);
 
+__decorate([State], TreeNode_TreeNode.prototype, "treeFolders", void 0);
+
+__decorate([Prop()], TreeNode_TreeNode.prototype, "selectedNodeIdentifier", void 0);
+
 __decorate([Prop()], TreeNode_TreeNode.prototype, "node", void 0);
+
+__decorate([Prop()], TreeNode_TreeNode.prototype, "selectCallBack", void 0);
 
 TreeNode_TreeNode = __decorate([vue_class_component_common_default.a], TreeNode_TreeNode);
 /* harmony default export */ var components_TreeNode = (TreeNode_TreeNode);
@@ -18252,6 +18390,7 @@ function (_Vue) {
     _classCallCheck(this, Tree);
 
     _this = _possibleConstructorReturn(this, getPrototypeOf_getPrototypeOf(Tree).call(this, props));
+    _this.selectedNodeIdentifier = '';
     var configuration = {
       draggableElements: 'li[data-type="' + FileType.FOLDER + '"] .list-tree-group',
       dropInto: 'li[data-type="' + FileType.FOLDER + '"] .list-tree-group'
@@ -18264,6 +18403,12 @@ function (_Vue) {
     key: "mounted",
     value: function mounted() {
       this.draggableService.makeDraggable();
+    }
+  }, {
+    key: "select",
+    value: function select(identifier) {
+      this.selectedNodeIdentifier = identifier;
+      this.selectCallBack(identifier);
     }
   }, {
     key: "render",
@@ -18294,7 +18439,9 @@ function (_Vue) {
       var h = this.$createElement;
       var treeNodeElement = h(components_TreeNode, {
         "attrs": {
-          "node": node
+          "node": node,
+          "selectCallBack": this.select,
+          "selectedNodeIdentifier": this.activeNode
         }
       });
       var childNodes;
@@ -18309,6 +18456,11 @@ function (_Vue) {
         }
       }, [treeNodeElement, childNodes]);
     }
+  }, {
+    key: "activeNode",
+    get: function get() {
+      return this.selectedNodeIdentifier;
+    }
   }]);
 
   return Tree;
@@ -18319,6 +18471,8 @@ __decorate([Action(AjaxRoutes.damGetTreeFolders)], Tree_Tree.prototype, "fetchTr
 __decorate([Prop()], Tree_Tree.prototype, "storage", void 0);
 
 __decorate([State], Tree_Tree.prototype, "treeFolders", void 0);
+
+__decorate([Prop()], Tree_Tree.prototype, "selectCallBack", void 0);
 
 Tree_Tree = __decorate([vue_class_component_common_default.a], Tree_Tree);
 /* harmony default export */ var components_Tree = (Tree_Tree);
@@ -18539,6 +18693,13 @@ function (_Vue) {
   }
 
   _createClass(TreePanel, [{
+    key: "mounted",
+    value: function mounted() {
+      if (this.activeStorage) {
+        this.fetchTreeData(this.browsableIdentifier);
+      }
+    }
+  }, {
     key: "updated",
     value: function updated() {
       this.fetchTreeData(this.browsableIdentifier);
@@ -18555,7 +18716,8 @@ function (_Vue) {
         "class": ''
       }, [this.activeStorage ? h(components_Tree, {
         "attrs": {
-          "storage": this.activeStorage
+          "storage": this.activeStorage,
+          "selectCallBack": this.fetchFolderItems
         }
       }) : ''])]);
     }
@@ -18568,6 +18730,8 @@ function (_Vue) {
 
   return TreePanel;
 }(vue_runtime_esm["default"]);
+
+__decorate([Action(AjaxRoutes.damGetFolderItems)], TreePanel_TreePanel.prototype, "fetchFolderItems", void 0);
 
 __decorate([Action(AjaxRoutes.damGetTreeFolders)], TreePanel_TreePanel.prototype, "fetchTreeData", void 0);
 
@@ -18716,7 +18880,7 @@ function (_Vue) {
         },
         "on": {
           "click": function click(event) {
-            return _this.toggleSelect(event, _this.listOfIdentifiers);
+            return _this.toggleSelect(event, _this.listOfResources);
           }
         }
       }), h("label", {
@@ -18730,9 +18894,9 @@ function (_Vue) {
     }
   }, {
     key: "toggleSelect",
-    value: function toggleSelect(event, listOfIdentifiers) {
+    value: function toggleSelect(event, listOfResources) {
       event.stopPropagation();
-      this.selected.length > 0 ? this.unselectItems(listOfIdentifiers) : this.selectItems(listOfIdentifiers);
+      this.selected.length > 0 ? this.unselectItems(listOfResources) : this.selectItems(listOfResources);
     }
   }, {
     key: "isSelected",
@@ -18750,7 +18914,7 @@ __decorate([Mutation(Mutations.UNSELECT_ALL)], AllSelector_AllSelector.prototype
 
 __decorate([State], AllSelector_AllSelector.prototype, "selected", void 0);
 
-__decorate([Prop()], AllSelector_AllSelector.prototype, "listOfIdentifiers", void 0);
+__decorate([Prop()], AllSelector_AllSelector.prototype, "listOfResources", void 0);
 
 AllSelector_AllSelector = __decorate([vue_class_component_common_default.a], AllSelector_AllSelector);
 /* harmony default export */ var components_AllSelector = (AllSelector_AllSelector);
@@ -18801,42 +18965,40 @@ function (_Vue) {
       var h = arguments[0];
       var randomPart = Math.random().toString(36).substring(7);
       var label = this.isSelected ? TYPO3.lang['ItemSelector.label.deselect'] : TYPO3.lang['ItemSelector.label.select'];
-      return h("span", {
-        "class": 'component-checkbox'
-      }, [h("input", {
-        "class": 'component-checkbox-input',
+      return h("a", {
         "attrs": {
-          "type": 'checkbox',
-          "id": 'component-datatable-select-identifier-' + randomPart,
-          "value": '1'
-        },
-        "domProps": {
-          "checked": this.selected.includes(this.identifier)
-        }
-      }), h("label", {
-        "class": 'component-checkbox-label',
-        "attrs": {
-          "for": 'component-datatable-select-identifier-' + randomPart
+          "href": '#',
+          "className": 'btn btn-sm btn-default'
         },
         "on": {
           "click": function click(event) {
-            return _this.toggleSelect(event, _this.identifier);
+            return _this.toggleSelect(event, _this.item);
           }
         }
-      }, [h("span", {
-        "class": 'component-visually-hidden'
-      }, [label, " ", this.identifier])])]);
+      }, [h("i", {
+        "class": 'fa fa-check-square',
+        "directives": [{
+          name: "show",
+          value: this.isSelected
+        }]
+      }), h("i", {
+        "class": 'fa fa-square-o',
+        "directives": [{
+          name: "show",
+          value: !this.isSelected
+        }]
+      })]);
     }
   }, {
     key: "toggleSelect",
-    value: function toggleSelect(event, identifier) {
+    value: function toggleSelect(event, item) {
       event.stopPropagation();
-      this.selected.includes(identifier) ? this.unselectItem(identifier) : this.selectItem(identifier);
+      this.selected.includes(item) ? this.unselectItem(item) : this.selectItem(item);
     }
   }, {
     key: "isSelected",
     get: function get() {
-      return this.selected.includes(this.identifier);
+      return this.selected.includes(this.item);
     }
   }]);
 
@@ -18849,7 +19011,7 @@ __decorate([Mutation(Mutations.UNSELECT_ITEM)], ItemSelector_ItemSelector.protot
 
 __decorate([State], ItemSelector_ItemSelector.prototype, "selected", void 0);
 
-__decorate([Prop()], ItemSelector_ItemSelector.prototype, "identifier", void 0);
+__decorate([Prop()], ItemSelector_ItemSelector.prototype, "item", void 0);
 
 ItemSelector_ItemSelector = __decorate([vue_class_component_common_default.a], ItemSelector_ItemSelector);
 /* harmony default export */ var components_ItemSelector = (ItemSelector_ItemSelector);
@@ -19480,7 +19642,7 @@ function (_Vue) {
         "class": 'pull-right'
       }, [h(components_ItemSelector, {
         "attrs": {
-          "identifier": item.identifier
+          "item": item
         }
       })]), h("span", {
         "class": 'tile-image-container'
@@ -19531,15 +19693,14 @@ function (_Vue) {
         "class": 'pull-right'
       }, [h(components_ItemSelector, {
         "attrs": {
-          "identifier": item.identifier
+          "item": item
         }
       })]), h("span", {
         "class": 'tile-image-container'
-      }, [h("img", {
+      }, [h(components_Icon, {
         "attrs": {
-          "src": item.iconIdentifier
-        },
-        "class": 'tile-image'
+          "identifier": item.iconIdentifier
+        }
       })])]), h("div", {
         "attrs": {
           "className": 'tile-title'
@@ -19575,7 +19736,7 @@ function (_Vue) {
         "class": 'pull-right'
       }, [h(components_ItemSelector, {
         "attrs": {
-          "identifier": item.identifier
+          "item": item
         }
       })]), h("span", {
         "class": 'tile-image-container'
@@ -20714,7 +20875,7 @@ var request_sendFormRequest = function sendFormRequest(xhr, data) {
  * @returns Promise
  */
 
-/* harmony default export */ var request = (function (options) {
+/* harmony default export */ var utils_request = (function (options) {
   var xhr = request_createRequest(options);
   return request_sendRequest(xhr, options.body);
 });
@@ -20843,7 +21004,7 @@ function () {
     value: function start() {
       var _this2 = this;
 
-      request({
+      utils_request({
         method: 'POST',
         headers: assign_default()({}, this.headers, {
           'Content-Type': 'application/json'
@@ -20973,7 +21134,7 @@ function () {
       var _this4 = this;
 
       this.updateFileProgress();
-      request({
+      utils_request({
         method: 'POST',
         headers: assign_default()({}, this.headers, {
           'Content-Type': 'application/json'
@@ -23254,7 +23415,574 @@ __decorate([Mutation(Mutations.CLEAR_MODAL_CONTENT)], DropZone_DropZone.prototyp
 
 DropZone_DropZone = __decorate([vue_class_component_common_default.a], DropZone_DropZone);
 /* harmony default export */ var components_DropZone = (DropZone_DropZone);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es6.array.find.js
+var es6_array_find = __webpack_require__("7514");
+
+// CONCATENATED MODULE: ./src/components/CopyMoveModal/index.tsx
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var CopyMoveModal_CopyMoveModal =
+/*#__PURE__*/
+function (_Vue) {
+  _inherits(CopyMoveModal, _Vue);
+
+  function CopyMoveModal(props) {
+    _classCallCheck(this, CopyMoveModal);
+
+    return _possibleConstructorReturn(this, getPrototypeOf_getPrototypeOf(CopyMoveModal).call(this, props));
+  }
+
+  _createClass(CopyMoveModal, [{
+    key: "render",
+    value: function render() {
+      var h = arguments[0];
+      var selectedItems = this.renderSelectedItemList();
+      return h("div", {
+        "class": 'row'
+      }, [h("div", {
+        "class": 'col-xs-6'
+      }, [selectedItems]), h("div", {
+        "class": 'col-xs-6'
+      }, [h(components_Tree, {
+        "attrs": {
+          "storage": this.activeStorage,
+          "selectCallBack": function selectCallBack(identifier) {
+            console.log(identifier);
+          }
+        }
+      })])]);
+    }
+  }, {
+    key: "renderSelectedItemList",
+    value: function renderSelectedItemList() {
+      var h = this.$createElement;
+      var selectedItems = [];
+
+      for (var i = 0; i < this.selected.length; i++) {
+        selectedItems.push(this.renderSelectedItem(this.selected[i]));
+      }
+
+      var currentPath = 'Coming soon...';
+      return h("div", {
+        "class": 'component-selected-items-list'
+      }, [h("p", ["Move ", this.selected.length, " Elements to", h("br"), h("strong", [currentPath])]), selectedItems]);
+    }
+  }, {
+    key: "renderSelectedItem",
+    value: function renderSelectedItem(item) {
+      switch (item.type) {
+        case FileType.FILE:
+          return this.renderFileItem(item);
+
+        case FileType.FOLDER:
+          return this.renderFolderItem(item);
+
+        case FileType.IMAGE:
+          return this.renderImageItem(item);
+
+        default:
+          throw Error('unknown type');
+      }
+    }
+  }, {
+    key: "renderFileItem",
+    value: function renderFileItem(item) {
+      var _this = this;
+
+      var h = this.$createElement;
+
+      var clickFunction = function clickFunction(e) {
+        e.stopPropagation();
+
+        _this.unselectItem(item);
+      };
+
+      return h("div", {
+        "class": 'component-selected-items-list-item'
+      }, [h("div", {
+        "class": 'component-selected-items-list-item-icon'
+      }, [h(components_Icon, {
+        "attrs": {
+          "identifier": item.iconIdentifier
+        }
+      })]), h("div", {
+        "class": 'component-selected-items-list-item-data'
+      }, [item.name, h("br"), h("small", [item.mtimeDisplay])]), h("div", {
+        "class": 'component-selected-items-list-item-action'
+      }, [h("a", {
+        "attrs": {
+          "href": '#'
+        },
+        "on": {
+          "click": clickFunction
+        }
+      }, ["X"])])]);
+    }
+  }, {
+    key: "renderFolderItem",
+    value: function renderFolderItem(item) {
+      var _this2 = this;
+
+      var h = this.$createElement;
+
+      var clickFunction = function clickFunction(e) {
+        e.stopPropagation();
+
+        _this2.unselectItem(item);
+      };
+
+      return h("div", {
+        "class": 'component-selected-items-list-item'
+      }, [h("div", {
+        "class": 'component-selected-items-list-item-icon'
+      }, [h("img", {
+        "attrs": {
+          "src": item.icon,
+          "width": '32',
+          "height": '32'
+        }
+      })]), h("div", {
+        "class": 'component-selected-items-list-item-data'
+      }, [item.name, h("br"), h("small", [item.mtimeDisplay])]), h("div", {
+        "class": 'component-selected-items-list-item-action'
+      }, [h("a", {
+        "attrs": {
+          "href": '#'
+        },
+        "on": {
+          "click": clickFunction
+        }
+      }, ["X"])])]);
+    }
+  }, {
+    key: "renderImageItem",
+    value: function renderImageItem(item) {
+      var _this3 = this;
+
+      var h = this.$createElement;
+
+      var clickFunction = function clickFunction(e) {
+        e.stopPropagation();
+
+        _this3.unselectItem(item);
+      };
+
+      return h("div", {
+        "class": 'component-selected-items-list-item'
+      }, [h("div", {
+        "class": 'component-selected-items-list-item-icon'
+      }, [h("img", {
+        "attrs": {
+          "src": item.thumbnailUrl,
+          "height": '32'
+        }
+      })]), h("div", {
+        "class": 'component-selected-items-list-item-data'
+      }, [item.name, h("br"), h("small", [item.mtimeDisplay])]), h("div", {
+        "class": 'component-selected-items-list-item-action'
+      }, [h("a", {
+        "attrs": {
+          "href": '#'
+        },
+        "on": {
+          "click": clickFunction
+        }
+      }, ["X"])])]);
+    }
+  }]);
+
+  return CopyMoveModal;
+}(vue_runtime_esm["default"]);
+
+__decorate([Mutation(Mutations.UNSELECT_ITEM)], CopyMoveModal_CopyMoveModal.prototype, "unselectItem", void 0);
+
+__decorate([Action(AjaxRoutes.damMoveResources)], CopyMoveModal_CopyMoveModal.prototype, "moveResources", void 0);
+
+__decorate([Action(AjaxRoutes.damCopyResources)], CopyMoveModal_CopyMoveModal.prototype, "copyResources", void 0);
+
+__decorate([State], CopyMoveModal_CopyMoveModal.prototype, "selected", void 0);
+
+__decorate([State], CopyMoveModal_CopyMoveModal.prototype, "activeStorage", void 0);
+
+CopyMoveModal_CopyMoveModal = __decorate([vue_class_component_common_default.a], CopyMoveModal_CopyMoveModal);
+/* harmony default export */ var components_CopyMoveModal = (CopyMoveModal_CopyMoveModal);
+// CONCATENATED MODULE: ./src/components/ButtonBar/index.tsx
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var ButtonBar_ButtonBar =
+/*#__PURE__*/
+function (_Vue) {
+  _inherits(ButtonBar, _Vue);
+
+  function ButtonBar(props) {
+    _classCallCheck(this, ButtonBar);
+
+    return _possibleConstructorReturn(this, getPrototypeOf_getPrototypeOf(ButtonBar).call(this, props));
+  }
+
+  _createClass(ButtonBar, [{
+    key: "copyResources",
+    value: function () {
+      var _copyResources = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee(request) {
+        var identifiers, response;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                identifiers = [];
+
+                values_default()(request.resources).map(function (item) {
+                  identifiers.push(item.identifier);
+                });
+
+                _context.next = 4;
+                return Typo3Client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damCopyResources] + '&conflictMode=rename' + '&identifiers[]=' + identifiers.join('&identifiers[]=') + '&targetFolderIdentifier=' + request.target);
+
+              case 4:
+                response = _context.sent;
+
+                if (response.status === 200) {
+                  this.modal.trigger('modal-dismiss');
+                  this.fetchData(request.target);
+                  this.navigate(request.target);
+                }
+
+              case 6:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function copyResources(_x) {
+        return _copyResources.apply(this, arguments);
+      }
+
+      return copyResources;
+    }()
+  }, {
+    key: "moveResources",
+    value: function () {
+      var _moveResources = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee2(request) {
+        var identifiers, response;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                identifiers = [];
+
+                values_default()(request.resources).map(function (item) {
+                  identifiers.push(item.identifier);
+                });
+
+                _context2.next = 4;
+                return Typo3Client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damMoveResources] + '&conflictMode=rename' + '&identifiers[]=' + identifiers.join('&identifiers[]=') + '&targetFolderIdentifier=' + request.target);
+
+              case 4:
+                response = _context2.sent;
+
+                if (response.status === 200) {
+                  this.modal.trigger('modal-dismiss');
+                  this.fetchData(request.target);
+                  this.navigate(request.target);
+                }
+
+              case 6:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function moveResources(_x2) {
+        return _moveResources.apply(this, arguments);
+      }
+
+      return moveResources;
+    }()
+  }, {
+    key: "deleteResources",
+    value: function () {
+      var _deleteResources = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee3(request) {
+        var identifiers, response;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                identifiers = [];
+
+                values_default()(request.resources).map(function (item) {
+                  identifiers.push(item.identifier);
+                });
+
+                _context3.next = 4;
+                return Typo3Client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damDeleteResources] + '&identifiers[]=' + identifiers.join('&identifiers[]='));
+
+              case 4:
+                response = _context3.sent;
+
+                if (response.status === 200) {
+                  this.modal.trigger('modal-dismiss');
+                  this.fetchData(this.current);
+                  this.navigate(this.current);
+                }
+
+              case 6:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function deleteResources(_x3) {
+        return _deleteResources.apply(this, arguments);
+      }
+
+      return deleteResources;
+    }()
+  }, {
+    key: "downloadResources",
+    value: function () {
+      var _downloadResources = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee4(request) {
+        var identifiers, response;
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                identifiers = [];
+
+                values_default()(request.resources).map(function (item) {
+                  identifiers.push(item.identifier);
+                });
+
+                _context4.next = 4;
+                return Typo3Client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damPrepareDownload] + '&identifiers[]=' + identifiers.join('&identifiers[]='), {
+                  responseType: 'blob'
+                }).then(function (resp) {
+                  var url = window.URL.createObjectURL(new Blob([resp.data]));
+                  var link = document.createElement('a');
+                  link.href = url;
+                  link.setAttribute('download', resp.headers.filename);
+                  document.body.appendChild(link);
+                  link.click();
+                });
+
+              case 4:
+                response = _context4.sent;
+
+              case 5:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
+      }));
+
+      function downloadResources(_x4) {
+        return _downloadResources.apply(this, arguments);
+      }
+
+      return downloadResources;
+    }()
+  }, {
+    key: "selectTarget",
+    value: function selectTarget(action) {
+      var _this = this;
+
+      var h = this.$createElement;
+      this.setModalContent(h(components_CopyMoveModal));
+      var content = jQuery('#vue-modalContent');
+      this.modal = Modal_default.a.advanced({
+        content: content,
+        additionalCssClasses: ['modal-select-target'],
+        buttons: [{
+          btnClass: 'btn-default',
+          dataAttributes: {
+            method: 'dismiss'
+          },
+          icon: 'actions-close',
+          text: 'Cancel'
+        }, {
+          btnClass: 'btn-primary',
+          dataAttributes: {
+            method: 'select'
+          },
+          text: 'Select target'
+        }],
+        callback: function callback(currentModal) {
+          currentModal.on('button.clicked', function (e) {
+            var method = $(e.target).data('method');
+
+            if (method === 'dismiss') {
+              currentModal.trigger('modal-dismiss');
+            }
+
+            if (method === 'select') {
+              var target = $(e.currentTarget).find('.list-tree .list-tree-group.active').data('identifier');
+              action({
+                'resources': _this.selected,
+                'target': target
+              }); // currentModal.trigger('modal-dismiss');
+            }
+          });
+        },
+        title: 'Select target folder'
+      });
+    }
+  }, {
+    key: "confirm",
+    value: function confirm(action) {
+      var _this2 = this;
+
+      this.modal = Modal_default.a.confirm('Are you sure?', 'Do you want delete the selected resources?').on('confirm.button.cancel', function () {
+        _this2.modal.trigger('modal-dismiss');
+      }).on('confirm.button.ok', function () {
+        action({
+          'resources': _this2.selected
+        });
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this3 = this;
+
+      var h = arguments[0];
+      var disabled = this.selected.length === 0;
+      var cssClasses = 'btn btn-default' + (disabled ? ' disabled' : '');
+
+      var moveResources = function moveResources(e) {
+        e.stopPropagation();
+
+        _this3.selectTarget(_this3.moveResources);
+      };
+
+      var copyResources = function copyResources(e) {
+        e.stopPropagation();
+
+        _this3.selectTarget(_this3.copyResources);
+      };
+
+      var deleteResources = function deleteResources(e) {
+        e.stopPropagation();
+
+        _this3.confirm(_this3.deleteResources);
+      };
+
+      var downloadResources = function downloadResources(e) {
+        e.stopPropagation();
+
+        _this3.downloadResources({
+          'resources': _this3.selected
+        });
+      };
+
+      return h("div", {
+        "class": 'btn-group'
+      }, [h("a", {
+        "attrs": {
+          "href": '#',
+          "disabled": disabled
+        },
+        "class": cssClasses,
+        "on": {
+          "click": downloadResources
+        }
+      }, [h("i", {
+        "class": 'fa fa-download'
+      }), " Download"]), h("a", {
+        "attrs": {
+          "href": '#',
+          "disabled": disabled
+        },
+        "class": cssClasses,
+        "on": {
+          "click": deleteResources
+        }
+      }, [h("i", {
+        "class": 'fa fa-trash'
+      }), " Delete"]), h("a", {
+        "attrs": {
+          "href": '#',
+          "disabled": disabled
+        },
+        "class": cssClasses,
+        "on": {
+          "click": moveResources
+        }
+      }, [h("i", {
+        "class": 'fa fa-crosshairs'
+      }), " Move to"]), h("a", {
+        "attrs": {
+          "href": '#',
+          "disabled": disabled
+        },
+        "class": cssClasses,
+        "on": {
+          "click": copyResources
+        }
+      }, [h("i", {
+        "class": 'fa fa-clipboard'
+      }), " Copy to"])]);
+    }
+  }]);
+
+  return ButtonBar;
+}(vue_runtime_esm["default"]);
+
+__decorate([Action(AjaxRoutes.damGetFolderItems)], ButtonBar_ButtonBar.prototype, "fetchData", void 0);
+
+__decorate([Mutation(Mutations.SET_MODAL_CONTENT)], ButtonBar_ButtonBar.prototype, "setModalContent", void 0);
+
+__decorate([Mutation(Mutations.NAVIGATE)], ButtonBar_ButtonBar.prototype, "navigate", void 0);
+
+__decorate([State], ButtonBar_ButtonBar.prototype, "selected", void 0);
+
+__decorate([State], ButtonBar_ButtonBar.prototype, "current", void 0);
+
+ButtonBar_ButtonBar = __decorate([vue_class_component_common_default.a], ButtonBar_ButtonBar);
+/* harmony default export */ var components_ButtonBar = (ButtonBar_ButtonBar);
 // CONCATENATED MODULE: ./src/components/ContentPanel/index.tsx
+
 
 
 
@@ -23310,7 +24038,7 @@ function (_Vue) {
         }]
       }), h(components_ViewSelector)]), h("template", {
         "slot": 'topBarRight'
-      }, [h(components_SortingSelector)]), h("template", {
+      }, [h(components_ButtonBar), h(components_SortingSelector)]), h("template", {
         "slot": 'bottomBarLeft'
       }, [h(components_StorageSelector), h(components_Breadcrumb, {
         "directives": [{
@@ -23465,13 +24193,13 @@ var store_options = {
     },
     items: [],
     current: '',
+    modalContent: null,
     viewMode: ViewType.TILE,
     showTree: true,
     activeStorage: null,
     treeFolders: [],
     storages: [],
-    treeIdentifierLocationMap: {},
-    modalContent: null
+    treeIdentifierLocationMap: {}
   },
   mutations: (_mutations = {}, _defineProperty(_mutations, Mutations.FETCH_DATA, function (state, items) {
     var sortItems = function sortItems(a, b) {
@@ -23525,16 +24253,16 @@ var store_options = {
         }
       }
     }
-  }), _defineProperty(_mutations, Mutations.SELECT_ITEM, function (state, identifier) {
-    if (!state.selected.includes(identifier)) {
-      state.selected.push(identifier);
+  }), _defineProperty(_mutations, Mutations.SELECT_ITEM, function (state, item) {
+    if (!state.selected.includes(item)) {
+      state.selected.push(item);
     }
-  }), _defineProperty(_mutations, Mutations.UNSELECT_ITEM, function (state, identifier) {
-    if (state.selected.includes(identifier)) {
-      state.selected.splice(state.selected.indexOf(identifier), 1);
+  }), _defineProperty(_mutations, Mutations.UNSELECT_ITEM, function (state, item) {
+    if (state.selected.includes(item)) {
+      state.selected.splice(state.selected.indexOf(item), 1);
     }
-  }), _defineProperty(_mutations, Mutations.SELECT_ALL, function (state, listOfIdentifiers) {
-    state.selected = listOfIdentifiers;
+  }), _defineProperty(_mutations, Mutations.SELECT_ALL, function (state, listOfResources) {
+    state.selected = listOfResources;
   }), _defineProperty(_mutations, Mutations.UNSELECT_ALL, function (state) {
     state.selected = [];
   }), _defineProperty(_mutations, Mutations.NAVIGATE, function (state, identifier) {
@@ -23630,7 +24358,7 @@ var store_options = {
   }), _defineProperty(_mutations, Mutations.CLEAR_MODAL_CONTENT, function (state) {
     state.modalContent = null;
   }), _mutations),
-  actions: (_actions = {}, _defineProperty(_actions, AjaxRoutes.damGetFolderItems, function () {
+  actions: (_actions = {}, _defineProperty(_actions, Mutations.FETCH_DATA, function () {
     var _ref2 = _asyncToGenerator(
     /*#__PURE__*/
     regeneratorRuntime.mark(function _callee(_ref, identifier) {
@@ -23640,9 +24368,10 @@ var store_options = {
           switch (_context.prev = _context.next) {
             case 0:
               commit = _ref.commit;
-              commit(Mutations.NAVIGATE, identifier);
+              commit(Mutations.NAVIGATE, identifier); // request [dummy data]:
+
               _context.next = 4;
-              return Typo3Client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetFolderItems] + '&identifier=' + identifier);
+              return Typo3Client.get('http://localhost:8080/api/files.json?identifier=' + identifier);
 
             case 4:
               response = _context.sent;
@@ -23659,7 +24388,7 @@ var store_options = {
     return function (_x, _x2) {
       return _ref2.apply(this, arguments);
     };
-  }()), _defineProperty(_actions, AjaxRoutes.damGetStoragesAndMounts, function () {
+  }()), _defineProperty(_actions, AjaxRoutes.damGetFolderItems, function () {
     var _ref4 = _asyncToGenerator(
     /*#__PURE__*/
     regeneratorRuntime.mark(function _callee2(_ref3, identifier) {
@@ -23669,14 +24398,15 @@ var store_options = {
           switch (_context2.prev = _context2.next) {
             case 0:
               commit = _ref3.commit;
-              _context2.next = 3;
-              return Typo3Client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetStoragesAndMounts]);
+              commit(Mutations.NAVIGATE, identifier);
+              _context2.next = 4;
+              return Typo3Client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetFolderItems] + '&identifier=' + identifier);
 
-            case 3:
+            case 4:
               response = _context2.sent;
-              commit(Mutations.FETCH_STORAGES, response.data);
+              commit(Mutations.FETCH_DATA, response.data);
 
-            case 5:
+            case 6:
             case "end":
               return _context2.stop();
           }
@@ -23687,7 +24417,7 @@ var store_options = {
     return function (_x3, _x4) {
       return _ref4.apply(this, arguments);
     };
-  }()), _defineProperty(_actions, AjaxRoutes.damGetTreeFolders, function () {
+  }()), _defineProperty(_actions, AjaxRoutes.damGetStoragesAndMounts, function () {
     var _ref6 = _asyncToGenerator(
     /*#__PURE__*/
     regeneratorRuntime.mark(function _callee3(_ref5, identifier) {
@@ -23698,14 +24428,11 @@ var store_options = {
             case 0:
               commit = _ref5.commit;
               _context3.next = 3;
-              return Typo3Client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetTreeFolders] + '&identifier=' + identifier);
+              return Typo3Client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetStoragesAndMounts]);
 
             case 3:
               response = _context3.sent;
-              commit(Mutations.FETCH_TREE_DATA, {
-                identifier: identifier,
-                folders: response.data
-              });
+              commit(Mutations.FETCH_STORAGES, response.data);
 
             case 5:
             case "end":
@@ -23718,19 +24445,27 @@ var store_options = {
     return function (_x5, _x6) {
       return _ref6.apply(this, arguments);
     };
-  }()), _defineProperty(_actions, Mutations.SET_STORAGE, function () {
+  }()), _defineProperty(_actions, AjaxRoutes.damGetTreeFolders, function () {
     var _ref8 = _asyncToGenerator(
     /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee4(_ref7, storageId) {
-      var commit, dispatch;
+    regeneratorRuntime.mark(function _callee4(_ref7, identifier) {
+      var commit, response;
       return regeneratorRuntime.wrap(function _callee4$(_context4) {
         while (1) {
           switch (_context4.prev = _context4.next) {
             case 0:
-              commit = _ref7.commit, dispatch = _ref7.dispatch;
-              commit(Mutations.SET_STORAGE, storageId);
+              commit = _ref7.commit;
+              _context4.next = 3;
+              return Typo3Client.get(TYPO3.settings.ajaxUrls[AjaxRoutes.damGetTreeFolders] + '&identifier=' + identifier);
 
-            case 2:
+            case 3:
+              response = _context4.sent;
+              commit(Mutations.FETCH_TREE_DATA, {
+                identifier: identifier,
+                folders: response.data
+              });
+
+            case 5:
             case "end":
               return _context4.stop();
           }
@@ -23740,6 +24475,29 @@ var store_options = {
 
     return function (_x7, _x8) {
       return _ref8.apply(this, arguments);
+    };
+  }()), _defineProperty(_actions, Mutations.SET_STORAGE, function () {
+    var _ref10 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee5(_ref9, storageId) {
+      var commit, dispatch;
+      return regeneratorRuntime.wrap(function _callee5$(_context5) {
+        while (1) {
+          switch (_context5.prev = _context5.next) {
+            case 0:
+              commit = _ref9.commit, dispatch = _ref9.dispatch;
+              commit(Mutations.SET_STORAGE, storageId);
+
+            case 2:
+            case "end":
+              return _context5.stop();
+          }
+        }
+      }, _callee5);
+    }));
+
+    return function (_x9, _x10) {
+      return _ref10.apply(this, arguments);
     };
   }()), _actions)
 };

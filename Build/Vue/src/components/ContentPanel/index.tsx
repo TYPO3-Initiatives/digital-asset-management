@@ -13,6 +13,7 @@ import StorageSelector from '@/components/StorageSelector';
 import {Action, State} from 'vuex-class';
 import TreeToggle from '@/components/TreeToggle';
 import DropZone from '@/components/DropZone';
+import ButtonBar from '@/components/ButtonBar';
 
 @Component
 export default class ContentPanel extends Vue {
@@ -39,7 +40,7 @@ export default class ContentPanel extends Vue {
                     <template slot='beforeUploadTable'>
                         <DocHeader>
                             <template slot='topBarLeft'><TreeToggle v-show={this.activeStorage}/><ViewSelector/></template>
-                            <template slot='topBarRight'><SortingSelector/></template>
+                            <template slot='topBarRight'><ButtonBar /><SortingSelector/></template>
                             <template slot='bottomBarLeft'><StorageSelector /><Breadcrumb v-show={this.activeStorage}/></template>
                             <template slot='bottomBarRight'><SelectIndicator v-show={this.activeStorage}/></template>
                         </DocHeader>
