@@ -1,0 +1,121 @@
+//
+// Tile
+//
+$component-tile-spacer: 1.25rem;
+$component-tile-gutter: 1rem;
+
+.component-tile-list {
+    display: flex;
+    flex-wrap: wrap;
+    margin: $component-tile-spacer (-1 * ($component-tile-gutter / 2));
+
+    &:first-child {
+        margin-top: (-1 * ($component-tile-gutter / 2));
+    }
+    &:last-child {
+        margin-bottom: (-1 * ($component-tile-gutter / 2));
+    }
+}
+
+.component-tile {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 11rem;
+    height: 12rem;
+    border: 1px solid transparent;
+    border-color: #eaeaea;
+    margin: ($component-tile-gutter / 2);
+
+    &:hover,
+    &:focus,
+    &.component-tile-selected {
+        text-decoration: none;
+        outline: $component-outline;
+        border-color: map-get($colors, 'primary');
+    }
+}
+
+.component-tile-icon {
+    padding: 1rem;
+    padding-bottom: 0;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.component-tile-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+
+    img {
+        object-fit: cover;
+        height: 100%;
+        width: 100%;
+    }
+}
+
+.component-tile-info {
+    position: relative;
+    white-space: nowrap;
+    padding: $component-tile-spacer;
+    text-align: center;
+    margin-top: auto;
+
+    > * {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.component-tile-info-meta {
+    font-size: 0.625rem;
+    opacity: 0.5;
+}
+
+.component-tile-selector {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1rem;
+    height: 3rem;
+    width: 3rem;
+    background-color: transparent;
+}
+
+//
+// Variants
+//
+.component-tile-folder {
+    border-color: transparent;
+}
+
+.component-tile-image {
+    height: 10rem;
+    width: 14rem;
+    flex-grow: 1;
+    border: 0;
+
+    .component-tile-info {
+        color: #ffffff;
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%,rgba(0,0,0,0.8) 50%,rgba(0,0,0,0) 100%);
+        text-align: left;
+    }
+}
+
+
+//
+// Status
+//
+.component-tile[data-connectivity="offline"] {
+    border-color: map-get($colors, 'danger');
+    outline-color: rgba(map-get($colors, 'danger'), 0.5);
+
+    .component-tile-info-meta {
+        color: map-get($colors, 'danger');
+    }
+}

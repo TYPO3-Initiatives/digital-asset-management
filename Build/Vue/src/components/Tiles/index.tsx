@@ -17,15 +17,13 @@ export default class Tiles extends Vue {
         super(props);
     }
 
-    private render(): VNode {
+    private render(): VNode | null {
         const tiles = this.items.map(this.generateTile, this);
-        return (
-            <div class='tiles'>
-                <div v-show={this.items.length > 0}>
+        return this.items.length > 0 ? (
+            <div class='component-tile-list'>
                 {tiles}
-                </div>
             </div>
-        );
+        ) : null;
     }
 
     private generateTile(item: ResourceInterface): VNode {

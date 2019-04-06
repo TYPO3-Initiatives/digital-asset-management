@@ -59,9 +59,9 @@ export default class Tile extends Vue {
     }
 
     private renderStorage(item: StorageInterface): VNode {
-        let classes = 'tile tile-' + item.type;
+        let classes = 'component-tile component-tile-' + item.type;
         if (this.isSelected) {
-            classes += ' selected';
+            classes += ' component-tile-selected';
         }
         const clickFunction = (e: Event) => {
             e.stopPropagation();
@@ -69,87 +69,109 @@ export default class Tile extends Vue {
         };
 
         return (
-            <div
+            <a
                 class={classes}
+                href='#'
+                title={item.name}
                 onClick={clickFunction}
                 data-identifier={item.identifier}
                 data-connectivity={item.storageOnline ? 'online' : 'offline'}
             >
-                <div class='tile-content'>
-                    <span class='pull-right'></span>
-                    <span class='tile-image-container'>
-                        <Icon identifier={item.icon} size='large' />
-                    </span>
+                <div class='component-tile-icon'>
+                    <Icon identifier={item.icon} size='large' />
                 </div>
-                <div className='tile-title'>
-                    <span class='tile-header'>{item.name}</span><br/>
-                    <span class='tile-image-meta storage-type'>{item.type}</span>
+                <div class='component-tile-info'>
+                    <div class='component-tile-info-name'>{item.name}</div>
+                    <div class='component-tile-info-meta'>{item.type}</div>
                 </div>
-            </div>
+            </a>
         );
     }
 
     private renderFolder(item: FolderInterface): VNode {
-        let classes = 'tile tile-' + item.type;
+        let classes = 'component-tile component-tile-' + item.type;
         if (this.isSelected) {
-            classes += ' selected';
+            classes += ' component-tile-selected';
         }
         const clickFunction = (e: Event) => {
             e.stopPropagation();
             this.openFolder(item.identifier);
         };
         return (
-            <div class={classes} onClick={clickFunction} data-identifier={item.identifier}>
-                <div class='tile-content'>
-                    <span class='pull-right'><ItemSelector item={item}/></span>
-                    <span class='tile-image-container'>
+            <a
+                class={classes}
+                href='#'
+                title={item.name}
+                onClick={clickFunction}
+                data-identifier={item.identifier}
+            >
+                <div class='component-tile-content'>
+                    <span class='component-tile-image-container'>
                         <img src={item.icon} class='tile-image'/>
                         <span class='tile-image-meta file-count' v-show={item.itemCount}>{item.itemCount}</span>
                     </span>
                 </div>
-                <div className='tile-title'>
-                    <span class='tile-header'>{item.name}</span><br/>
-                    <span class='tile-image-meta file-mtime' v-show={item.mtimeDisplay}>{item.mtimeDisplay}</span>
+                <div class='component-tile-info'>
+                    <div class='component-tile-info-name'>{item.name}</div>
+                    <div class='component-tile-info-meta' v-show={item.mtimeDisplay}>{item.mtimeDisplay}</div>
                 </div>
-            </div>
+                <div class='component-tile-selector'>
+                    <ItemSelector item={item}/>
+                </div>
+            </a>
         );
     }
 
     private renderFile(item: FileInterface): VNode {
-        let classes = 'tile tile-' + item.type;
+        let classes = 'component-tile component-tile-' + item.type;
         if (this.isSelected) {
-            classes += ' selected';
+            classes += ' component-tile-selected';
         }
         return (
-            <a class={classes} href={item.editMetaUrl} data-identifier={item.identifier}>
-                <div class='tile-content'>
-                    <span class='pull-right'><ItemSelector item={item}/></span>
-                    <span class='tile-image-container'>
-                        <Icon identifier={item.iconIdentifier} />
-                    </span>
+            <a
+                class={classes}
+                href={item.editMetaUrl}
+                title={item.name}
+                data-identifier={item.identifier}
+            >
+                <div class='component-tile-icon'>
+                    <Icon identifier={item.iconIdentifier} size='large' />
                 </div>
-                <div className='tile-title'>
-                    <span class='tile-header'>{this.item.name}</span><br/>
-                    <span class='tile-image-meta file-mtime' v-show={item.mtimeDisplay}>{item.mtimeDisplay}</span>
+                <div class='component-tile-info'>
+                    <div class='component-tile-info-name'>{item.name}</div>
+                    <div class='component-tile-info-meta' v-show={item.mtimeDisplay}>{item.mtimeDisplay}</div>
+                </div>
+                <div class='component-tile-selector'>
+                    <ItemSelector item={item}/>
                 </div>
             </a>
         );
     }
 
     private renderImage(item: ImageInterface): VNode {
-        let classes = 'tile tile-' + item.type;
+        let classes = 'component-tile component-tile-' + item.type;
         if (this.isSelected) {
-            classes += ' selected';
+            classes += ' component-tile-selected';
         }
+        console.log(item);
         return (
-            <div class={classes} data-identifier={item.identifier}>
-                <div class='tile-content'>
-                    <span class='pull-right'><ItemSelector item={item}/></span>
-                    <span class='tile-image-container'>
-                        <a href={item.editMetaUrl}><img src={item.thumbnailUrl} class='tile-thumbnail'/></a>
-                    </span>
+            <a
+                href={item.editMetaUrl}
+                class={classes}
+                title={item.name}
+                data-identifier={item.identifier}
+            >
+                <div class='component-tile-background'>
+                    <img src={item.thumbnailUrl}/>
                 </div>
-            </div>
+                <div class='component-tile-info'>
+                    <div class='component-tile-info-name'>{item.name}</div>
+                    <div class='component-tile-info-meta' v-show={item.mtimeDisplay}>{item.mtimeDisplay}</div>
+                </div>
+                <div class='component-tile-selector'>
+                    <ItemSelector item={item}/>
+                </div>
+            </a>
         );
     }
 }

@@ -19568,10 +19568,10 @@ function (_Vue) {
       var _this = this;
 
       var h = this.$createElement;
-      var classes = 'tile tile-' + item.type;
+      var classes = 'component-tile component-tile-' + item.type;
 
       if (this.isSelected) {
-        classes += ' selected';
+        classes += ' component-tile-selected';
       }
 
       var clickFunction = function clickFunction(e) {
@@ -19580,34 +19580,30 @@ function (_Vue) {
         _this.openStorage(item.identifier);
       };
 
-      return h("div", {
+      return h("a", {
         "class": classes,
-        "on": {
-          "click": clickFunction
-        },
         "attrs": {
+          "href": '#',
+          "title": item.name,
           "data-identifier": item.identifier,
           "data-connectivity": item.storageOnline ? 'online' : 'offline'
+        },
+        "on": {
+          "click": clickFunction
         }
       }, [h("div", {
-        "class": 'tile-content'
-      }, [h("span", {
-        "class": 'pull-right'
-      }), h("span", {
-        "class": 'tile-image-container'
+        "class": 'component-tile-icon'
       }, [h(components_Icon, {
         "attrs": {
           "identifier": item.icon,
           "size": 'large'
         }
-      })])]), h("div", {
-        "attrs": {
-          "className": 'tile-title'
-        }
-      }, [h("span", {
-        "class": 'tile-header'
-      }, [item.name]), h("br"), h("span", {
-        "class": 'tile-image-meta storage-type'
+      })]), h("div", {
+        "class": 'component-tile-info'
+      }, [h("div", {
+        "class": 'component-tile-info-name'
+      }, [item.name]), h("div", {
+        "class": 'component-tile-info-meta'
       }, [item.type])])]);
     }
   }, {
@@ -19616,10 +19612,10 @@ function (_Vue) {
       var _this2 = this;
 
       var h = this.$createElement;
-      var classes = 'tile tile-' + item.type;
+      var classes = 'component-tile component-tile-' + item.type;
 
       if (this.isSelected) {
-        classes += ' selected';
+        classes += ' component-tile-selected';
       }
 
       var clickFunction = function clickFunction(e) {
@@ -19628,24 +19624,20 @@ function (_Vue) {
         _this2.openFolder(item.identifier);
       };
 
-      return h("div", {
+      return h("a", {
         "class": classes,
+        "attrs": {
+          "href": '#',
+          "title": item.name,
+          "data-identifier": item.identifier
+        },
         "on": {
           "click": clickFunction
-        },
-        "attrs": {
-          "data-identifier": item.identifier
         }
       }, [h("div", {
-        "class": 'tile-content'
+        "class": 'component-tile-content'
       }, [h("span", {
-        "class": 'pull-right'
-      }, [h(components_ItemSelector, {
-        "attrs": {
-          "item": item
-        }
-      })]), h("span", {
-        "class": 'tile-image-container'
+        "class": 'component-tile-image-container'
       }, [h("img", {
         "attrs": {
           "src": item.icon
@@ -19658,98 +19650,106 @@ function (_Vue) {
           value: item.itemCount
         }]
       }, [item.itemCount])])]), h("div", {
-        "attrs": {
-          "className": 'tile-title'
-        }
-      }, [h("span", {
-        "class": 'tile-header'
-      }, [item.name]), h("br"), h("span", {
-        "class": 'tile-image-meta file-mtime',
+        "class": 'component-tile-info'
+      }, [h("div", {
+        "class": 'component-tile-info-name'
+      }, [item.name]), h("div", {
+        "class": 'component-tile-info-meta',
         "directives": [{
           name: "show",
           value: item.mtimeDisplay
         }]
-      }, [item.mtimeDisplay])])]);
+      }, [item.mtimeDisplay])]), h("div", {
+        "class": 'component-tile-selector'
+      }, [h(components_ItemSelector, {
+        "attrs": {
+          "item": item
+        }
+      })])]);
     }
   }, {
     key: "renderFile",
     value: function renderFile(item) {
       var h = this.$createElement;
-      var classes = 'tile tile-' + item.type;
+      var classes = 'component-tile component-tile-' + item.type;
 
       if (this.isSelected) {
-        classes += ' selected';
+        classes += ' component-tile-selected';
       }
 
       return h("a", {
         "class": classes,
         "attrs": {
           "href": item.editMetaUrl,
+          "title": item.name,
           "data-identifier": item.identifier
         }
       }, [h("div", {
-        "class": 'tile-content'
-      }, [h("span", {
-        "class": 'pull-right'
-      }, [h(components_ItemSelector, {
-        "attrs": {
-          "item": item
-        }
-      })]), h("span", {
-        "class": 'tile-image-container'
+        "class": 'component-tile-icon'
       }, [h(components_Icon, {
         "attrs": {
-          "identifier": item.iconIdentifier
+          "identifier": item.iconIdentifier,
+          "size": 'large'
         }
-      })])]), h("div", {
-        "attrs": {
-          "className": 'tile-title'
-        }
-      }, [h("span", {
-        "class": 'tile-header'
-      }, [this.item.name]), h("br"), h("span", {
-        "class": 'tile-image-meta file-mtime',
+      })]), h("div", {
+        "class": 'component-tile-info'
+      }, [h("div", {
+        "class": 'component-tile-info-name'
+      }, [item.name]), h("div", {
+        "class": 'component-tile-info-meta',
         "directives": [{
           name: "show",
           value: item.mtimeDisplay
         }]
-      }, [item.mtimeDisplay])])]);
+      }, [item.mtimeDisplay])]), h("div", {
+        "class": 'component-tile-selector'
+      }, [h(components_ItemSelector, {
+        "attrs": {
+          "item": item
+        }
+      })])]);
     }
   }, {
     key: "renderImage",
     value: function renderImage(item) {
       var h = this.$createElement;
-      var classes = 'tile tile-' + item.type;
+      var classes = 'component-tile component-tile-' + item.type;
 
       if (this.isSelected) {
-        classes += ' selected';
+        classes += ' component-tile-selected';
       }
 
-      return h("div", {
-        "class": classes,
+      console.log(item);
+      return h("a", {
         "attrs": {
+          "href": item.editMetaUrl,
+          "title": item.name,
           "data-identifier": item.identifier
-        }
+        },
+        "class": classes
       }, [h("div", {
-        "class": 'tile-content'
-      }, [h("span", {
-        "class": 'pull-right'
+        "class": 'component-tile-background'
+      }, [h("img", {
+        "attrs": {
+          "src": item.thumbnailUrl
+        }
+      })]), h("div", {
+        "class": 'component-tile-info'
+      }, [h("div", {
+        "class": 'component-tile-info-name'
+      }, [item.name]), h("div", {
+        "class": 'component-tile-info-meta',
+        "directives": [{
+          name: "show",
+          value: item.mtimeDisplay
+        }]
+      }, [item.mtimeDisplay])]), h("div", {
+        "class": 'component-tile-selector'
       }, [h(components_ItemSelector, {
         "attrs": {
           "item": item
         }
-      })]), h("span", {
-        "class": 'tile-image-container'
-      }, [h("a", {
-        "attrs": {
-          "href": item.editMetaUrl
-        }
-      }, [h("img", {
-        "attrs": {
-          "src": item.thumbnailUrl
-        },
-        "class": 'tile-thumbnail'
-      })])])])]);
+      })])]);
     }
   }, {
     key: "isSelected",
@@ -19799,14 +19799,9 @@ function (_Vue) {
     value: function render() {
       var h = arguments[0];
       var tiles = this.items.map(this.generateTile, this);
-      return h("div", {
-        "class": 'tiles'
-      }, [h("div", {
-        "directives": [{
-          name: "show",
-          value: this.items.length > 0
-        }]
-      }, [tiles])]);
+      return this.items.length > 0 ? h("div", {
+        "class": 'component-tile-list'
+      }, [tiles]) : null;
     }
   }, {
     key: "generateTile",
