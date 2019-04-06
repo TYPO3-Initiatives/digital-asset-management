@@ -23,10 +23,12 @@ export default class SelectIndicator extends Vue {
     }
 
     private render(): VNode | null {
+        const label = TYPO3.lang['SelectIndicator.label']
+          .replace('{selectedCount}', this.selectedCount);
         return this.selectedCount > 0 ? (
             <button class='component-button component-button-primary' onClick={(event: Event) => this.clearSelection(event)}>
                 <span class='component-button-text'>
-                    Selected {this.selectedCount}
+                    {label}
                 </span>
                 <span class='component-button-icon'>
                     <Icon identifier='actions-close' />

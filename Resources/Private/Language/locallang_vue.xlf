@@ -49,6 +49,11 @@
         <source>descending</source>
       </trans-unit>
 
+      <!-- SelectIndicator -->
+      <trans-unit id="SelectIndicator.label">
+        <source>{selectedCount} selected</source>
+      </trans-unit>
+
       <!-- StorageSelector -->
       <trans-unit id="StorageSelector.title">
         <source>Select a file storage to browse the assets</source>
@@ -114,6 +119,7 @@
       <trans-unit id="DropZone.uploadTable.header.progress">
         <source>Progress</source>
       </trans-unit>
+
       <!-- NoStorageOverlay -->
       <trans-unit id="NoStorageOverlay.admin.headline">
         <source>Your system has no asset storages configured</source>
