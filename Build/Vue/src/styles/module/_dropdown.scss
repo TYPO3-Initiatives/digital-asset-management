@@ -7,6 +7,7 @@
 }
 
 .component-dropdown-toggle {
+    @extend .component-a11y-outline;
     display: inline-flex;
     background: transparent;
     border: 0;
@@ -52,7 +53,7 @@
 
 .component-dropdown-menu-link {
     display: block;
-    padding: $component-input-padding-y $component-input-padding-x;
+    padding: $component-padding-y $component-padding-x;
     display: flex;
 
     &:hover,

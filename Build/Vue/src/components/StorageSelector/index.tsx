@@ -48,7 +48,7 @@ export default class StorageSelector extends Vue {
 
         const options = this.storages.map(this.generateOption, this);
         return (
-            <span class='component-dropdown component-dropdown-inactive'>
+            <span class='component-storageselector component-dropdown component-dropdown-inactive'>
                 <button
                     type='button'
                     title={TYPO3.lang['StorageSelector.title']}

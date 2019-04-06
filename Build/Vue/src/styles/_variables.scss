@@ -2,15 +2,16 @@
 // Colors
 //
 $colors: (
-    primary: #257EDE,
-    danger: #C83C3C
+    default: #eeeeee,
+    primary: #257ede,
+    danger: #c83c3c
 );
 
 //
 // Contrast
 //
 $contrast-text-dark: #333333;
-$contrast-text-light: #fff;
+$contrast-text-light: #ffffff;
 $contrast-threshold:  150;
 
 //
@@ -22,10 +23,12 @@ $zindex-dropdown: 1050;
 // Components
 //
 $component-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-$component-outline: 2px solid rgba(map-get($colors, 'primary'), 0.5);
+$component-outline: 4px solid rgba(map-get($colors, 'primary'), 0.5);
+$component-padding-y: 0.5rem;
+$component-padding-x: 0.75rem;
 
 //
 // Input
 //
-$component-input-padding-y: 0.5rem;
-$component-input-padding-x: 0.75rem;
+$component-input-padding-y: $component-padding-y;
+$component-input-padding-x: $component-padding-y;

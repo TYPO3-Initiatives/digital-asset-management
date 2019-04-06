@@ -1,0 +1,40 @@
+//
+// Button
+//
+.component-button {
+    @extend .component-a11y-outline;
+    display: inline-flex;
+    margin: 0;
+    line-height: 1em;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: $component-padding-y $component-padding-x;
+    text-decoration: none;
+    align-items: center;
+}
+
+.component-button-text {
+    .component-button-icon + & {
+        margin-left: 0.5rem;
+    }
+
+    + .component-button-icon {
+        margin-left: 0.5rem;
+    }
+}
+
+//
+// Variants
+//
+@each $name, $color in $colors {
+    .component-button-#{$name} {
+        color: color-contrast($color);
+        background-color: $color;
+        border-color: $color;
+
+        &:hover,
+        &:focus {
+            background-color: lighten($color, 5%);
+        }
+    }
+}

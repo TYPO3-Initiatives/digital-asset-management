@@ -1,0 +1,32 @@
+//
+// Breadcrumb
+//
+.component-breadcrumb {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.component-breadcrumb-list {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.component-breadcrumb-item {
+    display: inline-block;
+
+    & + &:before {
+        content: '/';
+        user-select: none;
+        opacity: 0.5;
+    }
+}
+
+.component-breadcrumb-link {
+    @extend .component-a11y-outline;
+    display: inline-block;
+    padding: $component-padding-y $component-input-padding-x;
+}

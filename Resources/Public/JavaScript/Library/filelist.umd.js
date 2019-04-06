@@ -18548,7 +18548,7 @@ function (_Vue) {
 
       var options = this.storages.map(this.generateOption, this);
       return h("span", {
-        "class": 'component-dropdown component-dropdown-inactive'
+        "class": 'component-storageselector component-dropdown component-dropdown-inactive'
       }, [h("button", {
         "attrs": {
           "type": 'button',
@@ -19719,7 +19719,6 @@ function (_Vue) {
         classes += ' component-tile-selected';
       }
 
-      console.log(item);
       return h("a", {
         "attrs": {
           "href": item.editMetaUrl,
@@ -20367,6 +20366,9 @@ Breadcrumb_Breadcrumb = __decorate([vue_class_component_common_default.a], Bread
 
 
 
+
+
+
 var SelectIndicator_SelectIndicator =
 /*#__PURE__*/
 function (_Vue) {
@@ -20381,8 +20383,32 @@ function (_Vue) {
   _createClass(SelectIndicator, [{
     key: "render",
     value: function render() {
+      var _this = this;
+
       var h = arguments[0];
-      return h("div", ["Selected ", this.selectedCount]);
+      var label = TYPO3.lang['SelectIndicator.label'].replace('{selectedCount}', this.selectedCount);
+      return this.selectedCount > 0 ? h("button", {
+        "class": 'component-button component-button-primary',
+        "on": {
+          "click": function click(event) {
+            return _this.clearSelection(event);
+          }
+        }
+      }, [h("span", {
+        "class": 'component-button-text'
+      }, [label]), h("span", {
+        "class": 'component-button-icon'
+      }, [h(components_Icon, {
+        "attrs": {
+          "identifier": 'actions-close'
+        }
+      })])]) : null;
+    }
+  }, {
+    key: "clearSelection",
+    value: function clearSelection(event) {
+      event.stopPropagation();
+      this.unselectItems();
     }
   }, {
     key: "selectedCount",
@@ -20395,6 +20421,8 @@ function (_Vue) {
 }(vue_runtime_esm["default"]);
 
 __decorate([State], SelectIndicator_SelectIndicator.prototype, "selected", void 0);
+
+__decorate([Mutation(Mutations.UNSELECT_ALL)], SelectIndicator_SelectIndicator.prototype, "unselectItems", void 0);
 
 SelectIndicator_SelectIndicator = __decorate([vue_class_component_common_default.a], SelectIndicator_SelectIndicator);
 /* harmony default export */ var components_SelectIndicator = (SelectIndicator_SelectIndicator);
