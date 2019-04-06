@@ -2,7 +2,7 @@
 	"name": "lns/digital-asset-management",
 	"type": "typo3-cms-extension",
 	"description": "Digital Asset Management for TYPO3",
-	"license": ["GPL-2.0+"],
+	"license": "GPL-3.0-or-later",
 	"authors": [
 		{
 			"name": "André Bardoun",

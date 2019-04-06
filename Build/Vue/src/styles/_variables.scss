@@ -14,7 +14,18 @@ $contrast-text-light: #fff;
 $contrast-threshold:  150;
 
 //
+// z-Index
+//
+$zindex-dropdown: 1050;
+
+//
 // Components
 //
 $component-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 $component-outline: 2px solid rgba(map-get($colors, 'primary'), 0.5);
+
+//
+// Input
+//
+$component-input-padding-y: 0.5rem;
+$component-input-padding-x: 0.75rem;
