@@ -2,7 +2,8 @@
 // Colors
 //
 $colors: (
-    primary: #257EDE
+    primary: #257EDE,
+    danger: #C83C3C
 );
 
 //
@@ -11,3 +12,9 @@ $colors: (
 $contrast-text-dark: #333333;
 $contrast-text-light: #fff;
 $contrast-threshold:  150;
+
+//
+// Components
+//
+$component-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+$component-outline: 2px solid rgba(map-get($colors, 'primary'), 0.5);
