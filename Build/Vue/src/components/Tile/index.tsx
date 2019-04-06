@@ -153,7 +153,6 @@ export default class Tile extends Vue {
         if (this.isSelected) {
             classes += ' component-tile-selected';
         }
-        console.log(item);
         return (
             <a
                 href={item.editMetaUrl}

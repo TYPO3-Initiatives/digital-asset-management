@@ -10,3 +10,10 @@
     width: 1px !important;
     overflow: hidden !important;
 }
+
+.component-a11y-outline {
+    &:focus {
+        outline: $component-outline;
+        border-color: map-get($colors, 'primary');
+    }
+}

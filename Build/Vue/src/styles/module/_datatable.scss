@@ -128,10 +128,17 @@ $component-datatable-sorting-icon-descending: '<svg viewBox="0 0 16 16"><g fill=
     display: flex;
     align-items: center;
 }
+
 .component-datatable-link-icon {
     width: 1rem;
     height: 1rem;
     margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+.component-datatable-link-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .component-datatable-columnheader {
