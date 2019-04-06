@@ -18599,7 +18599,7 @@ function (_Vue) {
       }, [h("a", {
         "class": 'component-dropdown-menu-link',
         "attrs": {
-          "title": '{storage.storageName}',
+          "title": storage.storageName,
           "href": '#',
           "data-identifier": storage.identifier
         },

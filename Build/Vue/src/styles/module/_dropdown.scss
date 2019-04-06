@@ -1,0 +1,72 @@
+//
+// Dropdown
+//
+.component-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.component-dropdown-toggle {
+    display: inline-flex;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    align-items: center;
+}
+
+.component-dropdown-toggle-text {
+    white-space: nowrap;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .component-dropdown-toggle-icon + & {
+        margin-left: 0.5rem;
+    }
+
+    + .component-dropdown-toggle-icon {
+        margin-left: 0.5rem;
+    }
+}
+
+.component-dropdown-container {
+    z-index: $zindex-dropdown;
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    box-shadow: $component-shadow;
+    background-color: #fff;
+
+    .component-dropdown-active & {
+        display: block;
+    }
+}
+
+.component-dropdown-menu {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.component-dropdown-menu-link {
+    display: block;
+    padding: $component-input-padding-y $component-input-padding-x;
+    display: flex;
+
+    &:hover,
+    &:focus {
+        text-decoration: none;
+        outline: $component-outline;
+        background-color: rgba(map-get($colors, 'primary'), 0.15);
+    }
+}
+
+.component-dropdown-menu-link-icon {
+    margin-right: 0.5rem;
+}
+
+.component-dropdown-menu-link-text {
+    white-space: nowrap;
+}

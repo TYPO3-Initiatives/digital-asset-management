@@ -82,7 +82,7 @@ export default class StorageSelector extends Vue {
             <li class='component-dropdown-menu-item'>
                 <a
                     class='component-dropdown-menu-link'
-                    title='{storage.storageName}'
+                    title={storage.storageName}
                     href='#'
                     data-identifier={storage.identifier}
                     onclick={this.updateStorage}
