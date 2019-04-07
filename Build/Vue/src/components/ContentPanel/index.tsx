@@ -39,10 +39,21 @@ export default class ContentPanel extends Vue {
                 <DropZone>
                     <template slot='beforeUploadTable'>
                         <DocHeader>
-                            <template slot='topBarLeft'><TreeToggle v-show={this.activeStorage}/><ViewSelector/></template>
-                            <template slot='topBarRight'><ButtonBar /><SortingSelector/></template>
-                            <template slot='bottomBarLeft'><StorageSelector /><Breadcrumb v-show={this.activeStorage}/></template>
-                            <template slot='bottomBarRight'><SelectIndicator v-show={this.activeStorage}/></template>
+                            <template slot='topBarLeft'>
+                                <ButtonBar />
+                            </template>
+                            <template slot='topBarRight'>
+                                <SortingSelector />
+                                <ViewSelector />
+                            </template>
+                            <template slot='bottomBarLeft'>
+                                <TreeToggle v-show={this.activeStorage}/>
+                                <StorageSelector />
+                                <Breadcrumb v-show={this.activeStorage}/>
+                            </template>
+                            <template slot='bottomBarRight'>
+                                <SelectIndicator v-show={this.activeStorage}/>
+                            </template>
                         </DocHeader>
                     </template>
                     <template slot='afterUploadTable'>

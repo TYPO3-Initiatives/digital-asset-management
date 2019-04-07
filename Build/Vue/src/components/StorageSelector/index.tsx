@@ -33,7 +33,7 @@ export default class StorageSelector extends Vue {
 
         const entries = this.storages.map(this.generateEntry, this);
         return (
-            <span class='component-storageselector'>
+            <span class='component-selector-storage'>
                 <Dropdown
                     toggleLabel={this.activeStorage.name}
                     toggleLabelIconIdentifier={this.activeStorage.icon}

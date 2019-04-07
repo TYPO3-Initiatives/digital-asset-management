@@ -6,6 +6,7 @@
     display: inline-flex;
     margin: 0;
     line-height: 1em;
+    height: 2.125rem;
     background-color: transparent;
     border: 1px solid transparent;
     padding: $component-padding-y $component-padding-x;
@@ -30,11 +31,32 @@
     .component-button-#{$name} {
         color: color-contrast($color);
         background-color: $color;
-        border-color: $color;
+        border-color: darken($color, 10%);
 
         &:hover,
         &:focus {
             background-color: lighten($color, 5%);
         }
+    }
+}
+
+//
+// Extended
+//
+[class*="component-selector-"] {
+    display: inline-block;
+    vertical-align: middle;
+    .component-dropdown-toggle {
+        @extend .component-button;
+    }
+}
+
+//
+//
+//
+.component-selector-sorting,
+.component-selector-view {
+    .component-dropdown-toggle {
+        @extend .component-button-default;
     }
 }

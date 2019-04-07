@@ -26,41 +26,17 @@
 .module-docheader-bar {
     display: flex;
     flex-flow: row wrap;
-    justify-content: flex-end;
+    justify-content: space-between;
     background: #e1e1e1;
     padding: 5px;
 }
-.module-docheader-bar-column-left {
-    width: 50%;
-}
-.module-docheader-bar-column-right {
-    width: 50%;
-    text-align: right;
+
+[class*="module-docheader-bar-column-"] {
+    min-height: 2.125rem;
 }
 
 .typo3-filelist-contentpanel .module-docheader {
     padding-right: 310px;
-}
-
-.breadcrumb {
-    display: flex;
-    width: 100%;
-    padding: 5px;
-}
-
-.breadcrumb .storage-selector {
-    margin-right: 10px;
-}
-
-.breadcrumb .breadcrumb-item {
-    color: #999;
-    margin-top: 4px;
-    margin-right: 4px;
-}
-
-.breadcrumb .breadcrumb-item:after {
-    content: " / ";
-    color: #999;
 }
 
 .hot {
