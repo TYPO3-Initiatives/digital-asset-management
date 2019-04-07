@@ -39,7 +39,7 @@
     box-shadow: $component-shadow;
     background-color: #fff;
 
-    .component-dropdown-active & {
+    [aria-expanded="true"] + & {
         display: block;
     }
 }

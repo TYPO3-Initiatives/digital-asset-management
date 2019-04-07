@@ -18476,16 +18476,201 @@ __decorate([Prop()], Tree_Tree.prototype, "selectCallBack", void 0);
 
 Tree_Tree = __decorate([vue_class_component_common_default.a], Tree_Tree);
 /* harmony default export */ var components_Tree = (Tree_Tree);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs2/core-js/parse-int.js
+var parse_int = __webpack_require__("e814");
+var parse_int_default = /*#__PURE__*/__webpack_require__.n(parse_int);
+
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.regexp.to-string.js
 var es6_regexp_to_string = __webpack_require__("6b54");
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.object.to-string.js
 var es6_object_to_string = __webpack_require__("06db");
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs2/core-js/parse-int.js
-var parse_int = __webpack_require__("e814");
-var parse_int_default = /*#__PURE__*/__webpack_require__.n(parse_int);
+// CONCATENATED MODULE: ./src/components/Dropdown/index.tsx
 
+
+
+
+
+
+
+
+var Dropdown_1;
+
+
+
+var Dropdown_Dropdown = Dropdown_1 =
+/*#__PURE__*/
+function (_Vue) {
+  _inherits(Dropdown, _Vue);
+
+  function Dropdown(props) {
+    _classCallCheck(this, Dropdown);
+
+    return _possibleConstructorReturn(this, getPrototypeOf_getPrototypeOf(Dropdown).call(this, props));
+  }
+
+  _createClass(Dropdown, [{
+    key: "render",
+    value: function render() {
+      var h = arguments[0];
+      var toggleLabelIcon = this.toggleLabelIconIdentifier ? h("span", {
+        "class": 'component-dropdown-toggle-icon',
+        "attrs": {
+          "role": 'presentation'
+        }
+      }, [h(components_Icon, {
+        "attrs": {
+          "identifier": this.toggleLabelIconIdentifier
+        }
+      })]) : '';
+      var toggleLabel = this.toggleLabel ? h("span", {
+        "class": 'component-dropdown-toggle-text'
+      }, [this.toggleLabel]) : '';
+      return h("span", {
+        "class": 'component-dropdown'
+      }, [h("button", {
+        "attrs": {
+          "type": 'button',
+          "title": this.toggleTitle,
+          "aria-haspopup": 'true',
+          "aria-expanded": 'false',
+          "aria-label": this.toggleAriaLabel
+        },
+        "class": 'component-dropdown-toggle',
+        "on": {
+          "click": Dropdown_1.toggleDropdown
+        }
+      }, [toggleLabelIcon, toggleLabel, h("span", {
+        "class": 'component-dropdown-toggle-icon',
+        "attrs": {
+          "role": 'presentation'
+        }
+      }, [h(components_Icon, {
+        "attrs": {
+          "identifier": 'apps-pagetree-expand'
+        }
+      })])]), h("div", {
+        "class": 'component-dropdown-container'
+      }, [this.$slots.default])]);
+    }
+  }], [{
+    key: "toggleDropdown",
+    value: function toggleDropdown(e) {
+      var me = e.target;
+      var dropdown = me.closest('.component-dropdown');
+
+      if (dropdown === null) {
+        return;
+      }
+
+      var dropdownToggle = dropdown.querySelector('.component-dropdown-toggle');
+
+      if (dropdownToggle !== null) {
+        var isActive = dropdownToggle.getAttribute('aria-expanded') === 'true';
+        dropdownToggle.setAttribute('aria-expanded', (!isActive).toString());
+      }
+    }
+  }]);
+
+  return Dropdown;
+}(vue_runtime_esm["default"]);
+
+__decorate([Prop()], Dropdown_Dropdown.prototype, "toggleLabel", void 0);
+
+__decorate([Prop()], Dropdown_Dropdown.prototype, "toggleLabelIconIdentifier", void 0);
+
+__decorate([Prop()], Dropdown_Dropdown.prototype, "toggleTitle", void 0);
+
+__decorate([Prop()], Dropdown_Dropdown.prototype, "toggleAriaLabel", void 0);
+
+Dropdown_Dropdown = Dropdown_1 = __decorate([vue_class_component_common_default.a], Dropdown_Dropdown);
+/* harmony default export */ var components_Dropdown = (Dropdown_Dropdown);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom.iterable.js
+var web_dom_iterable = __webpack_require__("ac6a");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es6.array.iterator.js
+var es6_array_iterator = __webpack_require__("cadf");
+
+// CONCATENATED MODULE: ./src/components/DropdownMenu/index.tsx
+
+
+
+
+
+
+
+
+
+
+
+
+var DropdownMenu_DropdownMenu =
+/*#__PURE__*/
+function (_Vue) {
+  _inherits(DropdownMenu, _Vue);
+
+  function DropdownMenu(props) {
+    _classCallCheck(this, DropdownMenu);
+
+    return _possibleConstructorReturn(this, getPrototypeOf_getPrototypeOf(DropdownMenu).call(this, props));
+  }
+
+  _createClass(DropdownMenu, [{
+    key: "render",
+    value: function render() {
+      var h = arguments[0];
+
+      if (!this.entries.length) {
+        return null;
+      }
+
+      var menuItems = this.entries.map(this.generateItem, this);
+      return h("ul", {
+        "class": 'component-dropdown-menu',
+        "attrs": {
+          "role": 'menu'
+        }
+      }, [menuItems]);
+    }
+  }, {
+    key: "generateItem",
+    value: function generateItem(link) {
+      var h = this.$createElement;
+      return h("li", {
+        "class": 'component-dropdown-menu-item'
+      }, [h("a", {
+        "class": 'component-dropdown-menu-link',
+        "attrs": {
+          "title": link.title,
+          "href": link.href,
+          "data-identifier": link.dataIdentifier
+        },
+        "on": {
+          "click": link.onclick
+        }
+      }, [h("span", {
+        "class": 'component-dropdown-menu-link-icon',
+        "attrs": {
+          "role": 'presentation'
+        }
+      }, [h(components_Icon, {
+        "attrs": {
+          "identifier": link.iconIdentifier
+        }
+      })]), h("span", {
+        "class": 'component-dropdown-menu-link-text'
+      }, [link.title])])]);
+    }
+  }]);
+
+  return DropdownMenu;
+}(vue_runtime_esm["default"]);
+
+__decorate([Prop()], DropdownMenu_DropdownMenu.prototype, "entries", void 0);
+
+DropdownMenu_DropdownMenu = __decorate([vue_class_component_common_default.a], DropdownMenu_DropdownMenu);
+/* harmony default export */ var components_DropdownMenu = (DropdownMenu_DropdownMenu);
 // CONCATENATED MODULE: ./src/enums/Mutations.ts
 var Mutations;
 
@@ -18516,13 +18701,13 @@ var Mutations;
 
 
 
-var StorageSelector_1;
 
 
 
 
 
-var StorageSelector_StorageSelector = StorageSelector_1 =
+
+var StorageSelector_StorageSelector =
 /*#__PURE__*/
 function (_Vue) {
   _inherits(StorageSelector, _Vue);
@@ -18546,78 +18731,32 @@ function (_Vue) {
         return null;
       }
 
-      var options = this.storages.map(this.generateOption, this);
+      var entries = this.storages.map(this.generateEntry, this);
       return h("span", {
-        "class": 'component-storageselector component-dropdown component-dropdown-inactive'
-      }, [h("button", {
+        "class": 'component-storageselector'
+      }, [h(components_Dropdown, {
         "attrs": {
-          "type": 'button',
-          "title": TYPO3.lang['StorageSelector.title'],
-          "aria-label": TYPO3.lang['StorageSelector.label'],
-          "aria-haspopup": 'true',
-          "aria-expanded": 'false'
-        },
-        "class": 'component-dropdown-toggle',
-        "on": {
-          "click": StorageSelector_1.toggleDropdown
+          "toggleLabel": this.activeStorage.name,
+          "toggleLabelIconIdentifier": this.activeStorage.icon,
+          "toggleTitle": TYPO3.lang['StorageSelector.title'],
+          "toggleAriaLabel": TYPO3.lang['StorageSelector.label']
         }
-      }, [h("span", {
-        "class": 'component-dropdown-toggle-icon',
+      }, [h(components_DropdownMenu, {
         "attrs": {
-          "role": 'presentation'
+          "entries": entries
         }
-      }, [h(components_Icon, {
-        "attrs": {
-          "identifier": this.activeStorage.icon
-        }
-      })]), h("span", {
-        "class": 'component-dropdown-toggle-text'
-      }, [this.activeStorage.name]), h("span", {
-        "class": 'component-dropdown-toggle-icon',
-        "attrs": {
-          "role": 'presentation'
-        }
-      }, [h(components_Icon, {
-        "attrs": {
-          "identifier": 'apps-pagetree-expand'
-        }
-      })])]), h("div", {
-        "class": 'component-dropdown-container'
-      }, [h("ul", {
-        "class": 'component-dropdown-menu',
-        "attrs": {
-          "role": 'menu'
-        }
-      }, [options])])]);
+      })])]);
     }
   }, {
-    key: "generateOption",
-    value: function generateOption(storage) {
-      var h = this.$createElement;
-      return h("li", {
-        "class": 'component-dropdown-menu-item'
-      }, [h("a", {
-        "class": 'component-dropdown-menu-link',
-        "attrs": {
-          "title": storage.storageName,
-          "href": '#',
-          "data-identifier": storage.identifier
-        },
-        "on": {
-          "click": this.updateStorage
-        }
-      }, [h("span", {
-        "class": 'component-dropdown-menu-link-icon',
-        "attrs": {
-          "role": 'presentation'
-        }
-      }, [h(components_Icon, {
-        "attrs": {
-          "identifier": storage.icon
-        }
-      })]), h("span", {
-        "class": 'component-dropdown-menu-link-text'
-      }, [storage.storageName])])]);
+    key: "generateEntry",
+    value: function generateEntry(storage) {
+      return {
+        title: storage.storageName,
+        href: '#',
+        dataIdentifier: storage.identifier.toString(),
+        iconIdentifier: storage.icon,
+        onclick: this.updateStorage
+      };
     }
   }, {
     key: "updateStorage",
@@ -18635,25 +18774,6 @@ function (_Vue) {
         this.setStorage(storageId);
       }
     }
-  }], [{
-    key: "toggleDropdown",
-    value: function toggleDropdown(e) {
-      var me = e.target;
-      var dropdown = me.closest('.component-dropdown');
-
-      if (dropdown === null) {
-        return;
-      }
-
-      var isActive = dropdown.classList.contains('component-dropdown-active');
-      dropdown.classList.toggle('component-dropdown-active', !isActive);
-      dropdown.classList.toggle('component-dropdown-inactive', isActive);
-      var dropdownToggle = dropdown.querySelector('.component-dropdown-toggle');
-
-      if (dropdownToggle !== null) {
-        dropdownToggle.setAttribute('aria-expanded', (!isActive).toString());
-      }
-    }
   }]);
 
   return StorageSelector;
@@ -18665,7 +18785,7 @@ __decorate([State], StorageSelector_StorageSelector.prototype, "storages", void 
 
 __decorate([State], StorageSelector_StorageSelector.prototype, "activeStorage", void 0);
 
-StorageSelector_StorageSelector = StorageSelector_1 = __decorate([vue_class_component_common_default.a], StorageSelector_StorageSelector);
+StorageSelector_StorageSelector = __decorate([vue_class_component_common_default.a], StorageSelector_StorageSelector);
 /* harmony default export */ var components_StorageSelector = (StorageSelector_StorageSelector);
 // CONCATENATED MODULE: ./src/components/TreePanel/index.tsx
 
@@ -20475,14 +20595,8 @@ __decorate([Mutation(Mutations.TOGGLE_TREE)], TreeToggle_TreeToggle.prototype, "
 
 TreeToggle_TreeToggle = __decorate([vue_class_component_common_default.a], TreeToggle_TreeToggle);
 /* harmony default export */ var components_TreeToggle = (TreeToggle_TreeToggle);
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es6.array.iterator.js
-var es6_array_iterator = __webpack_require__("cadf");
-
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.string.iterator.js
 var es6_string_iterator = __webpack_require__("5df3");
-
-// EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom.iterable.js
-var web_dom_iterable = __webpack_require__("ac6a");
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs2/core-js/array/is-array.js
 var is_array = __webpack_require__("a745");
