@@ -29,7 +29,7 @@ export default class Dropdown extends Vue {
 
         const dropdownToggle = dropdown.querySelector('.component-dropdown-toggle');
         if (dropdownToggle !== null) {
-            let isActive = dropdownToggle.getAttribute('aria-expanded') === 'true' ? true : false;
+            let isActive = dropdownToggle.getAttribute('aria-expanded') === 'true';
             dropdownToggle.setAttribute('aria-expanded', (!isActive).toString());
         }
     }

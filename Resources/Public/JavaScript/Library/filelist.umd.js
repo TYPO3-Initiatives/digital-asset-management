@@ -18567,7 +18567,7 @@ function (_Vue) {
       var dropdownToggle = dropdown.querySelector('.component-dropdown-toggle');
 
       if (dropdownToggle !== null) {
-        var isActive = dropdownToggle.getAttribute('aria-expanded') === 'true' ? true : false;
+        var isActive = dropdownToggle.getAttribute('aria-expanded') === 'true';
         dropdownToggle.setAttribute('aria-expanded', (!isActive).toString());
       }
     }
