@@ -13,7 +13,7 @@ Assets
 Contributing to the Frontend
 ============================
 
-Head over to :code:`Build/Vue` and use yarn to build the frontend.
+The frontend itself is based on Vue.js, TypeScript and JSX-TypeScript (.tsx) templates. To contribute and make changes use the commands described below within the :code:`./Build/Vue` directory.
 
 Project Setup
 -------------
