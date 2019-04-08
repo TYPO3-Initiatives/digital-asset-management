@@ -1,6 +1,9 @@
 //
 // Dropdown
 //
+$component-dropdown-menu-item-active-icon-color: map-get($colors,'primary');
+$component-dropdown-menu-item-active-icon: '<svg viewBox="0 0 16 16"><path fill="#{$component-dropdown-menu-item-active-icon-color}" d="M13.3 4.8l-.7-.7c-.2-.2-.5-.2-.7 0L6.5 9.5 4 6.9c-.2-.2-.5-.2-.7 0l-.6.7c-.2.2-.2.5 0 .7l3.6 3.6c.2.2.5.2.7 0l6.4-6.4c.1-.2.1-.5-.1-.7z"/></svg>';
+
 .component-dropdown {
     position: relative;
     display: inline-block;
@@ -49,18 +52,49 @@
     margin: 0;
     padding: 0;
     list-style: none;
+
+    & + & {
+        border-top: 1px solid #dadada;
+    }
+}
+
+.component-dropdown-menu-secondary {
+    background-color: #f2f2f2;
+}
+
+.component-dropdown-menu-active {
+    .component-dropdown-menu-link {
+        padding-left: $component-padding-x + 1.5rem;
+    }
+    .component-dropdown-menu-item-active a {
+        &:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: $component-padding-x;
+            display: block;
+            width: 1rem;
+            height: 1rem;
+            transform: translate(0, -50%);
+            background-image: url(svg-inline($component-dropdown-menu-item-active-icon));
+        }
+    }
 }
 
 .component-dropdown-menu-link {
+    position: relative;
     display: block;
     padding: $component-padding-y $component-padding-x;
     display: flex;
 
     &:hover,
     &:focus {
+        z-index: 1;
         text-decoration: none;
-        outline: $component-outline;
         background-color: rgba(map-get($colors, 'primary'), 0.15);
+    }
+    &:focus {
+        outline: $component-outline;
     }
 }
 

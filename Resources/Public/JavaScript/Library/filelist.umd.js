@@ -18626,8 +18626,11 @@ function (_Vue) {
       }
 
       var menuItems = this.entries.map(this.generateItem, this);
+      var itemClass = 'component-dropdown-menu';
+      itemClass += this.secondary ? ' component-dropdown-menu-secondary' : '';
+      itemClass += this.activeIcon ? ' component-dropdown-menu-active' : '';
       return h("ul", {
-        "class": 'component-dropdown-menu',
+        "class": itemClass,
         "attrs": {
           "role": 'menu'
         }
@@ -18637,8 +18640,17 @@ function (_Vue) {
     key: "generateItem",
     value: function generateItem(link) {
       var h = this.$createElement;
+      var icon = link.iconIdentifier ? h("span", {
+        "class": 'component-dropdown-menu-link-icon'
+      }, [h(components_Icon, {
+        "attrs": {
+          "identifier": link.iconIdentifier
+        }
+      })]) : '';
+      var itemClass = 'component-dropdown-menu-item';
+      itemClass += ' component-dropdown-menu-item-' + (link.active ? 'active' : 'inactive');
       return h("li", {
-        "class": 'component-dropdown-menu-item'
+        "class": itemClass
       }, [h("a", {
         "class": 'component-dropdown-menu-link',
         "attrs": {
@@ -18649,16 +18661,7 @@ function (_Vue) {
         "on": {
           "click": link.onclick
         }
-      }, [h("span", {
-        "class": 'component-dropdown-menu-link-icon',
-        "attrs": {
-          "role": 'presentation'
-        }
-      }, [h(components_Icon, {
-        "attrs": {
-          "identifier": link.iconIdentifier
-        }
-      })]), h("span", {
+      }, [icon, h("span", {
         "class": 'component-dropdown-menu-link-text'
       }, [link.title])])]);
     }
@@ -18668,6 +18671,14 @@ function (_Vue) {
 }(vue_runtime_esm["default"]);
 
 __decorate([Prop()], DropdownMenu_DropdownMenu.prototype, "entries", void 0);
+
+__decorate([Prop({
+  default: false
+})], DropdownMenu_DropdownMenu.prototype, "activeIcon", void 0);
+
+__decorate([Prop({
+  default: false
+})], DropdownMenu_DropdownMenu.prototype, "secondary", void 0);
 
 DropdownMenu_DropdownMenu = __decorate([vue_class_component_common_default.a], DropdownMenu_DropdownMenu);
 /* harmony default export */ var components_DropdownMenu = (DropdownMenu_DropdownMenu);
@@ -18733,7 +18744,7 @@ function (_Vue) {
 
       var entries = this.storages.map(this.generateEntry, this);
       return h("span", {
-        "class": 'component-storageselector'
+        "class": 'component-selector-storage'
       }, [h(components_Dropdown, {
         "attrs": {
           "toggleLabel": this.activeStorage.name,
@@ -20218,6 +20229,8 @@ StorageContent_StorageContent = __decorate([vue_class_component_common_default.a
 
 
 
+
+
 var SortingSelector_SortingSelector =
 /*#__PURE__*/
 function (_Vue) {
@@ -20232,32 +20245,66 @@ function (_Vue) {
   _createClass(SortingSelector, [{
     key: "render",
     value: function render() {
+      var h = arguments[0];
+      return h("span", {
+        "class": 'component-selector-sorting'
+      }, [h(components_Dropdown, {
+        "attrs": {
+          "toggleLabel": TYPO3.lang['SortingSelector.toggle.label'],
+          "toggleLabelIconIdentifier": 'dam-actions-sort-amount'
+        }
+      }, [h(components_DropdownMenu, {
+        "attrs": {
+          "entries": this.fieldEntries,
+          "activeIcon": 'true'
+        }
+      }), h(components_DropdownMenu, {
+        "attrs": {
+          "entries": this.orderEntries,
+          "activeIcon": 'true',
+          "secondary": 'true'
+        }
+      })])]);
+    }
+  }, {
+    key: "fieldEntries",
+    get: function get() {
       var _this = this;
 
-      var h = arguments[0];
-      return h("div", {
-        "class": 'form-inline'
-      }, [h("div", {
-        "class": 'form-group'
-      }, [h("select", {
-        "class": 'form-control',
-        "on": {
-          "change": function change(e) {
-            return _this.changeSorting(e.target.value);
+      var entries = [];
+
+      values_default()(SortingFields).map(function (field) {
+        var link = {
+          title: field,
+          href: '#',
+          onclick: function onclick(e) {
+            return _this.changeSorting(field);
           }
-        }
-      }, [values_default()(SortingFields).map(function (field) {
-        return h("option", [field]);
-      })]), h("select", {
-        "class": 'form-control',
-        "on": {
-          "change": function change(e) {
-            return _this.changeSortOrder(e.target.value);
+        };
+        entries.push(link);
+      });
+
+      return entries;
+    }
+  }, {
+    key: "orderEntries",
+    get: function get() {
+      var _this2 = this;
+
+      var entries = [];
+
+      values_default()(SortingOrder).map(function (field) {
+        var link = {
+          title: TYPO3.lang['SortingSelector.order.' + field + '.label'],
+          href: '#',
+          onclick: function onclick(e) {
+            return _this2.changeSortOrder(field);
           }
-        }
-      }, [values_default()(SortingOrder).map(function (field) {
-        return h("option", [field]);
-      })])])]);
+        };
+        entries.push(link);
+      });
+
+      return entries;
     }
   }]);
 
@@ -20271,6 +20318,8 @@ __decorate([Mutation(Mutations.CHANGE_SORTORDER)], SortingSelector_SortingSelect
 SortingSelector_SortingSelector = __decorate([vue_class_component_common_default.a], SortingSelector_SortingSelector);
 /* harmony default export */ var components_SortingSelector = (SortingSelector_SortingSelector);
 // CONCATENATED MODULE: ./src/components/ViewSelector/index.tsx
+
+
 
 
 
@@ -20301,40 +20350,58 @@ function (_Vue) {
   }, {
     key: "render",
     value: function render() {
-      var _this = this;
-
       var h = arguments[0];
-      var tileSelected = this.currentViewMode === ViewType.TILE ? 'active' : '';
-      var listSelected = this.currentViewMode === ViewType.LIST ? 'active' : '';
-      return h("div", {
-        "class": 'btn-group',
+      var entries = [];
+      entries.push(this.tileEntry);
+      entries.push(this.listEntry);
+      return h("span", {
+        "class": 'component-selector-view'
+      }, [h(components_Dropdown, {
         "attrs": {
-          "role": 'group'
+          "toggleLabel": TYPO3.lang['ViewSelector.toggle.label'],
+          "toggleLabelIconIdentifier": 'actions-system-list-open'
         }
-      }, [h("button", {
-        "class": 'btn btn-default ' + listSelected,
-        "on": {
-          "click": function click(event) {
-            return _this.changeView(ViewType.LIST);
-          }
+      }, [h(components_DropdownMenu, {
+        "attrs": {
+          "entries": entries,
+          "activeIcon": 'true'
         }
-      }, [h("i", {
-        "class": 'fa fa-fw fa-list'
-      })]), h("button", {
-        "class": 'btn btn-default ' + tileSelected,
-        "on": {
-          "click": function click(event) {
-            return _this.changeView(ViewType.TILE);
-          }
-        }
-      }, [h("i", {
-        "class": 'fa fa-fw fa-th'
       })])]);
     }
   }, {
     key: "currentViewMode",
     get: function get() {
       return this.viewMode;
+    }
+  }, {
+    key: "tileEntry",
+    get: function get() {
+      var _this = this;
+
+      return {
+        title: TYPO3.lang['ViewSelector.tileview.title'],
+        href: '#',
+        onclick: function onclick(event) {
+          return _this.changeView(ViewType.TILE);
+        },
+        iconIdentifier: 'dam-actions-viewmode-tiles',
+        active: this.currentViewMode === ViewType.TILE
+      };
+    }
+  }, {
+    key: "listEntry",
+    get: function get() {
+      var _this2 = this;
+
+      return {
+        title: TYPO3.lang['ViewSelector.listview.title'],
+        href: '#',
+        onclick: function onclick(event) {
+          return _this2.changeView(ViewType.LIST);
+        },
+        iconIdentifier: 'dam-actions-viewmode-list',
+        active: this.currentViewMode === ViewType.LIST
+      };
     }
   }]);
 
@@ -24168,16 +24235,16 @@ function (_Vue) {
         "slot": 'beforeUploadTable'
       }, [h(components_DocHeader, [h("template", {
         "slot": 'topBarLeft'
+      }, [h(components_ButtonBar)]), h("template", {
+        "slot": 'topBarRight'
+      }, [h(components_SortingSelector), h(components_ViewSelector)]), h("template", {
+        "slot": 'bottomBarLeft'
       }, [h(components_TreeToggle, {
         "directives": [{
           name: "show",
           value: this.activeStorage
         }]
-      }), h(components_ViewSelector)]), h("template", {
-        "slot": 'topBarRight'
-      }, [h(components_ButtonBar), h(components_SortingSelector)]), h("template", {
-        "slot": 'bottomBarLeft'
-      }, [h(components_StorageSelector), h(components_Breadcrumb, {
+      }), h(components_StorageSelector), h(components_Breadcrumb, {
         "directives": [{
           name: "show",
           value: this.activeStorage

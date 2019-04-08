@@ -49,9 +49,31 @@
         <source>descending</source>
       </trans-unit>
 
+      <!-- SortingSelector -->
+      <trans-unit id="SortingSelector.toggle.label">
+        <source>Sorting</source>
+      </trans-unit>
+      <trans-unit id="SortingSelector.order.ASC.label">
+        <source>ascending</source>
+      </trans-unit>
+      <trans-unit id="SortingSelector.order.DESC.label">
+        <source>descending</source>
+      </trans-unit>
+
       <!-- SelectIndicator -->
       <trans-unit id="SelectIndicator.label">
         <source>{selectedCount} selected</source>
+      </trans-unit>
+
+      <!-- ViewSelector -->
+      <trans-unit id="ViewSelector.toggle.label">
+        <source>View</source>
+      </trans-unit>
+      <trans-unit id="ViewSelector.tileview.title">
+        <source>Tiles</source>
+      </trans-unit>
+      <trans-unit id="ViewSelector.listview.title">
+        <source>List</source>
       </trans-unit>
 
       <!-- StorageSelector -->
