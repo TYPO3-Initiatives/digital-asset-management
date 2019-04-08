@@ -13,7 +13,7 @@ Assets
 Contributing to the Frontend
 ============================
 
-The frontend itself is based on Vue.js, TypeScript and JSX-TypeScript (.tsx) templates. To contribute and make changes use the commands described below within the :code:`./Build/Vue` directory.
+The frontend is based on Vue.js, TypeScript and JSX-TypeScript (.tsx) templates. To contribute and make changes please adapt the files and use the commands described below within the :code:`./Build/Vue` directory to build the required modules.
 
 Project Setup
 -------------
