@@ -13,6 +13,8 @@ Assets
 Contributing to the Frontend
 ============================
 
+Head over to :code:`Build/Vue` and use yarn to build the frontend.
+
 Project Setup
 -------------
 
@@ -43,6 +45,8 @@ To integrate with requirejs compile vue project as lib and manually copy it to e
 
 Testing
 =======
+
+Head over to :code:`Build/Vue` and use yarn to test the frontend.
 
 Linting and fixing files
 ------------------------
