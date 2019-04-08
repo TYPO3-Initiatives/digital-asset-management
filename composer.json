@@ -1,18 +1,13 @@
 {
-	"name": "lns/digital-asset-management",
+	"name": "typo3/cms-digital-asset-management",
 	"type": "typo3-cms-extension",
 	"description": "Digital Asset Management for TYPO3",
 	"license": "GPL-3.0-or-later",
 	"authors": [
 		{
-			"name": "André Bardoun",
-			"email": "bardoun@schaffrath-digital.de",
-			"role": "Maintainer"
-		},
-		{
-			"name": "Jürgen Venne",
-			"email": "venne@schaffrath-digital.de",
-			"role": "Maintainer"
+			"name": "The TYPO3 Community",
+			"role": "Developer",
+			"homepage": "https://typo3.org/community/"
 		}
 	],
 	"require": {
