@@ -246,56 +246,83 @@ class AjaxController
     }
 
     /**
-     * @param string $folderIdentifier
+     * Create folders from a not yet sanitized combined identifier
      *
+     * @param string $folderIdentifier
      * @return Folder
      */
     protected function createFolderRecursive(string $folderIdentifier): Folder
     {
+        $splitCombinedIdentifier = explode(':', $folderIdentifier);
+        if (count($splitCombinedIdentifier) !== 2) {
+            throw new ControllerException('Invalid identifier', 1554725198);
+        }
+        $storage = $splitCombinedIdentifier[0];
+        if (!is_numeric($storage)) {
+            throw new ControllerException('Broken storage identifier', 1554725216);
+        }
+        $storage = (int)$storage;
         $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
-        $stack = [];
-        while (true) {
-            $parentName = dirname($folderIdentifier);
-            $folderName = basename($folderIdentifier);
-            $stack[] = $folderName;
+        $storage = $resourceFactory->getStorageObject($storage);
+        $folderObject = $storage->getFolder('/');
+        $folders = array_filter(explode('/', ltrim($splitCombinedIdentifier[1], '/')));
+        foreach ($folders as $folder) {
+            $sanitizedFolderName = $storage->sanitizeFileName($folder, $folderObject);
             try {
-                $parentObject = $resourceFactory->retrieveFileOrFolderObject($parentName);
-                break;
-            } catch (ResourceDoesNotExistException $e) {
-                $folderIdentifier = $parentName;
+                $folderObject = $folderObject->getSubfolder($sanitizedFolderName);
+            } catch (\InvalidArgumentException $e) {
+                $folderObject->createFolder($sanitizedFolderName);
+                $folderObject = $folderObject->getSubfolder($sanitizedFolderName);
             }
         }
-        while ($folderName = array_pop($stack)) {
-            try {
-                $parentObject = $parentObject->createFolder($folderName);
-            } catch (ResourceException $e) {
-            }
-        }
-        return $parentObject;
+        return $folderObject;
     }
 
     /**
-     * @param ServerRequestInterface $request
+     * File exists for a client side created pseudo combined identifier that
+     * is sanitized on server side.
      *
+     * @param ServerRequestInterface $request
      * @return JsonResponse
      */
     public function fileExistsAction(ServerRequestInterface $request): JsonResponse
     {
-        $identifier = $request->getQueryParams()['identifier'];
-        if (empty($identifier)) {
-            return new JsonExceptionResponse(new ControllerException('Identifier needed', 1554125449));
-        }
-        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
-        $folderIdentifier = dirname($identifier) . '/';
-        $fileIdentifier = basename($identifier);
         try {
-            $folder = $resourceFactory->retrieveFileOrFolderObject($folderIdentifier);
-        } catch (ResourceDoesNotExistException $e) {
+            $identifier = $request->getQueryParams()['identifier'];
+            if (empty($identifier)) {
+                throw new ControllerException('Identifier needed', 1554125449);
+            }
+            $splitCombinedIdentifier = explode(':', $identifier);
+            if (count($splitCombinedIdentifier) !== 2) {
+                throw new ControllerException('Invalid identifier', 1554717790);
+            }
+            $storage = $splitCombinedIdentifier[0];
+            if (!is_numeric($storage)) {
+                throw new ControllerException('Broken storage identifier', 1554717432);
+            }
+            $storage = (int)$storage;
+            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+            $storage = $resourceFactory->getStorageObject($storage);
+            $folderObject = $storage->getFolder('/');
+            $folders = explode('/', ltrim($splitCombinedIdentifier[1], '/'));
+            $fileName = array_pop($folders);
+            if (empty($fileName)) {
+                throw new ControllerException('Empty filename not allowed', 1554719701);
+            }
+            foreach ($folders as $folder) {
+                // Throws on '..' and '.', so no path traversal possible
+                $folderObject = $folderObject->getSubfolder($storage->sanitizeFileName($folder, $folderObject));
+            }
+            $fileName = $folderObject->getStorage()->sanitizeFileName($fileName, $folderObject);
+        } catch (\InvalidArgumentException $e) {
             return new FileExistsResponse(FileExistsResponse::PARENT_FOLDER_DOES_NOT_EXIST);
+        } catch (ResourceException $e) {
+            return new JsonExceptionResponse($e);
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
         }
-        $fileName = $folder->getStorage()->sanitizeFileName($fileIdentifier, $folder);
-        if ($folder->hasFile($fileName)) {
-            $file = $resourceFactory->getFileObjectFromCombinedIdentifier($folderIdentifier . $fileName);
+        if ($folderObject->hasFile($fileName)) {
+            $file = $storage->getFileInFolder($fileName, $folderObject);
             // If file is an image or media, create image object, else file object
             $fileExtension = strtolower($file->getExtension());
             if (GeneralUtility::inList($GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'], $fileExtension)
@@ -310,8 +337,8 @@ class AjaxController
     }
 
     /**
-     * Return item list (folders, files, images) of a storage:path
-     * FAL folder identifier. GET request with identifier argument.
+     * Return item list (folders, files, images) of a server side created valid
+     * storage:path FAL folder identifier. GET request with identifier argument.
      *
      * @param ServerRequestInterface $request
      *
