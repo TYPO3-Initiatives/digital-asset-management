@@ -132,7 +132,7 @@ class FolderItemFile implements \JsonSerializable
         $urlParameters = [
             'edit' => [
                 'sys_file_metadata' => [
-                    $file->getMetaData()['uid'] => 'edit',
+                    $file->_getMetaData()['uid'] => 'edit',
                 ],
             ],
             'returnUrl' => (string)$uriBuilder->buildUriFromRoute('file_DigitalAssetManagement'),
