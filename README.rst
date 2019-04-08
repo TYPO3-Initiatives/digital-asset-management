@@ -10,8 +10,16 @@ Assets
 * Mockups: https://xd.adobe.com/view/f870af49-1519-4051-7a88-490e94fb7b0d-8e41/
 * Icons: https://github.com/typo3/typo3.icons
 
-Contributing to the Frontend
-============================
+Contributing
+============
+
+Feel free to fork this project and create a pull request when you're happy with your changes. 
+We check the source code according to the our Coding Guidelines.
+
+Contributing to the Frontend (JS/CSS)
+=====================================
+
+The backend module is based on **Vue.js**, **TypeScript** and **JSX-TypeScript-Templates (.tsx)**. Head over to the :code:`./Build/Vue` directory and use our **yarn** commands build the sources.
 
 Project Setup
 -------------
@@ -44,6 +52,8 @@ To integrate with requirejs compile vue project as lib and manually copy it to e
 Testing
 =======
 
+Head over to :code:`Build/Vue` and use yarn to test the frontend.
+
 Linting and fixing files
 ------------------------
 
@@ -64,6 +74,14 @@ Run unit tests
 .. code-block::
 
     yarn run test:unit
+    
+Contact & Communication
+=======================
+
+You can connect directly with us on `Slack <https://typo3.slack.com/messages/cig-filelist/>`_, the
+preferred instant communication platform of TYPO3 CMS developers. If you already have access to the
+TYPO3 Slack platform join the **#cig-filelist** channel. If you don't have access yet, you can
+register `here <https://forger.typo3.org/slack>`_.
 
 
 Code Quality
