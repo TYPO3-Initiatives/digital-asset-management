@@ -15,6 +15,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Http\Stream;
@@ -643,6 +644,97 @@ class AjaxController
         }
         return new FileOperationResponse($resources);
     }
+
+    /**
+     * Return item list (folders, files, images) of a storage:path
+     * FAL folder identifier. GET request with identifier argument.
+     * Query parameter
+     *  identifier string combined identifier of search starting point
+     *  query string serach string
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return JsonResponse
+     */
+    public function searchAction(ServerRequestInterface $request): JsonResponse
+    {
+        try {
+            $identifier = $request->getQueryParams()['identifier'] ?? '';
+            $query = $request->getQueryParams()['query'] ?? '';
+            if (empty($identifier)) {
+                throw new ControllerException('Identifier needed', 1553699828);
+            }
+            if (empty($identifier)) {
+                throw new ControllerException('Query string needed', 1554452377);
+            }
+            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+            $folderObject = $resourceFactory->getObjectFromCombinedIdentifier($identifier);
+            if (!$folderObject instanceof Folder) {
+                throw new ControllerException('Identifier is not a folder', 1553701684);
+            }
+            $allFiles = $this->searchFiles($identifier, $query);
+            $folders = [];
+            $files = [];
+            $images = [];
+            foreach ($allFiles as $file) {
+                // If file is an image or media, create image object, else file object
+                $fileExtension = strtolower($file->getExtension());
+                if (GeneralUtility::inList($GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'], $fileExtension)
+                    || GeneralUtility::inList($GLOBALS['TYPO3_CONF_VARS']['GFX']['mediafile_ext'], $fileExtension)
+                ) {
+                    $images[] = new FolderItemImage($file);
+                } else {
+                    $files[] = new FolderItemFile($file);
+                }
+            }
+            return new FolderItemsResponse($folders, $files, $images);
+        } catch (ResourceException $e) {
+            return new JsonExceptionResponse($e);
+        } catch (ControllerException $e) {
+            return new JsonExceptionResponse($e);
+        }
+    }
+
+    /**
+     * returns an array of files in a current path
+     *
+     * @param string $combinedIdentifier
+     * @param string $searchWord
+     *
+     * @return array
+     * @throws ResourceDoesNotExistException
+     */
+    protected function searchFiles($combinedIdentifier = '', $searchWord = ''): array
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_file');
+        /** @var ResourceFactory $resourceFactory */
+        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+        $storage = $resourceFactory->getStorageObjectFromCombinedIdentifier($combinedIdentifier);
+        $identifier = substr($combinedIdentifier, strpos($combinedIdentifier, ':') + 1);
+        $constraints = [];
+        $constraints[] = $queryBuilder->expr()->eq('storage', $storage->getUid());
+        $constraints[] = $queryBuilder->expr()->like('sys_file.name', $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($searchWord) . '%') );
+        if ($identifier !== '/') {
+            $constraints[] = $queryBuilder->expr()->like('identifier', $queryBuilder->createNamedParameter( $queryBuilder->escapeLikeWildcards($identifier) . '%') );
+        }
+        $statement = $queryBuilder->select('*')
+            ->from('sys_file')
+            ->join(
+                'sys_file',
+                'sys_file_metadata',
+                'file_metadata',
+                $queryBuilder->expr()->eq('sys_file.uid', 'file_metadata.file')
+            )
+            ->where($queryBuilder->expr()->andX(...$constraints))
+            ->execute();
+        $files = [];
+        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+        while ($row = $statement->fetch()) {
+            $files[] = $resourceFactory->getObjectFromCombinedIdentifier($row['storage'] . ':' . $row['identifier']);
+        }
+        return $files;
+    }
+
 
     /**
      * @return BackendUserAuthentication
